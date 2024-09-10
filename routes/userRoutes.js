@@ -11,5 +11,5 @@ router.get("/register",registerGetFn);
 router.post("/register",userResiter)
 router.post("/send-otp",otp)
 router.get("/login",loginGetFn);
-
+//comment
 export default router
