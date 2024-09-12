@@ -51,7 +51,7 @@ export const googleAuthCallback = async (req, res) => {
         // Check if the user exists
         const existingUser = await userModel.findOne({ email });
 
-        if (existingUser) {
+        if (existingUser&& !existingUser.googleUser) {
             // Update the existing user's Google-related fields
             existingUser.googleUser = true;
             existingUser.googleId = id;
@@ -60,8 +60,8 @@ export const googleAuthCallback = async (req, res) => {
             await existingUser.save(); // Save the updated user
 
             res.redirect("/")
-        } else {
-            // Create a new user if not found
+        } else if(!existingUser){
+          
             const newUser = new userModel({
                 username: req.user.profile.name || 'Unknown', // Default value if name is not available
                 email,
@@ -75,6 +75,16 @@ export const googleAuthCallback = async (req, res) => {
             res.redirect("/")
 
             // res.json({ message: "User created successfully", token });
+        }
+        else{
+            res.send(`
+                <html>
+                  <script>
+                    alert('User alredy exisit');
+                    window.location.href = '/register';  // Redirect after alert
+                  </script>
+                </html>
+              `);
         }
     } catch (error) {
         console.error('Error during Google auth callback:', error);

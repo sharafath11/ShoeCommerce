@@ -6,8 +6,10 @@ export const registerGetFn = (req, res) => {
 };
 export const userResiter = async(req, res) => {
   const { email, otp,username,password } = req.body;
-  
+  const user=userModel.find({email});
 
+
+ if(!user){
   if (otpStore[email] && otpStore[email].expiresAt > Date.now()) {
     if (otpStore[email].code === otp) {
       const salt = await bcrypt.genSalt(10);
@@ -27,7 +29,7 @@ export const userResiter = async(req, res) => {
       delete otpStore[email]; 
      
       
-      return res.redirect("/");  // Successful registration
+      return res.redirect("/login");  // Successful registration
     } else {
       // Invalid OTP, display alert and redirect to register
       res.send(`
@@ -50,5 +52,16 @@ export const userResiter = async(req, res) => {
       </html>
     `);
   }
+ }
+ else{
+  res.send(`
+    <html>
+      <script>
+        alert('User alredy exisit');
+        window.location.href = '/register';  // Redirect after alert
+      </script>
+    </html>
+  `);
+ }
 }
 
