@@ -5,7 +5,8 @@ import session from 'express-session';
 
 // Function to handle GET request for login page
 export const loginGetFn = (req, res) => {
-  res.render("user/login");
+  const user=req.session.user
+  res.render("user/login",{user});
 };
 
 // Function to handle POST request for login

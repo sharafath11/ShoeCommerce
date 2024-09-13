@@ -1,3 +1,4 @@
 export const getContact=((req,res)=>{
-    res.render("user/contact")
+    const user=req.session.user
+    res.render("user/contact",{user})
 })

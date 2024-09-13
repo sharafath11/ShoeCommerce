@@ -1,3 +1,4 @@
 export const getCategory=((req,res)=>{
-    res.render("user/category")
+    const user=req.session.user 
+    res.render("user/category",{user})
 })

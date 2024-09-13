@@ -49,13 +49,13 @@
 					<div class="collapse navbar-collapse offset" id="navbarSupportedContent">
 						<ul class="nav navbar-nav menu_nav ml-auto">
 							<li class="nav-item active"><a class="nav-link" href="/">Home</a></li>
-							<li class="nav-item"><a class="nav-link" href="contact.html">CATOGRY</a></li>
-							<li class="nav-item"><a class="nav-link" href="contact.html">CHECK OUT</a></li>
-							<li class="nav-item"><a class="nav-link" href="contact.html">CONTACT</a></li>
+							<li class="nav-item"><a class="nav-link" href="/category">CATOGRY</a></li>
+							<li class="nav-item"><a class="nav-link" href="/checkout">CHECK OUT</a></li>
+							<li class="nav-item"><a class="nav-link" href="/contact">CONTACT</a></li>
 							
 						</ul>
 						<ul class="nav navbar-nav navbar-right">
-							<li class="nav-item"><a href="#" class="cart"><span class="ti-bag"></span></a></li>
+							<li class="nav-item"><a href="/cart" class="cart"><span class="ti-bag"></span></a></li>
 							<li class="nav-item">
 								<button class="search"><span class="lnr lnr-magnifier" id="search"></span></button>
 							</li>
@@ -64,16 +64,26 @@
 						<ul class="navbar-nav">
 							<li class="nav-item dropdown">
 								<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-									LOGIN
+									<% if (user) { %> 
+										<%= user.username %> <!-- Display username if user is logged in -->
+									<% } else { %>
+										LOGIN <!-- Display "Login" if user is not logged in -->
+									<% } %>
 								</a>
 								<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-									<a class="dropdown-item" href="/login">Login</a>
-									<a class="dropdown-item" href="login.html">Profile</a>
-									<div class="dropdown-divider"></div>
-									<a class="dropdown-item" href="forgot-password.html">Forgot Password</a>
+									<% if (user) { %> 
+										<!-- Show the Profile link if user is logged in -->
+										<a class="dropdown-item" href="/profile">Profile</a>
+										<div class="dropdown-divider"></div>
+										<a class="dropdown-item" href="/logout">Logout</a> <!-- Logout option for logged-in users -->
+									<% } else { %>
+										<!-- Show the Login link if user is not logged in -->
+										<a class="dropdown-item" href="/login">Login</a>
+									<% } %>
 								</div>
 							</li>
 						</ul>
+						
 					</div>
 				</div>
 			</nav>

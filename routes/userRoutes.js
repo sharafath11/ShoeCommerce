@@ -6,13 +6,13 @@ import { otp } from "../controller/userConteroller/otpController.js";
 import passport from "passport";
 import '../controller/userConteroller/googleAuth.js'
 import { authFailure, authProtected, authSuccess, googleAuthCallback } from "../controller/userConteroller/googleAuth.js";
-import { verifyUser } from "../controller/userConteroller/verifyUser.js";
 import { getSingleProdect } from "../controller/userConteroller/getSingleProdect.js";
 import { getCategory } from "../controller/userConteroller/categoryController.js";
 import { getCheckout } from "../controller/userConteroller/checkoutController.js";
 import { getContact } from "../controller/userConteroller/contactController.js";
 import { getCart } from "../controller/userConteroller/cartController.js";
 import { protectedHand } from "./protectedRoutes.js";
+import { logoutFn } from "../controller/userConteroller/logoutController.js";
 const router=express.Router();
 
 router.get("/",homeRender)
@@ -34,6 +34,7 @@ router.get('/auth/google/failure', authFailure);
 router.get('/auth/protected', protectedHand, authProtected);
 router.get("/login",loginGetFn)
 router.post("/login",loginPost)
+router.get("/logout",logoutFn)
 router.get("/singleprodect",getSingleProdect)
 router.get("/category",getCategory)
 router.get("/checkout",protectedHand,getCheckout)
