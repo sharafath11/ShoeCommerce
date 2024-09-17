@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>edit Category - Admin Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+        }
+
+        .sidebar {
+            height: 100vh;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            background-color: #343a40;
+        }
+
+        .sidebar .nav-link {
+            color: #fff;
+            padding: 15px;
+            font-size: 16px;
+        }
+
+        .sidebar .nav-link:hover {
+            background-color: #495057;
+            color: #fff;
+        }
+
+        .sidebar-heading {
+            font-size: 1.5rem;
+            color: #fff;
+            padding: 15px;
+        }
+
+        .form-control {
+            border-radius: 20px;
+        }
+
+        .btn-primary {
+            border-radius: 20px;
+        }
+
+        .card {
+            border-radius: 10px;
+            border: none;
+        }
+
+        .form-group label {
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <%- include('partials/sidebar') %>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+                    <h1 class="h2">Edit Category</h1>
+                </div>
+                
+                <!-- Add Category Form -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <form action="/admin/category/edit-category/<%= categorie._id %>" method="POST">
+                            <div class="form-group mb-3">
+                                <label for="categoryName">Category Name</label>
+                                <input type="text" name="name" class="form-control" id="categoryName" placeholder="Enter category name" value="<%= categorie.name %>" required>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="categoryDescription">Description</label>
+                                <textarea class="form-control" name="description" id="categoryDescription" rows="4" placeholder="Enter category description"><%= categorie.description %></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Update Category</button>
+                        </form>                        
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -12,7 +12,7 @@ const productSchema = new mongoose.Schema({
         trim: true
     },
     availableSize: {
-        type: [String], // Array of strings to accommodate multiple sizes
+        type: [String], 
         required: true
     },
     description: {
@@ -20,17 +20,30 @@ const productSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
+    images: [String],
+    price:{
+        type:Number,
+        required:true
+    },
+    stock:{
+        type:Number,
+        required:true,
+    },
     blocked: {
         type: Boolean,
         default: false
     },
+    sales:{
+        type:Number,
+        default:0
+    },
     categoryId: {
-        type: mongoose.Schema.Types.ObjectId, // Reference to a Category model
-        ref: 'Category', // The name of the model to which the categoryId refers
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'Category', 
         required: true
     }
 }, { timestamps: true });
 
-const Product = mongoose.model('Product', productSchema);
+const ProductModel = mongoose.model('Product', productSchema);
 
-export default Product;
+export default ProductModel;

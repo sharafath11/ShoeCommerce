@@ -11,7 +11,7 @@ import { getCategory } from "../controller/userConteroller/categoryController.js
 import { getCheckout } from "../controller/userConteroller/checkoutController.js";
 import { getContact } from "../controller/userConteroller/contactController.js";
 import { getCart } from "../controller/userConteroller/cartController.js";
-import { protectedHand } from "./protectedRoutes.js";
+import { protectedHand } from "../controller/userConteroller/protectedRoutes.js";
 import { logoutFn } from "../controller/userConteroller/logoutController.js";
 const router=express.Router();
 
@@ -20,17 +20,11 @@ router.get("/register",registerGetFn);
 router.post("/register",userResiter)
 router.post("/send-otp",otp)
 router.get('/auth/google', passport.authenticate('google', { scope: ['email', 'profile'], session: false }));
-
 // Callback route
 router.get('/auth/google/callback', passport.authenticate('google', { session: false }), googleAuthCallback);
-
-// Route for successful login
 router.get('/auth/google/success', authSuccess);
-
 // Route for login failure
 router.get('/auth/google/failure', authFailure);
-
-
 router.get('/auth/protected', protectedHand, authProtected);
 router.get("/login",loginGetFn)
 router.post("/login",loginPost)

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Products Management</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Toastify CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f6f9;
+        }
+        .sidebar {
+            height: 100vh;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+        .sidebar .nav-link {
+            font-size: 16px;
+        }
+        .sidebar-heading {
+            font-size: 1.5rem;
+            color: #333;
+        }
+        .card {
+            border-radius: 10px;
+            border: none;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .table th {
+            font-weight: 600;
+        }
+        .table th, .table td {
+            vertical-align: middle;
+        }
+        .form-control {
+            border-radius: 20px;
+        }
+        .btn {
+            font-size: 12px;
+        }
+        .btn-delete {
+            color: red;
+        }
+        .btn-delete:hover {
+            color: darkred;
+        }
+        a {
+            text-decoration: none;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <%- include('partials/sidebar') %>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+                    <h1 class="h2">Products Management</h1>
+                    <button class="btn btn-dark"><a href="/admin/products/addproducts">Add Product</a></button>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control w-25" placeholder="Search products...">
+                </div>
+
+                <!-- Products Table -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>Brand Name</th>
+                                    <th>Available Sizes</th>
+                                    <th>Description</th>
+                                    <th>Price</th>
+                                    <th>Stock</th>
+                                    <th>Category</th>
+                                    <th>Blocked</th>
+                                    <th>Sales</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% Products.forEach(product => { %>
+                                <tr>
+                                    <td><%= product.name %></td>
+                                    <td><%= product.name %></td>
+                                    <td><%= product.availableSize.join(', ') %></td>
+                                    <td><%= product.description %></td>
+                                    <td>$<%= product.price %></td>
+                                    <td><%= product.stock %></td>
+                                    <td><%= product.categoryId.name %></td>
+                                    <td><%= product.sales %></td>
+                                    <td><%= product.blocked %></td>
+                                    <td>
+                                        <a href="/admin/products/edit/<%= product._id %>" class="btn btn-sm btn-primary">Edit</a>
+                                        <a href="/admin/products/delete/<%= product._id %>" class="btn btn-sm btn-delete">Delete</a>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Toastify JS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    <!-- Toast Notification Script -->
+    <% if (typeof message !== undefined && message) { %>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function showToast(message) {
+                Toastify({
+                    text: message,
+                    duration: 2000, // duration in ms
+                    gravity: "top", // `top` or `bottom`
+                    position: "right", // `left`, `center` or `right`
+                    backgroundColor: "#333", // background color
+                    stopOnFocus: true // stop on focus
+                }).showToast();
+            }
+            showToast('<%= message %>');
+        });
+    </script>
+    <% } %>
+</body>
+</html>
