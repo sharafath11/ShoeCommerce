@@ -10,12 +10,14 @@ import { getSingleProdect } from "../controller/userConteroller/getSingleProdect
 import { getCategory } from "../controller/userConteroller/categoryController.js";
 import { getCheckout } from "../controller/userConteroller/checkoutController.js";
 import { getContact } from "../controller/userConteroller/contactController.js";
-import { getCart } from "../controller/userConteroller/cartController.js";
-import { protectedHand } from "../controller/userConteroller/protectedRoutes.js";
+import {  addToCart, cartRenderPage} from "../controller/userConteroller/cartController.js";
+import { clearTheHeader, protectedHand } from "../controller/userConteroller/protectedRoutes.js";
 import { logoutFn } from "../controller/userConteroller/logoutController.js";
+import { removeWhislist, renderWishlistPage, whislistFn } from "../controller/userConteroller/whislistController.js";
+
 const router=express.Router();
 
-router.get("/",homeRender)
+router.get("/",clearTheHeader,homeRender)
 router.get("/register",registerGetFn);
 router.post("/register",userResiter)
 router.post("/send-otp",otp)
@@ -26,12 +28,16 @@ router.get('/auth/google/success', authSuccess);
 // Route for login failure
 router.get('/auth/google/failure', authFailure);
 router.get('/auth/protected', protectedHand, authProtected);
-router.get("/login",loginGetFn)
+router.get("/login",clearTheHeader,loginGetFn)
 router.post("/login",loginPost)
 router.get("/logout",logoutFn)
-router.get("/singleprodect",getSingleProdect)
-router.get("/category",getCategory)
+router.get("/category",clearTheHeader,getCategory)
 router.get("/checkout",protectedHand,getCheckout)
-router.get("/contact",getContact)
-router.get("/cart",protectedHand,getCart)
+router.get("/contact",clearTheHeader,getContact)
+router.get("/singleprodect/:id",clearTheHeader,getSingleProdect)
+router.get("/whislistAdd/:id",protectedHand,whislistFn)
+router.get('/wishlist', protectedHand,renderWishlistPage)
+router.get("/remove-from-wishlist/:id",removeWhislist)
+router.get("/addToCart/:id",protectedHand,addToCart)
+router.get("/cart",cartRenderPage)
 export default router

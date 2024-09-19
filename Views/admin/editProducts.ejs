@@ -26,6 +26,7 @@
                     <h2>Edit the Product</h2>
                     <form action="/admin/products/edit-products" method="post">
                         <input type="hidden" name="id" value="<%= product._id %>">
+                        
                         <div class="mb-3">
                             <label for="productName" class="form-label">Product Name</label>
                             <input type="text" name="name" class="form-control" id="productName" placeholder="Enter product name" value="<%= product.name %>">
@@ -36,7 +37,9 @@
                         </div>
                         <div class="mb-3">
                             <label for="availableSizes" class="form-label">Available Sizes (comma separated)</label>
-                            <input type="text" name="sizes" class="form-control" id="availableSizes" placeholder="Enter sizes, e.g., 37,38,39,40" value="<%= product.sizes %>">
+                            <input type="text" name="sizes" class="form-control" id="availableSizes" placeholder="Enter sizes, e.g., S,M,L,XL" value="<%= product.sizes ? product.sizes.join(', ') : '' %>">
+
+   
                         </div>
                         <div class="mb-3">
                             <label for="productDescription" class="form-label">Description</label>
@@ -61,6 +64,13 @@
                                 <% }) %>
                             </select>
                         </div>
+                        <div class="mb-3">
+                            <label for="blockOption" class="form-label">Block</label>
+                            <select class="form-select" id="blockOption" name="block">
+                                <option value="false" <%= product.blocked === false ? 'selected' : '' %>>False</option>
+                                <option value="true" <%= product.blocked === true ? 'selected' : '' %>>True</option>
+                              </select>
+                          </div>
                         <button type="submit" class="btn btn-dark">Update</button>
                     </form>
                 </div>

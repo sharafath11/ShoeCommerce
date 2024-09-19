@@ -1,0 +1,18 @@
+
+<script>
+    document.getElementById('searchInput').addEventListener('keyup', function() {
+        var input = this.value.toLowerCase();
+        var rows = document.querySelectorAll('#userTable tr');
+        
+        rows.forEach(function(row) {
+            var name = row.cells[1].textContent.toLowerCase();
+            var batch = row.cells[2].textContent.toLowerCase();
+            
+            if (name.includes(input) || batch.includes(input)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+</script>

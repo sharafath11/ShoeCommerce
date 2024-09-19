@@ -1,8 +1,7 @@
 import mongoose from "mongoose";
 import { categoryModel } from "../../models/category.js";
 import ProductModel from "../../models/prodectsModel.js";
-import multer from 'multer';
-import path from 'path';
+
 
 export const renderProductsPage = async (req, res) => {
 
@@ -33,6 +32,7 @@ export const renderAddProdects = async (req, res) => {
       // Check if files were uploaded
       const images = req.files ? req.files.map(file => file.path) : []; // Use req.files to get uploaded file paths
   
+    
       // Create a new product document
       const product = new ProductModel({
         name,
@@ -80,7 +80,8 @@ export const renderEditPage=async(req,res)=>{
         // Fetch the product based on its ID
         const product = await ProductModel.findById(req.params.id).populate('categoryId').exec();
         
-        // Fetch all categories from the Category collection
+        
+       
         const categories = await categoryModel.find({});
         res.render('admin/editProducts', { product, categories });
     } catch (error) {
@@ -92,8 +93,7 @@ export const editProducts = async (req, res) => {
     const { id, name, brand, sizes, price, description, category, stock, block } = req.body;
 
     try {
-        console.log("body", req.body);
-
+    
         // Find the product by ID and update its fields
         const updatedProduct = await ProductModel.findByIdAndUpdate(
             id, 
@@ -104,7 +104,7 @@ export const editProducts = async (req, res) => {
                 price,
                 description,
                 stock,
-                blocked: block, 
+                blocked: block==='true', 
                 categoryId: category,
             },
             { new: true } 

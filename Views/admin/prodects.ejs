@@ -70,15 +70,16 @@
 
                 <!-- Search Bar -->
                 <div class="input-group mb-3">
-                    <input type="text" class="form-control w-25" placeholder="Search products...">
+                    <input type="text" class="form-control w-25" id="searchInput" placeholder="Search products...">
                 </div>
 
                 <!-- Products Table -->
                 <div class="card shadow-sm mb-4">
                     <div class="card-body">
-                        <table class="table">
+                        <table class="table" id="productsTable">
                             <thead>
                                 <tr>
+                                    <th>SL NO</th>
                                     <th>Product Name</th>
                                     <th>Brand Name</th>
                                     <th>Available Sizes</th>
@@ -92,17 +93,18 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <% Products.forEach(product => { %>
+                                <% Products.forEach((product,index )=> { %>
                                 <tr>
+                                    <td><%= index+1 %></td>
                                     <td><%= product.name %></td>
-                                    <td><%= product.name %></td>
+                                    <td><%= product.brand %></td>
                                     <td><%= product.availableSize.join(', ') %></td>
                                     <td><%= product.description %></td>
                                     <td>$<%= product.price %></td>
                                     <td><%= product.stock %></td>
                                     <td><%= product.categoryId.name %></td>
-                                    <td><%= product.sales %></td>
                                     <td><%= product.blocked %></td>
+                                    <td><%= product.sales %></td>
                                     <td>
                                         <a href="/admin/products/edit/<%= product._id %>" class="btn btn-sm btn-primary">Edit</a>
                                         <a href="/admin/products/delete/<%= product._id %>" class="btn btn-sm btn-delete">Delete</a>
@@ -141,5 +143,27 @@
         });
     </script>
     <% } %>
+
+    <!-- JavaScript for Search Functionality -->
+    <script>
+        document.getElementById('searchInput').addEventListener('input', function() {
+            let searchQuery = this.value.toLowerCase();
+            let productsTable = document.getElementById('productsTable');
+            let rows = productsTable.getElementsByTagName('tr');
+
+            for (let i = 1; i < rows.length; i++) { // Start at 1 to skip the header row
+                let cells = rows[i].getElementsByTagName('td');
+                let productName = cells[1].textContent.toLowerCase(); // Change index as needed
+                let brandName = cells[2].textContent.toLowerCase(); // Change index as needed
+                
+                // Check if either product name or brand name contains the search query
+                if (productName.includes(searchQuery) || brandName.includes(searchQuery)) {
+                    rows[i].style.display = ''; // Show row
+                } else {
+                    rows[i].style.display = 'none'; // Hide row
+                }
+            }
+        });
+    </script>
 </body>
 </html>

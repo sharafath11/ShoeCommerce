@@ -1,12 +1,14 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import userModel from "../../models/userModel.js";
-import session from 'express-session';
+
 
 // Function to handle GET request for login page
 export const loginGetFn = (req, res) => {
   const user=req.session.user
-  res.render("user/login",{user});
+  const WishlistQty= req.session.WishlistQty
+ const cartQty= req.session.cartQty
+  res.render("user/login",{user,WishlistQty,cartQty});
 };
 
 // Function to handle POST request for login
@@ -52,7 +54,7 @@ export const loginPost = async (req, res) => {
     // Send token to the user
     req.session.token=token;
     req.session.user=user
-    
+    req.session.toast="login success"
     
     res.status(200).redirect("/");
   } catch (error) {

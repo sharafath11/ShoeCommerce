@@ -3,8 +3,7 @@ import jwt from 'jsonwebtoken';
 export const protectedHand = (req, res, next) => {
     const token = req.session.token;
 
-    // Check if token is undefined or null
-    console.log('token from token',token);
+    
     
     if (!token) {
         console.log('Token is undefined. Redirecting to login...');
@@ -23,4 +22,21 @@ export const protectedHand = (req, res, next) => {
         next(); // Proceed to the next middleware or route handler
     });
 };
+export const clearTheHeader=(req,res,next)=>{
+//  const user=req.session.user;
+//  if(user){
+//     next();
+//  }
+//  else{
+//     req.session.destroy((err) => {
+//         if (err) {
+//             console.log('Error destroying session:', err);
+//             return res.status(500).send('Failed to logout.');
+//         }
+//         next()
+//     });
+//  }
+next()
+
+}
                   

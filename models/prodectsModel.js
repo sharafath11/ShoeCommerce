@@ -11,6 +11,11 @@ const productSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
+    // after this weak chirichaaal
+        // review:{
+        //     type:[String]
+        // },
+    
     availableSize: {
         type: [String], 
         required: true

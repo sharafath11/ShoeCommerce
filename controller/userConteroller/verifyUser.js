@@ -8,10 +8,10 @@ export const verifyUser = (req, res, next) => {
     }
 
     try {
-        // Verify the token using the secret
+        
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;  // Attach decoded user data to the request object
-        next();  // Proceed to the next middleware or route
+        req.user = decoded;  
+        next();  
     } catch (error) {
         return res.status(401).json({ message: "Invalid or expired token." });
     }
