@@ -7,10 +7,10 @@ const categorySchema = new mongoose.Schema({
         unique: true,
         trim: true
     },
-    // block:{
-    //     type:Boolean,
-    //     default:false
-    // },
+    blocked:{
+        type:Boolean,
+        default:false
+    },
     description: {
         type: String,
         trim: true

@@ -29,11 +29,11 @@
                         
                         <div class="mb-3">
                             <label for="productName" class="form-label">Product Name</label>
-                            <input type="text" name="name" class="form-control" id="productName" placeholder="Enter product name" value="<%= product.name %>">
+                            <input type="text" name="name" class="form-control" id="productName" placeholder="Enter product name" value="<%= product.name %>" required>
                         </div>
                         <div class="mb-3">
                             <label for="brandName" class="form-label">Brand Name</label>
-                            <input type="text" name="brand" class="form-control" id="brandName" placeholder="Enter Brand name" value="<%= product.brand %>">
+                            <input type="text" name="brand" class="form-control" id="brandName" placeholder="Enter Brand name" value="<%= product.brand %>" required>
                         </div>
                         <div class="mb-3">
                             <label for="availableSizes" class="form-label">Available Sizes (comma separated)</label>
@@ -48,11 +48,11 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="productPrice" class="form-label">Price</label>
-                                <input type="text" name="price" class="form-control" id="productPrice" placeholder="Enter price" value="<%= product.price %>">
+                                <input type="text" name="price" class="form-control" id="productPrice" placeholder="Enter price" value="<%= product.price %>" required>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="productStock" class="form-label">Stock</label>
-                                <input type="text" name="stock" class="form-control" id="productStock" placeholder="Enter stock quantity" value="<%= product.stock %>">
+                                <input type="text" name="stock" class="form-control" id="productStock" placeholder="Enter stock quantity" value="<%= product.stock %>" required>
                             </div>
                         </div>
                         <div class="mb-3">
@@ -64,13 +64,13 @@
                                 <% }) %>
                             </select>
                         </div>
-                        <div class="mb-3">
+                        <!-- <div class="mb-3">
                             <label for="blockOption" class="form-label">Block</label>
                             <select class="form-select" id="blockOption" name="block">
                                 <option value="false" <%= product.blocked === false ? 'selected' : '' %>>False</option>
                                 <option value="true" <%= product.blocked === true ? 'selected' : '' %>>True</option>
                               </select>
-                          </div>
+                          </div> -->
                         <button type="submit" class="btn btn-dark">Update</button>
                     </form>
                 </div>

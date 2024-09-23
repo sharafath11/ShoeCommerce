@@ -87,13 +87,14 @@
                                     <th>Price</th>
                                     <th>Stock</th>
                                     <th>Category</th>
-                                    <th>Blocked</th>
+                                    <!-- <th>Blocked</th> -->
                                     <th>Sales</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <% Products.forEach((product,index )=> { %>
+                                    <% console.log("fvjbh",product); %>
                                 <tr>
                                     <td><%= index+1 %></td>
                                     <td><%= product.name %></td>
@@ -102,12 +103,16 @@
                                     <td><%= product.description %></td>
                                     <td>$<%= product.price %></td>
                                     <td><%= product.stock %></td>
-                                    <td><%= product.categoryId.name %></td>
-                                    <td><%= product.blocked %></td>
+                                    <td><%= product?.categoryId?.name %></td>
+                                    <!-- <td><%= product.blocked %></td> -->
                                     <td><%= product.sales %></td>
                                     <td>
                                         <a href="/admin/products/edit/<%= product._id %>" class="btn btn-sm btn-primary">Edit</a>
-                                        <a href="/admin/products/delete/<%= product._id %>" class="btn btn-sm btn-delete">Delete</a>
+                                        <button class="btn btn-sm btn-toggle-list" 
+                                        data-id="<%= product._id %>" 
+                                        data-status="<%= product.blocked ? 'unlist' : 'list' %>">
+                                    <%= product.blocked ? 'Unlist' : 'List' %>
+                                </button>
                                     </td>
                                 </tr>
                                 <% }) %>
@@ -165,5 +170,51 @@
             }
         });
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const buttons = document.querySelectorAll('.btn-toggle-list');
+    
+            buttons.forEach(button => {
+                button.addEventListener('click', async function () {
+                    const productId = this.getAttribute('data-id');
+                    const action = this.getAttribute('data-status');
+    
+                    try {
+                        const response = await fetch(`/admin/products/${action}/${productId}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                        });
+    
+                        const data = await response.json();
+    
+                        if (data.success) {
+                            
+                            button.textContent = action === 'list' ? 'Unlist' : 'List';
+                            button.setAttribute('data-status', action === 'list' ? 'unlist' : 'list');
+                            showToast(data.message); 
+                        } else {
+                            showToast(data.message); 
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        showToast('An error occurred. Please try again.');
+                    }
+                });
+            });
+    
+            function showToast(message) {
+                Toastify({
+                    text: message,
+                    duration: 3000,
+                    gravity: 'top',
+                    position: 'right',
+                    backgroundColor: '#333',
+                    stopOnFocus: true,
+                }).showToast();
+            }
+        });
+    </script>
 </body>
-</html>
+</html>  

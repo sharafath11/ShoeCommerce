@@ -55,7 +55,11 @@
                                             <td><%= category.description %></td>
                                             <td>
                                                 <a href="/admin/category/edit-category/<%= category._id %>" class="text-primary me-2">Edit</a>
-                                                <a href="/admin/category/delet-categorye/<%= category._id %>" class="text-danger">Delete</a>
+                                                <button class="toggle-list-status text-danger" data-id="<%= category._id %>">
+                                                    <%= category.blocked ? 'Unblock' : 'Block' %>
+                                                </button>
+                                                
+                                                
                                             </td>
                                         </tr>
                                     <% }) %>
@@ -94,6 +98,52 @@
             });
         </script>
     <% } %>
-    
+   
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const buttons = document.querySelectorAll('.toggle-list-status');
+        
+            buttons.forEach(button => {
+                button.addEventListener('click', async function (e) {
+                    const categoryId = this.getAttribute('data-id');
+                    
+                    try {
+                        const response = await fetch(`/admin/category/toggle-category/${categoryId}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                        });
+        
+                        const data = await response.json();
+        
+                        if (data.success) {
+                            // Update the button text based on the new blocked status
+                            this.textContent = data.blocked ? 'Unblock' : 'Block';
+                            showToast(data.message); // Show the toast message
+                        } else {
+                            showToast(data.message); // Show the error message
+                        }
+                    } catch (error) {
+                        console.error("Error:", error);
+                        showToast("An error occurred. Please try again.");
+                    }
+                });
+            });
+        
+            function showToast(message) {
+                Toastify({
+                    text: message,
+                    duration: 2000,
+                    gravity: "top",
+                    position: "right",
+                    backgroundColor: "#333",
+                    stopOnFocus: true
+                }).showToast();
+            }
+        });
+        </script>
+
+    </script>
 </body>
 </html>

@@ -17,32 +17,32 @@
     <!-- Site Title -->
     <title>Karma Shop</title>
 
-    <!--
-            CSS
-            ============================================= -->
-            <link rel="stylesheet" href="css/linearicons.css">
-            <link rel="stylesheet" href="css/font-awesome.min.css">
-            <link rel="stylesheet" href="css/themify-icons.css">
-            <link rel="stylesheet" href="css/bootstrap.css">
-            <link rel="stylesheet" href="css/owl.carousel.css">
-            <link rel="stylesheet" href="css/nice-select.css">
-            <link rel="stylesheet" href="css/nouislider.min.css">
-            <link rel="stylesheet" href="css/ion.rangeSlider.css" />
-            <link rel="stylesheet" href="css/ion.rangeSlider.skinFlat.css" />
-            <link rel="stylesheet" href="css/magnific-popup.css">
-            <link rel="stylesheet" href="css/main.css">
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/linearicons.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/themify-icons.css">
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/owl.carousel.css">
+    <link rel="stylesheet" href="css/nice-select.css">
+    <link rel="stylesheet" href="css/nouislider.min.css">
+    <link rel="stylesheet" href="css/ion.rangeSlider.css" />
+    <link rel="stylesheet" href="css/ion.rangeSlider.skinFlat.css" />
+    <link rel="stylesheet" href="css/magnific-popup.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 </head>
 <style>
     .cart-image {
-  max-width: 150px; /* Adjust as needed */
-  height: auto;
-}
+        max-width: 150px; /* Adjust as needed */
+        height: auto;
+    }
 </style>
+
 <body>
 
     <!-- Start Header Area -->
-	<%- include('partials/header') %>
-	<!-- End Header Area -->
+    <%- include('partials/header') %>
+    <!-- End Header Area -->
 
     <!-- Start Banner Area -->
     <section class="banner-area organic-breadcrumb">
@@ -72,6 +72,7 @@
                                 <th scope="col">Price</th>
                                 <th scope="col">Quantity</th>
                                 <th scope="col">Total</th>
+                                <th scope="col">Action</th> <!-- New Action column -->
                             </tr>
                         </thead>
                         <tbody>
@@ -80,10 +81,7 @@
                                 <td>
                                     <div class="media">
                                         <div class="d-flex">
-                                            <!-- Assuming productId has an image field -->
-                                            <!-- <img src="<%= product.productId.images %>" alt="<%= product.productId.name %>"> -->
                                             <img class="img-fluid cart-image" src="<%= product.productId.images[0].replace('public', '') %>" alt="<%= product.productId.name %>" />
-
                                         </div>
                                         <div class="media-body">
                                             <p><%= product.productId.name %></p>
@@ -93,16 +91,19 @@
                                 <td>
                                     <h5>$<%= product.productId.price %></h5>
                                 </td>
+                                
+                                
                                 <td>
                                     <div class="product_count">
-                                        <input type="text" name="qty" id="sst" maxlength="12" value="<%= product.quantity %>" title="Quantity:" class="input-text qty">
-                                        <button onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst )) result.value++;return false;" class="increase items-count" type="button"><i class="lnr lnr-chevron-up"></i></button>
-                                        <button onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst ) && sst > 0 ) result.value--;return false;" class="reduced items-count" type="button"><i class="lnr lnr-chevron-down"></i></button>
+                                        <input type="text" name="qty" id="sst-<%= product.productId._id %>" maxlength="12" value="<%= product.quantity %>" title="Quantity:" class="input-text qty" readonly data-price-per-unit="<%= product.productId.price %>">
+                                        <button onclick="updateQuantity('<%= product.productId._id %>', 'increase')" class="increase items-count" type="button"><i class="lnr lnr-chevron-up"></i></button>
+                                        <button onclick="updateQuantity('<%= product.productId._id %>', 'decrease')" class="reduced items-count" type="button"><i class="lnr lnr-chevron-down"></i></button>
                                     </div>
                                 </td>
+                                <td class="total-price">$<%= product.productId.price * product.quantity %></td> <!-- Total price cell -->
                                 <td>
-                                    <!-- Calculate total price for each product -->
-                                    <h5>$<%= product.productId.price  %></h5>
+                                    <!-- try ajax -->
+                                    <button class="btn btn-danger remove-cart-btn" data-id="<%= product.productId._id %>">Remove</button>
                                 </td>
                             </tr>
                             <% }); %>
@@ -113,13 +114,8 @@
                                 </td>
                                 <td></td>
                                 <td></td>
-                                <td>
-                                    <div class="cupon_text d-flex align-items-center">
-                                        <input type="text" placeholder="Coupon Code">
-                                        <a class="primary-btn" href="#">Apply</a>
-                                        <a class="gray_btn" href="#">Close Coupon</a>
-                                    </div>
-                                </td>
+                                <td></td>
+                                <td></td>
                             </tr>
     
                             <!-- Assuming subtotal is calculated in the backend -->
@@ -128,35 +124,7 @@
                                 <td></td>
                                 <td><h5>Subtotal</h5></td>
                                 <td><h5>$<%= cartProducts.reduce((sum, product) => sum + (product.productId.price * product.quantity), 0) %></h5></td>
-                            </tr>
-    
-                            <tr class="shipping_area">
                                 <td></td>
-                                <td></td>
-                                <td><h5>Shipping</h5></td>
-                                <td>
-                                    <div class="shipping_box">
-                                        <ul class="list">
-                                            <li><a href="#">Flat Rate: $5.00</a></li>
-                                            <li><a href="#">Free Shipping</a></li>
-                                            <li><a href="#">Flat Rate: $10.00</a></li>
-                                            <li class="active"><a href="#">Local Delivery: $2.00</a></li>
-                                        </ul>
-                                        <h6>Calculate Shipping <i class="fa fa-caret-down" aria-hidden="true"></i></h6>
-                                        <select class="shipping_select">
-                                            <option value="1">Bangladesh</option>
-                                            <option value="2">India</option>
-                                            <option value="4">Pakistan</option>
-                                        </select>
-                                        <select class="shipping_select">
-                                            <option value="1">Select a State</option>
-                                            <option value="2">Select a State</option>
-                                            <option value="4">Select a State</option>
-                                        </select>
-                                        <input type="text" placeholder="Postcode/Zipcode">
-                                        <a class="gray_btn" href="#">Update Details</a>
-                                    </div>
-                                </td>
                             </tr>
     
                             <tr class="out_button_area">
@@ -176,7 +144,6 @@
             </div>
         </div>
     </section>
-    
     <!--================End Cart Area =================-->
 
     <!-- start footer Area -->
@@ -184,19 +151,120 @@
     <!-- End footer Area -->
 
     <script src="js/vendor/jquery-2.2.4.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
-	 crossorigin="anonymous"></script>
-	<script src="js/vendor/bootstrap.min.js"></script>
-	<script src="js/jquery.ajaxchimp.min.js"></script>
-	<script src="js/jquery.nice-select.min.js"></script>
-	<script src="js/jquery.sticky.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+        crossorigin="anonymous"></script>
+    <script src="js/vendor/bootstrap.min.js"></script>
+    <script src="js/jquery.ajaxchimp.min.js"></script>
+    <script src="js/jquery.nice-select.min.js"></script>
+    <script src="js/jquery.sticky.js"></script>
     <script src="js/nouislider.min.js"></script>
-	<script src="js/jquery.magnific-popup.min.js"></script>
-	<script src="js/owl.carousel.min.js"></script>
-	<!--gmaps Js-->
-	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjCGmQ0Uq4exrzdcL6rvxywDDOvfAu6eE"></script>
-	<script src="js/gmaps.min.js"></script>
-	<script src="js/main.js"></script>
+    <script src="js/jquery.magnific-popup.min.js"></script>
+    <script src="js/owl.carousel.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 </body>
 
+</script>
+<!-- <% if (typeof message !== undefined && message) { %>
+  <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          function showToast(message) {
+              Toastify({
+                  text: message,
+                  duration: 2000, // duration in ms
+                  gravity: "top", // `top` or `bottom`
+                  position: "right", // `left`, `center` or `right`
+                  backgroundColor: "#333", // background color
+                  stopOnFocus: true // stop on focus
+              }).showToast();
+          }
+          showToast('<%= message %>');
+      });
+  </script>
+  <% } %> -->
+  <script>
+    function updateQuantity(productId, action) {
+        var qtyInput = document.getElementById('sst-' + productId);
+        var currentQty = parseInt(qtyInput.value);
+    
+        if (action === 'increase') {
+            currentQty++;
+        } else if (action === 'decrease' && currentQty > 1) {
+            currentQty--;
+        } else {
+            return;
+        }
+    
+       
+        qtyInput.value = currentQty;
+    
+       
+        $.ajax({
+            url: '/cart/update-quantity',  
+            method: 'POST',
+            data: {
+                productId: productId,
+                quantity: currentQty
+            },
+            success: function(response) {
+              
+                
+                var pricePerUnit = parseFloat(qtyInput.dataset.pricePerUnit); 
+                var totalCell = qtyInput.closest('tr').querySelector('.total-price'); 
+                totalCell.textContent = '$' + (currentQty * pricePerUnit).toFixed(2); // Update total price
+
+                // document.addEventListener('DOMContentLoaded', function() {
+                // })
+                console.log('Quantity and total price updated successfully');
+            },
+            error: function(error) {
+                console.error('Error updating quantity:', error);
+               
+                qtyInput.value = parseInt(qtyInput.value) + (action === 'increase' ? -1 : 1);
+            }
+                // location.reload();  
+                // document.getElementsByClassName('qty').value=
+            
+           
+        });
+    }
+    </script>
+    
+    <script>
+        $(document).ready(function() {
+            $('.remove-cart-btn').on('click', function(event) {
+                var $button = $(this);
+                event.preventDefault(); // Prevent the default button action
+    
+                var productId = $(this).data('id'); // Get product ID from data attribute
+                function showToast(message) {
+              Toastify({
+                  text: message,
+                  duration: 2000, // duration in ms
+                  gravity: "top", // `top` or `bottom`
+                  position: "right", // `left`, `center` or `right`
+                  backgroundColor: "#333", // background color
+                  stopOnFocus: true // stop on focus
+              }).showToast();
+          }
+                $.ajax({
+                    url: '/cart/remove/' + productId, 
+                    method: 'DELETE',
+                    success: function(response) {
+                        if (response.success) {
+                            
+                            $button.closest('tr').remove();
+                            
+                            showToast(response.message)
+                        }
+                    },
+                    error: function(error) {
+                        console.error('Error removing item from cart:', error);
+                        alert('Failed to remove item from cart.');
+                    }
+                });
+            });
+        });
+    </script>
+    
 </html>

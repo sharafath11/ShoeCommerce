@@ -294,14 +294,14 @@
                   <% } %>
                 </div>
                 <div class="prd-bottom">
-                  <a href="/addToCart/<%= product._id %>" class="social-info">
+                  <span class="social-info" data-id="<%= product._id %>" onclick="addToCart('<%= product._id %>')">
                     <span class="ti-bag"></span>
                     <p class="hover-text">add to bag</p>
-                  </a>
-                  <a href="/whislistAdd/<%= product._id %>" class="social-info" id="wishlistbtn" data-id="<%= product._id %>">
+                  </span>
+                  <span class="social-info" id="wishlistbtn" data-id="<%= product._id %>" onclick="addToWishList('<%= product._id %>')">
                     <span class="lnr lnr-heart"></span>
                     <p class="hover-text">Wishlist</p>
-                  </a>
+                  </span>
                   
                   
                 </div>
@@ -611,5 +611,89 @@
       });
   </script>
   <% } %>
+ 
+
+  <script>
+    function addToCart(productId) {
+        console.log('Adding product to cart');
+        
+        $.ajax({
+            url: `/addToCart/${productId}`,  
+            method: 'GET',
+            success: function(response) {
+                
+                showToast(response.message);
+                if (response.success) {
+                    updateCartQuantity();
+                }
+            },
+            error: function(xhr, status, error) {
+                
+                showToast('Please login :) ');
+                console.log(error);
+                
+            }
+        });
+    }
+
+    // Function to show toast notification
+    function showToast(message) {
+        Toastify({
+            text: message,
+            duration: 2000, // duration in ms
+            gravity: "top", // `top` or `bottom`
+            position: "right", // `left`, `center` or `right`
+            backgroundColor: "#333", // background color
+            stopOnFocus: true // stop on focus
+        }).showToast();
+    }
+
+    // Function to update the cart quantity
+    function updateCartQuantity() {
+        // Get the current cart quantity
+        let currentCartQty = parseInt($('#cart-quantity').text());
+        
+       
+        $('#cart-quantity').text(currentCartQty + 1);
+    }
+</script>
+<script>
+  function addToWishList(productId) {
+      $.ajax({
+          url: `/whislistAdd/${productId}`, 
+          method: 'POST', 
+          success: function(response) {
+              if (response.success) {
+                  showToast(response.message);
+                  addWishlistQty()
+              } else {
+                  showToast(response.message); 
+              }
+          },
+          error: function(xhr, status, error) {
+              showToast('Plese login :)');
+              // console.log(error);
+              // window.location.href = '/login';
+              
+          }
+      });
+  }
+  function addWishlistQty() {
+    // Get the current quantity from the DOM
+    let currentWtQty = parseInt($('#w-qty').text());
+    $('#w-qty').text(currentWtQty + 1);
+}
+  // Toast notification function (optional)
+  function showToast(message) {
+      Toastify({
+          text: message,
+          duration: 3000,
+          gravity: "top",
+          position: "right",
+          backgroundColor: "#333",
+          stopOnFocus: true
+      }).showToast();
+  }
+  </script>
   </body>
 </html>

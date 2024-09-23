@@ -41,7 +41,7 @@
                         <li class="nav-item">
                             <a href="/wishlist" class="cart">
                                 <div class="cart-container">
-                                    <span class="qty"><%= WishlistQty %></span>
+                                    <span class="qty" id="w-qty" ><%= WishlistQty %></span>
                                     <span class="ti-heart"></span>
                                 </div>
                             </a>
@@ -52,7 +52,7 @@
                         <a href="/cart" class="cart">
                             <div class="cart-container">
                                 <% if (cartQty > 0) { %>
-                                    <span class="qty"><%= cartQty %></span>
+                                    <span class="qty" id="cart-quantity" ><%= cartQty %></span>
                                 <% } %>
                                 <span class="ti-bag"></span>
                             </div>

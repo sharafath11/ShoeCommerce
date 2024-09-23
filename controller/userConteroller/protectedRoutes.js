@@ -1,42 +1,46 @@
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
+import userModel from "../../models/userModel.js";
+import { verifyUser } from "./verifyUser.js";
 
-export const protectedHand = (req, res, next) => {
-    const token = req.session.token;
+export const protectedHand = async (req, res, next) => {
+  const token = req.session?.token;
+  const userLogged = req.session?.user;
+  if(!userLogged){
+    // return res.status(202).json({success:false,msg:"user not Login"})
+    return res.send(`
+      <html>
+          <head>
+              <title>Alert</title>
+          </head>
+          <body>
+              <script>
+                  alert("Please login");
+                  window.location.href = "/login"; 
+              </script>
+          </body>
+      </html>
+  `);
+  }
+    
+    const user = await userModel.findById(userLogged._id);
+  
 
-    
-    
-    if (!token) {
-        console.log('Token is undefined. Redirecting to login...');
-        return res.redirect('/login'); // Redirect to login if token is missing
+  console.log(user.block);
+
+  if (!token || user.block ) {
+    console.log("Token is undefined. Sending error message...");
+    return res.redirect("/");
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+      console.log("Token verification failed:", err);
+     verifyUser();
+      
     }
 
-    // If token exists, verify it
-    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-        if (err) {
-            console.log('Token verification failed:', err);
-            return res.redirect('/login'); // Redirect if token is invalid or expired
-        }
+    req.user = decoded;
 
-        // Token is valid, attach user info to req
-        req.user = decoded;
-        next(); // Proceed to the next middleware or route handler
-    });
+    next();
+  });
 };
-export const clearTheHeader=(req,res,next)=>{
-//  const user=req.session.user;
-//  if(user){
-//     next();
-//  }
-//  else{
-//     req.session.destroy((err) => {
-//         if (err) {
-//             console.log('Error destroying session:', err);
-//             return res.status(500).send('Failed to logout.');
-//         }
-//         next()
-//     });
-//  }
-next()
-
-}
-                  

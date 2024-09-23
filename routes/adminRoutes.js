@@ -1,11 +1,11 @@
 import express from "express"
 import { getAdmin } from "../controller/adminController/homeController.js";
 import { getUsers, isBlockFn } from "../controller/adminController/userController.js";
-import { adminLogin, adminLoginPost } from "../controller/adminController/loginController.js";
-import { protect } from "../controller/adminController/protectRoutes.js";
+import { adminLogin, adminLoginPost, adminLogout } from "../controller/adminController/loginController.js";
+import {  verifyToken } from "../controller/adminController/protectRoutes.js";
 import { getOrders } from "../controller/adminController/orderController.js";
-import { addProducts,deleteProducts,editProducts,renderAddProdects,renderEditPage,renderProductsPage } from "../controller/adminController/prodectController.js";
-import { addCategory, deleteCatCategorie, editCategory, getAddCategory, getCategory, getEditCategory } from "../controller/adminController/categoryController.js";
+import { addProducts,editProducts,productListUnlist,renderAddProdects,renderEditPage,renderProductsPage } from "../controller/adminController/prodectController.js";
+import { addCategory, categorieBlock, editCategory, getAddCategory, getCategory, getEditCategory } from "../controller/adminController/categoryController.js";
 import multer from "multer";
 import path from 'path'
 
@@ -19,23 +19,25 @@ const diskStorage = multer.diskStorage({
     }
   });
   const upload = multer({ storage: diskStorage });
-router.get("/",protect, getAdmin)
+router.get("/",verifyToken, getAdmin)
 router.get("/login",adminLogin)
 router.post("/login",adminLoginPost)
-router.get("/orders",protect,getOrders)
-router.get("/category",protect,getCategory)
-router.get("/category/addcategory",protect,getAddCategory)
-router.post("/category/add-category",protect,addCategory)
-router.get("/category/edit-category/:id",protect,getEditCategory)
-router.post("/category/edit-category/:id",protect,editCategory)
-router.get("/category/delet-categorye/:id",protect,deleteCatCategorie)
-router.get("/prodects",protect,renderProductsPage)
-router.get("/products/addproducts",protect,renderAddProdects)
+router.post("/logout",verifyToken,adminLogout)
+router.get("/orders",verifyToken,getOrders)
+router.get("/category",verifyToken,getCategory)
+router.get("/category/addcategory",verifyToken,getAddCategory)
+router.post("/category/add-category",verifyToken,addCategory)
+router.get("/category/edit-category/:id",verifyToken,getEditCategory)
+router.post("/category/edit-category/:id",verifyToken,editCategory)
+router.post("/category/toggle-category/:id",verifyToken,categorieBlock)
+router.get("/products",verifyToken,renderProductsPage)
+router.get("/products/addproducts",verifyToken,renderAddProdects)
 router.post("/products/add-products/",upload.array('images', 3),addProducts)
-router.get("/products/delete/:id",deleteProducts)
-router.get("/products/edit/:id",renderEditPage)
-router.post("/products/edit-products",editProducts)
-router.get("/users",protect,getUsers)
-router.post('/users/toggle-block/:id',isBlockFn);
+router.post('/products/list/:id',verifyToken,productListUnlist)
+router.post('/products/unlist/:id',verifyToken,productListUnlist)
+router.get("/products/edit/:id",verifyToken,renderEditPage)
+router.post("/products/edit-products",verifyToken,editProducts)
+router.get("/users",verifyToken,getUsers)
+router.post('/users/toggle-block/:id',verifyToken,isBlockFn);
 
 export default router

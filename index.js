@@ -10,10 +10,6 @@ import MongoStore from 'connect-mongo';
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
-// app.use((req, res, next) => {
-//   res.status(404); 
-//   res.render('404', { message: "Page not found" }); 
-// });
 app.use(passport.initialize());
 
 app.use(session({
@@ -21,7 +17,7 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({ mongoUrl: 'mongodb://localhost:27017/bro1' }),
-    cookie: { secure: false } // Set `secure: true` if using HTTPS
+    cookie: { secure: false } 
 }));
 
 mongoose
@@ -36,6 +32,8 @@ app.set("view engine", "ejs");
 app.set("views", "./Views");
 app.use(bodyParser.json());
 app.use(express.static('public'))
+app.use(express.static('public')); 
+
 app.use(express.static("views/user"));
 app.use(express.static("views/admin"));
 app.use(express.json());
@@ -45,3 +43,4 @@ app.use("/admin", adminRoutes);
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+3

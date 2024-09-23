@@ -84,22 +84,33 @@ export const editCategory = async (req, res) => {
     return res.status(500).send("Internal Server Error");
   }
 };
-export const deleteCatCategorie = async (req, res) => {
+export const categorieBlock = async (req, res) => {
   const id = req.params.id;
+
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).send("Invalid Category ID");
+    return res.status(400).json({ success: false, message: "Invalid Category ID" });
   }
 
   try {
-    const deletedCategory = await categoryModel.findByIdAndDelete(id);
-
-    if (!deletedCategory) {
-      return res.status(404).send("Category not found");
+    const category = await categoryModel.findById(id);
+    
+    if (!category) {
+      return res.status(404).json({ success: false, message: "Category not found" });
     }
-    req.session.toast = "deleted succesfully";
-    return res.redirect('/admin/category');
+
+    // Toggle the blocked status
+    category.blocked = !category.blocked;
+
+    // Save the updated category
+    await category.save();
+
+    return res.status(200).json({
+      success: true,
+      message: category.blocked ? "Category blocked successfully" : "Category unblocked successfully",
+      blocked: category.blocked
+    });
   } catch (error) {
-    console.error("Error deleting category:", error);
-    return res.status(500).send("Internal Server Error");
+    console.error("Error toggling category blocked status:", error);
+    return res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };

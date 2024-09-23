@@ -4,19 +4,22 @@ import ProductModel from "../../models/prodectsModel.js";
 
 
 export const renderProductsPage = async (req, res) => {
-
   try {
-    
     const Products = await ProductModel.find().populate('categoryId').exec();
+   
+    
     const toastMessage = req.session.toast;
     delete req.session.toast;
-    res.render('admin/prodects', { Products,message:toastMessage });
    
-} catch (error) {
-    console.error('Error fetching products:', error);
-    res.status(500).send('Internal Server Error');
-}
+    // res.json({ ok: true, msg: "Products fetched successfully"});
+    return res.render("admin/prodects",{Products,message:toastMessage})
+  } catch (error) {
+    console.error('Error fetching products:', error.message, error.stack); 
+    res.status(500).json({ ok: false, msg: "Internal Server Error" }); 
+  }
 };
+
+
 
 export const renderAddProdects = async (req, res) => {
   try {
@@ -29,11 +32,10 @@ export const renderAddProdects = async (req, res) => {
     const { name, brand, sizes, price, description, category, stock, block } = req.body;
   
     try {
-      // Check if files were uploaded
-      const images = req.files ? req.files.map(file => file.path) : []; // Use req.files to get uploaded file paths
+      const images = req.files ? req.files.map(file => file.path) : []; 
   
     
-      // Create a new product document
+      
       const product = new ProductModel({
         name,
         brand,
@@ -41,12 +43,12 @@ export const renderAddProdects = async (req, res) => {
         price,
         description,
         stock,
-        blocked: block === 'true', // Convert block to boolean if necessary
+        blocked: block === 'true', 
         categoryId: category,
-        images // Save image paths in the database
+        images 
       });
   
-      // Save the product to the database
+    
       await product.save();
       req.session.toast = "Product added successfully";
       res.redirect("/admin/prodects");
@@ -56,28 +58,39 @@ export const renderAddProdects = async (req, res) => {
     }
   };
   
-export const deleteProducts=async(req,res)=>{
-    const id = req.params.id;
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).send("Invalid prodcts ID");
-    }
-  
-    try {
-      const deletedProduct = await ProductModel.findByIdAndDelete(id);
-  
-      if (!deletedProduct) {
-        return res.status(404).send("products not found");
+export const productListUnlist = async (req, res) => {
+  const id = req.params.id;
+console.log('====================================');
+console.log(id);
+console.log('====================================');
+ 
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ success: false, message: 'Invalid Product ID' });
+  }
+
+  try {
+      const product = await ProductModel.findById(id);
+      
+      if (!product) {
+          return res.status(404).json({ success: false, message: 'Product not found' });
       }
-      req.session.toast = "Product deleted succesfully";
-      return res.redirect('/admin/prodects');
-    } catch (error) {
-      console.error("Error deleting products:", error);
-      return res.status(500).send("Internal Server Error");
-    }
-}
+
+     
+      product.blocked = !product.blocked;
+      await product.save();
+
+      return res.status(200).json({
+          success: true,
+          message: product.blocked ? 'Product unlisted successfully.' : 'Product listed successfully.'
+      });
+  } catch (error) {
+      console.error('Error toggling product status:', error);
+      return res.status(500).json({ success: false, message: 'Internal Server Error' });
+  }
+};
 export const renderEditPage=async(req,res)=>{
     try {
-        // Fetch the product based on its ID
+       
         const product = await ProductModel.findById(req.params.id).populate('categoryId').exec();
         
         
@@ -94,7 +107,7 @@ export const editProducts = async (req, res) => {
 
     try {
     
-        // Find the product by ID and update its fields
+      
         const updatedProduct = await ProductModel.findByIdAndUpdate(
             id, 
             {

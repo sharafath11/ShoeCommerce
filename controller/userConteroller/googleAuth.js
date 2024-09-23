@@ -1,105 +1,120 @@
-import passport from 'passport';
-import { Strategy as GoogleStrategy } from 'passport-google-oauth2';
-import jwt from 'jsonwebtoken';
-import userModel from '../../models/userModel.js';
 
-passport.use(new GoogleStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: "http://localhost:5000/auth/google/callback",
-    passReqToCallback: true
-},
-async function(request, accessToken, refreshToken, profile, done) {
-    try {
-        // Create a JWT token
+import passport from "passport";
+import { Strategy as GoogleStrategy } from "passport-google-oauth2";
+import jwt from "jsonwebtoken";
+import userModel from "../../models/userModel.js";
+
+// Google strategy configuration
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: "http://localhost:5000/auth/google/callback",
+      passReqToCallback: true,
+    },
+    async function (request, accessToken, refreshToken, profile, done) {
+      try {
         const token = jwt.sign(
-            { id: profile.id, email: profile.email }, 
-            process.env.JWT_SECRET, 
-            { expiresIn: '1h' }
+          { id: profile.id, email: profile.email },
+          process.env.JWT_SECRET,
+          { expiresIn: "1h" }
         );
 
         console.log("JWT Token Generated: ", token);
-
-        // Pass the token instead of the user object (no session)
         done(null, { token, profile });
-    } catch (error) {
+      } catch (error) {
+        
+        
         done(error, false);
+      }
     }
-}));
+  )
+);
 
-// You don't need to serialize/deserialize the user because JWT handles it
-
-// export const googleAuthCallback = (req, res) => {
-//     const { token } = req.user; 
-//     console.log(req.user.profile.id);
-//     const users=userModel.find({email:req.user.profile.email})
-//     if(users){
-
-//     }
-//     const newUser = new userModel({
-//         googleUser:true,
-//         googleId:req.user.profile.id,
-//         isVerified:true,
-//       });
-//     res.json({ message: "Login Successfuldfdfdf", token }); 
-// };
 export const googleAuthCallback = async (req, res) => {
-    try {
-        const { token } = req.user; 
-        const { id, email } = req.user.profile;
-
-        // Check if the user exists
-        const existingUser = await userModel.findOne({ email });
-
-        if (existingUser&& !existingUser.googleUser) {
-            // Update the existing user's Google-related fields
-            existingUser.googleUser = true;
-            existingUser.googleId = id;
-            existingUser.isVerified = true;
-
-            await existingUser.save(); // Save the updated user
-
-            res.redirect("/")
-        } else if(!existingUser){
-          
-            const newUser = new userModel({
-                username: req.user.profile.name || 'Unknown', // Default value if name is not available
-                email,
-                googleUser: true,
-                googleId: id,
-                isVerified: true,
-                // Add other fields if needed
-            });
-
-            await newUser.save(); // Save the new user
-            res.redirect("/")
-
-            // res.json({ message: "User created successfully", token });
-        }
-        else{
-            res.send(`
-                <html>
-                  <script>
-                    alert('User alredy exisit');
-                    window.location.href = '/register';  // Redirect after alert
-                  </script>
-                </html>
-              `);
-        }
-    } catch (error) {
-        console.error('Error during Google auth callback:', error);
-        res.status(500).json({ message: 'Server error' });
+  try {
+    const { id, email } = req.user.profile;
+    let user = await userModel.findOne({ googleId: id }) || await userModel.findOne({ email });
+    console.log("fhfghf",req.query);
+    
+    if (user) {
+    
+      if (!user.googleUser) {
+        user.googleUser = true;
+        user.googleId = id;
+        user.isVerified = true;
+        await user.save();
+        console.log("Updated existing user to Google user");
+      }
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+      req.session.token=token
+      res.render("user/index",{user})
+      // return res.status(200).json({
+      //   success: true,
+      //   token,
+      //   message: "Login Successful",
+      //   redirect: "/",
+      // });
+    } else {
+      // New Google user registration
+      const { name } = req.user.profile || {};
+      const username = name ? `${name.givenName || ""} ${name.familyName || ""}`.trim() : "Anonymous";
+      user = new userModel({
+        username,
+        email,
+        googleUser: true,
+        googleId: id,
+        isVerified: true,
+      });
+      await user.save();
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+      return res.status(200).json({
+        success: true,
+        token,
+        message: "Registration Successful",
+        redirect: "/",
+      });
     }
+  } catch (error) {
+    console.error("Error during Google auth callback:", error);
+    res.status(500).json({ message: "Server error" });
+  }
 };
+
+// Auth success and failure routes
 export const authSuccess = (req, res) => {
-    res.json({ message: "Login Successful" });
+  res.json({ message: "Login Successful" });
 };
 
 export const authFailure = (req, res) => {
-    res.send("Something went wrong. Please try again.");
+  res.send("Something went wrong. Please try again.");
 };
-
 export const authProtected = (req, res) => {
-    const { email } = req.user;  // User info is available from the JWT payload
-    res.send(`Hello ${email}, you have accessed a protected route!`);
+  const { email } = req.user;
+  res.send(`Hello ${email}, you have accessed a protected route!`);
 };
+export const catchError=(req,res,next)=>{
+
+  if(req.query.error){
+    return res.redirect("/")
+  //   return res.send(`
+  //     <html>
+  //         <head>
+  //             <title>Alert</title>
+  //         </head>
+  //         <body>
+  //             <script>
+  //                 alert("Somthing wrong");
+  //                 window.location.href = "/login"; 
+  //             </script>
+  //         </body>
+  //     </html>
+  // `);
+  }
+  else{
+    next()
+  }
+ 
+  
+}
