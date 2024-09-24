@@ -50,14 +50,9 @@ export const googleAuthCallback = async (req, res) => {
       const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
       req.session.token=token
       res.render("user/index",{user})
-      // return res.status(200).json({
-      //   success: true,
-      //   token,
-      //   message: "Login Successful",
-      //   redirect: "/",
-      // });
+     
     } else {
-      // New Google user registration
+    
       const { name } = req.user.profile || {};
       const username = name ? `${name.givenName || ""} ${name.familyName || ""}`.trim() : "Anonymous";
       user = new userModel({
@@ -82,7 +77,7 @@ export const googleAuthCallback = async (req, res) => {
   }
 };
 
-// Auth success and failure routes
+
 export const authSuccess = (req, res) => {
   res.json({ message: "Login Successful" });
 };

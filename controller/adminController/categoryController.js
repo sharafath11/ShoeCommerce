@@ -1,11 +1,38 @@
 import mongoose from "mongoose";
 import { categoryModel } from "../../models/category.js";
 export const getCategory = async (req, res) => {
-  const toastMessage = req.session.toast;
-  delete req.session.toast;
-  const categories = await categoryModel.find({});
-  res.render("admin/category", { message: toastMessage, categories });
-  
+  try {
+    
+    let page = parseInt(req.query.page) || 1;
+    const limit = 10; 
+    const skip = (page - 1) * limit;
+
+   
+    const categories = await categoryModel.find({})
+        .skip(skip)
+        .limit(limit);
+
+   
+    const totalCategories = await categoryModel.countDocuments();
+
+    const totalPages = Math.ceil(totalCategories / limit); 
+
+    
+    const toastMessage = req.session.toast;
+    delete req.session.toast;
+
+    
+    res.render("admin/category", { 
+        message: toastMessage, 
+        categories: categories,
+        currentPage: page,
+        totalPages: totalPages
+    });
+} catch (error) {
+    console.error(error);
+    res.status(500).send("Server Error");
+}
+
 };
 export const getAddCategory = (req, res) => {
   res.render("admin/addCategory");
@@ -15,9 +42,18 @@ export const addCategory = async (req, res) => {
   try {
     const { name, description } = req.body;
 
-    const existingCategory = await categoryModel.findOne({ name });
+    const existingCategory = await categoryModel.findOne({ name: { $regex: `^${name}$`, $options: '' } });
     if (existingCategory) {
-      return res.redirect("/admin/addCategory");
+        return res.send(`
+      <html>
+          <body>
+              <script>
+                  alert("This categoris alredy uploaded");
+                  window.location.href = "/admin/category/addcategory"; 
+              </script>
+          </body>
+      </html>
+  `);
     }
 
     const newCategory = new categoryModel({

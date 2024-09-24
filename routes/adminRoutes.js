@@ -10,15 +10,17 @@ import multer from "multer";
 import path from 'path'
 
 const router=express.Router();
-const diskStorage = multer.diskStorage({
-    destination: function(req, file, cb) {
-      cb(null, 'public/images'); 
-    },
-    filename: function(req, file, cb) {
-      cb(null, Date.now() + path.extname(file.originalname)); // Use timestamp to avoid duplicate file names
-    }
-  });
-  const upload = multer({ storage: diskStorage });
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'public/images'); 
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname)); 
+  }
+});
+
+const upload = multer({ storage: storage });
 router.get("/",verifyToken, getAdmin)
 router.get("/login",adminLogin)
 router.post("/login",adminLoginPost)
@@ -32,7 +34,7 @@ router.post("/category/edit-category/:id",verifyToken,editCategory)
 router.post("/category/toggle-category/:id",verifyToken,categorieBlock)
 router.get("/products",verifyToken,renderProductsPage)
 router.get("/products/addproducts",verifyToken,renderAddProdects)
-router.post("/products/add-products/",upload.array('images', 3),addProducts)
+router.post("/products/add-products/",upload.array('croppedImages', 3),addProducts)
 router.post('/products/list/:id',verifyToken,productListUnlist)
 router.post('/products/unlist/:id',verifyToken,productListUnlist)
 router.get("/products/edit/:id",verifyToken,renderEditPage)

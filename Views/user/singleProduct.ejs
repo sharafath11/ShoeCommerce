@@ -22,7 +22,7 @@
       font-size: 24px;
       font-weight: bold;
     }
-    
+
     .product-price {
       font-size: 20px;
       color: #28a745;
@@ -54,19 +54,82 @@
     .rating {
       color: gold;
     }
+
+    /* Thumbnail images style */
+    .thumbnails {
+      margin-top: 20px;
+    }
+
+    .thumbnails img {
+      width: 80px;
+      height: 80px;
+      margin-right: 10px;
+      cursor: pointer;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    .thumbnails img:hover {
+      border-color: #28a745;
+    }
+
+    /* Zoom effect styles */
+    .zoom-container {
+      position: relative;
+      display: inline-block;
+    }
+
+    .zoomed-image {
+      top: 0px;
+    left: 550px;
+    /* right: 76px; */
+    position: absolute;
+    border: 2px solid #28a745;
+    border-radius: 5px;
+    display: none;
+    background-size: 300%;
+    width: 400px;
+    height: 280px;
+    pointer-events: none;
+    z-index: 10;
+    }
+
+    /* Focus area styles */
+    .focus-area {
+      position: absolute;
+    /* Dashed border for focus area */
+      border-radius: 50%; /* Circular shape */
+      width: 100px; /* Diameter of the focus area */
+      height: 100px; /* Diameter of the focus area */
+      pointer-events: none; /* Prevent mouse events on the focus area */
+      display: none; /* Hidden by default */
+      z-index: 20; /* Above the zoom image */
+    }
   </style>
 </head>
 <body>
-	<%- include('partials/header') %>
+  <%- include('partials/header') %>
   <div class="container mt-4">
     <div class="row">
       <div class="col-md-6">
-        <!-- Product Image -->
-        <img src="<%= product.images[0].replace('public', '') %>" alt="<%= product.name %>"  class="img-fluid">
+        <!-- Product Image with Zoom -->
+        <div class="zoom-container">
+          <img id="main-image" src="<%= product.images[0].replace('public', '') %>" alt="<%= product.name %>" class="img-fluid">
+          <div id="zoomed-image" class="zoomed-image"></div>
+          <div id="focus-area" class="focus-area"></div> <!-- Added focus area -->
+        </div>
+
+        <!-- Thumbnails -->
+        <div class="thumbnails d-flex">
+          <% product.images.slice(0, 4).forEach(image => { %>
+            <img src="<%= image.replace('public', '') %>" alt="<%= product.name %>" class="thumbnail-img">
+          <% }) %>
+        </div>
       </div>
+
       <div class="col-md-6">
         <!-- Product Details -->
-        <h1 class="product-title"> <%= product.name %></h1>
+        <h1 class="product-title"><%= product.name %></h1>
         <p class="product-price">$ <%= product.price %></p>
         <p class="product-description">
           <%= product.description %>
@@ -74,22 +137,21 @@
 
         <!-- Size Options -->
         <div class="my-3">
-			<h5>Size</h5>
-			<% product.availableSize.forEach((size, index) => { %>
-				<div class="form-check form-check-inline">
-					<input class="form-check-input" type="radio" name="sizeOptions" id="<%= size.toLowerCase() %>" value="<%= size.toLowerCase() %>" <%= index === 0 ? 'checked' : '' %>>
-					<label class="form-check-label" for="<%= size.toLowerCase() %>"><%= size %></label>
-				</div>
-			<% }) %>
-		</div>
-		
+          <h5>Size</h5>
+          <% product.availableSize.forEach((size, index) => { %>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="sizeOptions" id="<%= size.toLowerCase() %>" value="<%= size.toLowerCase() %>" <%= index === 0 ? 'checked' : '' %>>
+              <label class="form-check-label" for="<%= size.toLowerCase() %>"><%= size %></label>
+            </div>
+          <% }) %>
+        </div>
 
         <!-- Add to Cart -->
-		<div class="input-group mb-3" style="max-width: 120px;">
-			<button class="btn btn-outline-secondary" type="button" id="button-minus">-</button>
-			<input type="text" class="form-control text-center" id="input-value" value="1">
-			<button class="btn btn-outline-secondary" type="button" id="button-plus">+</button>
-		  </div>
+        <div class="input-group mb-3" style="max-width: 120px;">
+          <button class="btn btn-outline-secondary" type="button" id="button-minus">-</button>
+          <input type="text" class="form-control text-center" id="input-value" value="1">
+          <button class="btn btn-outline-secondary" type="button" id="button-plus">+</button>
+        </div>
 
         <button class="btn btn-dark w-100">Add to Cart</button>
       </div>
@@ -122,20 +184,60 @@
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-	document.getElementById('button-minus').addEventListener('click', function() {
-  var input = document.getElementById('input-value');
-  var currentValue = parseInt(input.value);
-  if (currentValue > 1) { // You can set a minimum value here
-    input.value = currentValue - 1;
-  }
-});
 
-document.getElementById('button-plus').addEventListener('click', function() {
-  var input = document.getElementById('input-value');
-  var currentValue = parseInt(input.value);
-  input.value = `${currentValue + 1}`;
-});
+  <script>
+    document.getElementById('button-minus').addEventListener('click', function() {
+      var input = document.getElementById('input-value');
+      var currentValue = parseInt(input.value);
+      if (currentValue > 1) { 
+        input.value = currentValue - 1;
+      }
+    });
+
+    document.getElementById('button-plus').addEventListener('click', function() {
+      var input = document.getElementById('input-value');
+      var currentValue = parseInt(input.value);
+      input.value = `${currentValue + 1}`;
+    });
+
+    // Change main image when thumbnail is clicked
+    document.querySelectorAll('.thumbnail-img').forEach(img => {
+      img.addEventListener('click', function() {
+        const mainImage = document.getElementById('main-image');
+        const zoomedImage = document.getElementById('zoomed-image');
+        mainImage.src = this.src;
+        zoomedImage.style.backgroundImage = `url('${this.src}')`; // Update zoom image
+      });
+    });
+
+    // Zoom functionality
+    const mainImage = document.getElementById('main-image');
+    const zoomedImage = document.getElementById('zoomed-image');
+    const focusArea = document.getElementById('focus-area');
+
+    mainImage.addEventListener('mousemove', function(e) {
+      const rect = mainImage.getBoundingClientRect();
+      const x = e.clientX - rect.left; // Mouse X position
+      const y = e.clientY - rect.top; // Mouse Y position
+
+      // Show zoomed area
+      zoomedImage.style.display = 'block';
+      zoomedImage.style.backgroundImage = `url('${mainImage.src}')`;
+
+      // Position the focus area
+      focusArea.style.display = 'block';
+      focusArea.style.left = `${e.pageX - 50}px`; // Center focus area
+      focusArea.style.top = `${e.pageY - 50}px`; // Center focus area
+
+      // Calculate zoomed image position
+      const zoomFactor = 2; // Adjust this to control the zoom level
+      zoomedImage.style.backgroundPosition = `-${(x * zoomFactor) - 200}px -${(y * zoomFactor) - 140}px`;
+    });
+
+    mainImage.addEventListener('mouseleave', function() {
+      zoomedImage.style.display = 'none'; 
+      focusArea.style.display = 'none'; // Hide focus area
+    });
   </script>
 </body>
 </html>

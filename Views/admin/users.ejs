@@ -9,6 +9,8 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
+    <!-- Toastify CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <link rel="stylesheet" href="styles.css" />
   </head>
   <style>
@@ -73,7 +75,7 @@
                         <td><%= user.googleUser %></td>
                         <td>
                           <button class="btn btn-sm btn-<%= user.block ? 'danger' : 'success' %> toggle-block-btn" data-id="<%= user._id %>">
-                            <%= user.block ? 'Unlist' : 'List' %>
+                            <%= user.block ? 'Unblock' : 'Block' %>
                           </button>
                         </td>
                       </tr>
@@ -83,53 +85,107 @@
               </div>
             </div>
           </main>
+          <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+                <!-- Previous Button -->
+                <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                    <a class="page-link" href="/admin/users?page=<%= currentPage - 1 %>" tabindex="-1" aria-disabled="true">
+                        <i class="bi bi-arrow-left">Previous</i> <!-- Bootstrap icon -->
+                    </a>
+                </li>
+        
+                <!-- Page Numbers -->
+                <% for (let i = 1; i <= totalPages; i++) { %>
+                    <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                        <a class="page-link" href="/admin/users?page=<%= i %>"><%= i %></a>
+                    </li>
+                <% } %>
+        
+                <!-- Next Button -->
+                <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                    <a class="page-link" href="/admin/users?page=<%= currentPage + 1 %>">
+                        <i class="bi bi-arrow-right">Next</i> <!-- Bootstrap icon -->
+                    </a>
+                </li>
+            </ul>
+        </nav>
       </div>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Toastify JS -->
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.toggle-block-btn').forEach(button => {
-                button.addEventListener('click', async function() {
-                    const userId = this.getAttribute('data-id');
-                    try {
-                        const response = await fetch(`/admin/users/toggle-block/${userId}`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            }
-                        });
-                        const result = await response.json();
-                        if (result.success) {
-                            // Update the button label and class based on the new block status
-                            this.textContent = result.block ? 'Unlist' : 'List';
-                            this.className = `btn btn-sm btn-${result.block ? 'danger' : 'success'} toggle-block-btn`;
-                        }
-                    } catch (error) {
-                        console.error('Error toggling block status:', error);
+    document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.toggle-block-btn').forEach(button => {
+        button.addEventListener('click', async function() {
+            const userId = this.getAttribute('data-id');
+            const isBlocking = this.textContent.trim() === 'Block'; // Check the current action
+
+            // Confirmation dialog
+            const confirmationMessage = isBlocking ? 
+                'Are you sure you want to block this user?' : 
+                'Are you sure you want to unblock this user?';
+                
+            const confirmed = confirm(confirmationMessage);
+
+            if (!confirmed) {
+                return; // Stop if the admin cancels the action
+            }
+
+            try {
+                const response = await fetch(`/admin/users/toggle-block/${userId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
                     }
                 });
-            });
-        });
-        </script>
-        <script>
-            document.getElementById('searchInput').addEventListener('input', function () {
-              const searchTerm = this.value.toLowerCase();
-              const rows = document.querySelectorAll('#userTableBody tr');
-          
-              rows.forEach(row => {
-                const username = row.getAttribute('data-username');
-                const email = row.getAttribute('data-email');
-          
-                if (username.includes(searchTerm) || email.includes(searchTerm)) {
-                  row.style.display = '';
-                } else {
-                  row.style.display = 'none';
+
+                const result = await response.json();
+                if (result.ok) {
+                    // Update the button label and class based on the new block status
+                    this.textContent = result.block ? 'Unblock' : 'Block';
+                    this.className = `btn btn-sm btn-${result.block ? 'danger' : 'success'} toggle-block-btn`;
+
+                    // Show toast notification
+                    showToast(`User ${result.block ? 'blocked' : 'unblocked'} successfully`);
                 }
-              });
-            });
-          </script>
-        
+            } catch (error) {
+                console.error('Error toggling block status:', error);
+            }
+        });
+    });
+});
+
+function showToast(message) {
+    Toastify({
+        text: message,
+        duration: 3000,
+        gravity: 'top', // Toast position
+        position: 'right', // Toast location
+        backgroundColor: '#333', // Background color
+        stopOnFocus: true, // Stop on focus
+        close: true // Show close button
+    }).showToast();
+}
+
+    </script>
+    <script>
+        document.getElementById('searchInput').addEventListener('input', function () {
+          const searchTerm = this.value.toLowerCase();
+          const rows = document.querySelectorAll('#userTableBody tr');
+      
+          rows.forEach(row => {
+            const username = row.getAttribute('data-username');
+            const email = row.getAttribute('data-email');
+      
+            if (username.includes(searchTerm) || email.includes(searchTerm)) {
+              row.style.display = '';
+            } else {
+              row.style.display = 'none';
+            }
+          });
+        });
+      </script>
   </body>
 </html>

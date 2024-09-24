@@ -25,6 +25,7 @@ export const adminLoginPost = (req, res) => {
             msg: "Login successful",
             red:"/admin"
         });
+      
     } else {
         res.status(401).json({ success: false, msg: "Somthing wrong" });
     }

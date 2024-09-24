@@ -30,59 +30,6 @@ export const cartRenderPage = async (req, res) => {
   }
 };
 
-// export const addToCart = async (req, res) => {
-//     try {
-//         const productId = req.params.id;
-//         const userId = req.session.user ? req.session.user._id : null;
-
-//         if (!userId) {
-//             return res
-//                 .status(400)
-//                 .json({ message: "User not logged in or session expired" });
-//         }
-
-//         const product = await ProductModel.findById(productId);
-//         if (!product) {
-//             return res.status(404).json({ message: "Product not found" });
-//         }
-
-//         let cart = await CartModel.findOne({ userId });
-
-//         if (!cart) {
-
-//             cart = new CartModel({
-//                 userId,
-//                 products: [{ productId }]
-//             });
-//         } else {
-//             const productInCart = cart.products.find(
-//                 (item) => item?.productId?.toString() === productId
-//             );
-
-//             if (productInCart) {
-
-//                 req.session.toast = "Product already in cart";
-//                 res.status(200).json({ message: "Product already in cart:)", success:false });
-//             } else {
-
-//                 cart.products.push({ productId });
-//             }
-//         }
-
-//         await cart.save();
-
-//         const cartItem = await CartModel.findOne({ userId }).populate('products.productId');
-//         req.session.cartQty = cartItem.products.length;
-
-//         req.session.toast = "Cart added successfully :)";
-//         res.status(200).json({ message: "Cart added successfully :)", success:true });
-//         // return res.redirect("/")
-//     } catch (error) {
-//         console.error('Error adding to cart:', error);
-//         return res.status(500).json({ message: "Server error", error });
-//     }
-// };
-
 export const removeCart = async (req, res) => {
   try {
     const productId = req.params.id;

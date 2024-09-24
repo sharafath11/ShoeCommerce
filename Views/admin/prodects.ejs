@@ -11,6 +11,41 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 
     <style>
+     
+    .pagination {
+        font-size: 1.2rem; /* Increase font size for better readability */
+    }
+    .page-item {
+        margin: 0 5px; /* Add space between pagination items */
+    }
+    .page-link {
+        border-radius: 50%; /* Make pagination items circular */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a slight shadow */
+        transition: all 0.3s ease; /* Smooth hover transition */
+    }
+    .page-link:hover {
+        background-color: #6c757d; /* Darker hover effect */
+        color: #fff; /* White text on hover */
+    }
+    .page-item.active .page-link {
+        background-color: #0d6efd; /* Make the active page more prominent */
+        color: white; /* White text for active */
+        border: 2px solid #0a58ca; /* Add border to the active page */
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Stronger shadow for active */
+    }
+    .page-link:focus {
+        outline: none;
+        box-shadow: 0 0 8px rgba(33, 150, 243, 0.5); /* Blue glow effect when focused */
+    }
+    .page-item.disabled .page-link {
+        background-color: #e9ecef; /* Disable color for 'Previous' and 'Next' if not clickable */
+        color: #6c757d;
+    }
+    .page-link, .page-link:hover {
+        text-decoration: none; /* Remove underline from pagination links */
+    }
+
+
         body {
             font-family: 'Arial', sans-serif;
             background-color: #f4f6f9;
@@ -87,16 +122,15 @@
                                     <th>Price</th>
                                     <th>Stock</th>
                                     <th>Category</th>
-                                    <!-- <th>Blocked</th> -->
+                                    <th>Color</th>
                                     <th>Sales</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <% Products.forEach((product,index )=> { %>
-                                    <% console.log("fvjbh",product); %>
+                                <% Products.forEach((product, index) => { %>
                                 <tr>
-                                    <td><%= index+1 %></td>
+                                    <td><%= index + 1 %></td>
                                     <td><%= product.name %></td>
                                     <td><%= product.brand %></td>
                                     <td><%= product.availableSize.join(', ') %></td>
@@ -104,15 +138,15 @@
                                     <td>$<%= product.price %></td>
                                     <td><%= product.stock %></td>
                                     <td><%= product?.categoryId?.name %></td>
-                                    <!-- <td><%= product.blocked %></td> -->
+                                    <td><%= product?.color %></td>
                                     <td><%= product.sales %></td>
                                     <td>
                                         <a href="/admin/products/edit/<%= product._id %>" class="btn btn-sm btn-primary">Edit</a>
                                         <button class="btn btn-sm btn-toggle-list" 
-                                        data-id="<%= product._id %>" 
-                                        data-status="<%= product.blocked ? 'unlist' : 'list' %>">
-                                    <%= product.blocked ? 'Unlist' : 'List' %>
-                                </button>
+                                                data-id="<%= product._id %>" 
+                                                data-status="<%= product.blocked ? 'unlist' : 'list' %>">
+                                            <%= product.blocked ? 'Unlist' : 'List' %>
+                                        </button>
                                     </td>
                                 </tr>
                                 <% }) %>
@@ -120,6 +154,32 @@
                         </table>
                     </div>
                 </div>
+                <!-- Pagination UI with better design -->
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+        <!-- Previous Button -->
+        <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+            <a class="page-link" href="/admin/products?page=<%= currentPage - 1 %>" tabindex="-1" aria-disabled="true">
+                <i class="bi bi-arrow-left">Previous</i> <!-- Bootstrap icon -->
+            </a>
+        </li>
+
+        <!-- Page Numbers -->
+        <% for (let i = 1; i <= totalPages; i++) { %>
+            <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                <a class="page-link" href="/admin/products?page=<%= i %>"><%= i %></a>
+            </li>
+        <% } %>
+
+        <!-- Next Button -->
+        <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+            <a class="page-link" href="/admin/products?page=<%= currentPage + 1 %>">
+                <i class="bi bi-arrow-right">Next</i> <!-- Bootstrap icon -->
+            </a>
+        </li>
+    </ul>
+</nav>
+
             </main>
         </div>
     </div>
@@ -170,40 +230,49 @@
             }
         });
     </script>
+
+    <!-- JavaScript for List/Unlist Confirmation -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const buttons = document.querySelectorAll('.btn-toggle-list');
-    
+
             buttons.forEach(button => {
                 button.addEventListener('click', async function () {
                     const productId = this.getAttribute('data-id');
                     const action = this.getAttribute('data-status');
-    
-                    try {
-                        const response = await fetch(`/admin/products/${action}/${productId}`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                        });
-    
-                        const data = await response.json();
-    
-                        if (data.success) {
-                            
-                            button.textContent = action === 'list' ? 'Unlist' : 'List';
-                            button.setAttribute('data-status', action === 'list' ? 'unlist' : 'list');
-                            showToast(data.message); 
-                        } else {
-                            showToast(data.message); 
+
+                    // Adding confirmation dialog
+                    const confirmationMessage = action === 'list' 
+                        ? 'Are you sure you want to list this product?' 
+                        : 'Are you sure you want to unlist this product?';
+
+                    if (confirm(confirmationMessage)) {
+                        try {
+                            const response = await fetch(`/admin/products/${action}/${productId}`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                            });
+
+                            const data = await response.json();
+
+                            if (data.success) {
+                                // Toggle button text and status
+                                button.textContent = action === 'list' ? 'Unlist' : 'List';
+                                button.setAttribute('data-status', action === 'list' ? 'unlist' : 'list');
+                                showToast(data.message); 
+                            } else {
+                                showToast(data.message); 
+                            }
+                        } catch (error) {
+                            console.error('Error:', error);
+                            showToast('An error occurred. Please try again.');
                         }
-                    } catch (error) {
-                        console.error('Error:', error);
-                        showToast('An error occurred. Please try again.');
                     }
                 });
             });
-    
+
             function showToast(message) {
                 Toastify({
                     text: message,
@@ -217,4 +286,4 @@
         });
     </script>
 </body>
-</html>  
+</html>
