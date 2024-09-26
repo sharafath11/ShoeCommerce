@@ -56,16 +56,19 @@
                 />
             </div>
             <div class="mb-3">
-                <label for="sizes" class="form-label">Available Sizes (comma separated)</label>
-                <input
-                    type="text"
-                    class="form-control"
-                    id="sizes"
-                    name="sizes"
-                    value="<%= product.availableSize.join(', ') %>"
-                    required
-                />
+                <label class="form-label">Available Sizes and Stock</label>
+                <div id="sizeContainer">
+                    <% product.availableSize.forEach(function(sizeStock) { %>
+                        <div class="d-flex mb-2 size-stock-row">
+                            <input type="text" name="size" class="form-control me-2" value="<%= sizeStock.size %>" placeholder="Size" required style="width: 100px;" />
+                            <input type="number" name="stock" class="form-control me-2" value="<%= sizeStock.stock %>" placeholder="Stock" required style="width: 100px;" />
+                            <button type="button" class="btn btn-danger remove-size-stock">Remove</button>
+                        </div>
+                    <% }) %>
+                </div>
+                <button type="button" id="addSizeStock" class="btn btn-primary mt-2">Add Size & Stock</button>
             </div>
+            
             <div class="mb-3">
                 <label for="price" class="form-label">Price</label>
                 <input
@@ -112,28 +115,10 @@
                 </select>
             </div>
             <div class="mb-3">
-                <label for="stock" class="form-label">Stock</label>
-                <input
-                    type="number"
-                    class="form-control"
-                    id="stock"
-                    name="stock"
-                    value="<%= product.stock %>"
-                    required
-                />
-            </div>
-            <div class="mb-3">
                 <label for="imageUpload" class="form-label">Images</label>
-                <input
-                    type="file"
-                    class="form-control"
-                    id="imageUpload"
-                    name="images"
-                    multiple
-                    accept="image/*"
-                    max="3"
-                />
-                <div id="imagePreviewContainer" class="row">
+                <input type="file" class="form-control" id="imageUpload" name="images" multiple accept="image/*" />
+
+                <div id="imagePreviewContainer" class="row mt-2">
                     <center>
                         <h2 class="mt-5 p-5">Do you want to crop this image? Please upload that image.</h2>
                     </center>
@@ -153,103 +138,153 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
-        let croppers = [];
+          let croppers = [];
 
-        document.getElementById("imageUpload").addEventListener("change", function (event) {
-            const files = event.target.files;
-            const previewContainer = document.getElementById("imagePreviewContainer");
+document.getElementById("imageUpload").addEventListener("change", function (event) {
+    const files = event.target.files;
+    const previewContainer = document.getElementById("imagePreviewContainer");
 
-            previewContainer.innerHTML = ""; 
-            if (files.length !== 3) {
-                alert("Please upload exactly 3 images.");
-                event.target.value = "";
-                return;
-            }
+    previewContainer.innerHTML = ""; 
+    if (files.length !== 3) {
+        alert("Please upload exactly 3 images.");
+        event.target.value = "";
+        return;
+    }
 
-            Array.from(files).forEach((file) => {
-                const reader = new FileReader();
+    Array.from(files).forEach((file) => {
+        const reader = new FileReader();
 
-                reader.onload = function (e) {
-                    const colDiv = document.createElement("div");
-                    colDiv.className = "col-md-4";
-                    const image = new Image();
-                    image.src = e.target.result;
-                    image.className = "image-preview";
-                    colDiv.appendChild(image);
-                    previewContainer.appendChild(colDiv);
+        reader.onload = function (e) {
+            const colDiv = document.createElement("div");
+            colDiv.className = "col-md-4";
+            const image = new Image();
+            image.src = e.target.result;
+            image.className = "image-preview";
+            colDiv.appendChild(image);
+            previewContainer.appendChild(colDiv);
 
-                    const cropper = new Cropper(image, {
-                        aspectRatio: 1,
-                        autoCropArea: 1,
-                        responsive: true,
-                        scalable: false,
-                    });
+            const cropper = new Cropper(image, {
+                aspectRatio: 1,
+                autoCropArea: 1,
+                responsive: true,
+                scalable: false,
+            });
 
-                    croppers.push(cropper);
-                };
+            croppers.push(cropper);
+        };
 
-                reader.readAsDataURL(file);
+        reader.readAsDataURL(file);
+    });
+});
+        const sizeContainer = document.getElementById('sizeContainer');
+        const addSizeStockButton = document.getElementById('addSizeStock');
+    
+     
+        addSizeStockButton.addEventListener('click', () => {
+            const sizeStockRow = document.createElement('div');
+            sizeStockRow.classList.add('d-flex', 'mb-2', 'size-stock-row');
+    
+            sizeStockRow.innerHTML = 
+                `<input type="text" name="size" class="form-control me-2" placeholder="Size" required style="width: 100px;" />
+                 <input type="number" name="stock" class="form-control me-2" placeholder="Stock" required style="width: 100px;" />
+                 <button type="button" class="btn btn-danger remove-size-stock">Remove</button>`;
+    
+            sizeContainer.appendChild(sizeStockRow);
+    
+         
+            sizeStockRow.querySelector('.remove-size-stock').addEventListener('click', () => {
+                sizeContainer.removeChild(sizeStockRow);
             });
         });
-
+    
+        
+        document.querySelectorAll('.remove-size-stock').forEach((button) => {
+            button.addEventListener('click', function () {
+                const row = this.closest('.size-stock-row');
+                sizeContainer.removeChild(row);
+            });
+        });
+    
         document.getElementById("edit-product-form").addEventListener("submit", function (event) {
-          const name=document.getElementById("name").value.trim()
-    const brand=document.getElementById("brand").value.trim()
-    console.log('====================================');
-    console.log(brand);
-    console.log('====================================');
-    const availableSizes=document.getElementById("sizes").value.trim()
-    const color=document.getElementById("color").value.trim()
-    const productDescription=document.getElementById("description").value.trim()
-    const productPrice=document.getElementById("price").value.trim()
-    const productStock=document.getElementById("stock").value.trim()
-    const productCategory=document.getElementById("category").value.trim()
-    if (name.length < 0 || !/^[A-Za-z'0-9\s]+$/.test(name)){
-      alert("Its not allowed spaces and special charecter")
-      return
-    }
-    if (brand.length < 0 || !/^[A-Za-z'0-9\s]+$/.test(brand)){
-      alert("Its not allowed spaces and special charecter")
-      return
-    }
-    if (color.length < 0 || !/^[A-Za-z'\s]+$/.test(color)){
-      alert("Its not allowed spaces and special charecter")
-      return
-    }
-    if (productDescription.length < 0 || !/^[A-Za-z'\s]+$/.test(productDescription)){
-      alert("Its not allowed spaces and special charecter")
-      return
-    }
-    if (name===""||brand ===""||availableSizes===""|| productDescription===""||productPrice===""||productStock===""||productCategory===""  ) {
-      alert("All fileds are required :)");
-      return
-    }
-    if(productPrice<1){
-      alert ("Peice not allowed Zero :)")
-      return
-    }
-    if(productStock<1){
-      alert ("Stock not allowed Zero :)")
-      return
-    }
-            const isOk = confirm("Are you sure you want to edit the product?");
-            if (!isOk) {
+            event.preventDefault();
+    
+            const name = document.getElementById("name").value.trim();
+            const brand = document.getElementById("brand").value.trim();
+            const availableSizes = [];
+            const color = document.getElementById("color").value.trim();
+            const productDescription = document.getElementById("description").value.trim();
+            const productPrice = document.getElementById("price").value.trim();
+            const productCategory = document.getElementById("category").value.trim();
+    
+            if (name === "" || brand === "" || color === "" || productDescription === "" || productPrice === "" || productCategory === "") {
+                alert("All fields are required!");
                 return;
             }
-            event.preventDefault();
+    
+            if (productPrice < 1) {
+                alert("Price must be greater than zero.");
+                return;
+            }
+    
+         let isValidSizeStok=false
+         
+            document.querySelectorAll('.size-stock-row').forEach(row => {
+                const size = row.querySelector('input[name="size"]').value.trim();
+                const stock = row.querySelector('input[name="stock"]').value.trim();
+                
+                
+                if(size<=1){
+                    isValidSizeStok=true
+                    alert("size must be greater than zero.");
+                
+                
+                }
+                if(stock<0){
+                    isValidSizeStok=true
+                    alert("Stock not allowed lesthan zero :)")
+                    return
+                }
+                if (size && stock) {
+                    availableSizes.push({ size, stock });
+                }
+            });
+            if(isValidSizeStok) return 
+    
+            
+            if (availableSizes.length === 0) {
+                alert("Please add at least one size and stock.");
+                return;
+            }
+            if (!color || !/^[A-Za-z'\s]+$/.test(color)) {
+              alert("Color contains invalid characters or is empty.");
+              return;
+          }
+    if (!brand ||!/^[A-Za-z'\s]+$/.test(brand)) {
+        alert("Brand contains invalid characters or is empty.");
+        return;
+    }
+    if (!name||!/^[A-Za-z'0-9\s]+$/.test(name)) {
+        alert("Name contains invalid characters or is empty.");
+        return;
+    }   if (!productDescription||!/^[A-Za-z'0-9\s]+$/.test(productDescription)) {
+        alert("Description contains invalid characters or is empty.");
+        return;
+    }
+    
+           
             const formData = new FormData();
-
             formData.append("id", document.getElementById("id").value);
-            formData.append("name",name);
+            formData.append("name", name);
             formData.append("brand", brand);
-            formData.append("sizes", availableSizes);
             formData.append("color", color);
             formData.append("description", productDescription);
             formData.append("price", productPrice);
-            formData.append("stock", productStock);
             formData.append("category", productCategory);
-
+            
+          
+            formData.append("sizes", JSON.stringify(availableSizes));
             croppers.forEach((cropper, index) => {
+
                 const croppedCanvas = cropper.getCroppedCanvas({
                     width: 300,
                     height: 300,
@@ -267,23 +302,31 @@
                 const blob = new Blob([uint8Array], { type: "image/jpeg" });
                 formData.append(`croppedImages`, blob, `croppedImage_${index}.jpg`);
             });
-
-            axios.post(`/admin/products/edit-products`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            })
-            .then((response) => {
-                if (response.data.ok) {
-                    window.location.href = response.data.red;
-                } else {
-                    alert("Failed to update product");
-                }
-            })
-            .catch((error) => {
-                console.error("Error:", error);
+            
+              const okke=confirm("Are you sure edit the product :)");
+              if(!okke){
+                return
+              }
+                axios
+                    .post("/admin/products/edit-products", formData, {
+                        headers: {
+                            "Content-Type": "multipart/form-data",
+                        },
+                    })
+                    .then((response) => {
+                        if(response.data.ok){
+                            alert(response.data.msg);
+                            window.location.href=response.data.red
+                        }
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                        alert("An error occurred while updating the product.");
+                        return
+                    });
             });
-        });
+       ;
     </script>
+    
 </body>
 </html>

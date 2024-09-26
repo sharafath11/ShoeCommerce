@@ -117,10 +117,10 @@
                                     <th>SL NO</th>
                                     <th>Product Name</th>
                                     <th>Brand Name</th>
-                                    <th>Available Sizes</th>
+                                    <th> Sizes and stock</th>
                                     <th>Description</th>
                                     <th>Price</th>
-                                    <th>Stock</th>
+                                    
                                     <th>Category</th>
                                     <th>Color</th>
                                     <th>Sales</th>
@@ -133,10 +133,14 @@
                                     <td><%= index + 1 %></td>
                                     <td><%= product.name %></td>
                                     <td><%= product.brand %></td>
-                                    <td><%= product.availableSize.join(', ') %></td>
+                                    <td>
+                                        <% product.availableSize.forEach(function(item) { %>
+                                          <%= item.size %> (Stock: <%= item.stock %>)<br>
+                                        <% }); %>
+                                      </td>
                                     <td><%= product.description %></td>
                                     <td>$<%= product.price %></td>
-                                    <td><%= product.stock %></td>
+                                   
                                     <td><%= product?.categoryId?.name %></td>
                                     <td><%= product?.color %></td>
                                     <td><%= product.sales %></td>

@@ -55,7 +55,7 @@
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
           <div class="form-container">
             <h2>Add New Product</h2>
-            <form enctype="multipart/form-data">
+            <form enctype="multipart/form-data" id="addProductForm">
               <!-- Product Fields -->
               <div class="mb-3">
                 <label for="productName" class="form-label">Product Name</label>
@@ -79,19 +79,19 @@
                   required
                 />
               </div>
-              <div class="mb-3">
+              <div class="mb-3" id="sizeContainer">
                 <label for="availableSizes" class="form-label"
-                  >Available Sizes (comma separated)</label
+                  >Available Sizes & Stock</label
                 >
-                <input
-                  type="text"
-                  name="sizes"
-                  class="form-control"
-                  id="availableSizes"
-                  placeholder="Enter sizes, e.g., 37,38,39,40"
-                  required
-                />
               </div>
+
+              <button
+                type="button"
+                class="btn btn-secondary mb-3"
+                id="addSizeStockBtn"
+              >
+                Add Size & Stock
+              </button>
               <div class="mb-3">
                 <label for="color" class="form-label">Color</label>
                 <input
@@ -129,18 +129,6 @@
                     required
                   />
                 </div>
-                <div class="col-md-6 mb-3">
-                  <label for="productStock" class="form-label">Stock</label>
-                  <input
-                    type="number"
-                    name="stock"
-                    class="form-control"
-                    id="productStock"
-                    placeholder="Enter stock quantity"
-                    min="1"
-                    required
-                  />
-                </div>
               </div>
               <div class="mb-3">
                 <label for="productCategory" class="form-label">Category</label>
@@ -172,7 +160,6 @@
                   accept="image/*"
                   multiple
                   required
-                  max="3"
                 />
               </div>
 
@@ -192,182 +179,191 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
-    
+
     <script>
-      let croppers = []; 
-    
-      document
-        .getElementById("productImages")
-        .addEventListener("change", function (event) {
+      let croppers = [];
+  
+      document.getElementById("addSizeStockBtn").addEventListener("click", function () {
+          const sizeContainer = document.getElementById("sizeContainer");
+          const sizeStockRow = document.createElement("div");
+          sizeStockRow.classList.add("d-flex", "align-items-center", "mb-2");
+          sizeStockRow.innerHTML = `
+              <input type="text" name="size" class="form-control me-2" placeholder="Size" required style="width: 100px;" />
+              <input type="number" name="stock" class="form-control me-2" placeholder="Stock" required style="width: 100px;" />
+              <button type="button" class="btn btn-danger remove-size-stock">Remove</button>
+          `;
+          sizeContainer.appendChild(sizeStockRow);
+      });
+  
+      document.getElementById("sizeContainer").addEventListener("click", function (e) {
+          if (e.target.classList.contains("remove-size-stock")) {
+              e.target.parentElement.remove();
+          }
+      });
+  
+      document.getElementById("productImages").addEventListener("change", function (event) {
           const files = event.target.files;
+         
           const container = document.getElementById("imageCropContainer");
           container.innerHTML = "";
-    
-          
-    
-          for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            const reader = new FileReader();
-    
-           
-            const cropContainer = document.createElement("div");
-            cropContainer.classList.add("crop-container");
-    
-            const imagePreview = document.createElement("img");
-            imagePreview.classList.add("image-preview");
-            imagePreview.id = `imagePreview_${i}`;
-    
-            const cropButton = document.createElement("button");
-            cropButton.type = "button";
-            cropButton.classList.add("btn", "btn-primary", "mt-2");
-            cropButton.textContent = "Crop Image";
-            cropButton.id = `cropButton_${i}`;
-    
-            cropContainer.appendChild(imagePreview);
-            cropContainer.appendChild(cropButton);
-            container.appendChild(cropContainer);
-    
-            reader.onload = function (e) {
-              imagePreview.src = e.target.result;
-              imagePreview.style.display = "block";
-    
-             
-              const cropper = new Cropper(imagePreview, {
-                aspectRatio: 1,
-                viewMode: 1,
-                autoCropArea: 1,
-              });
-              croppers[i] = cropper;
-    
-              cropButton.addEventListener("click", function () {
-                const canvas = cropper.getCroppedCanvas();
-                const croppedImage = canvas.toDataURL("image/jpeg");
-    
-            
-                let croppedImagesField = document.getElementById("croppedImages").value;
-                croppedImagesField = croppedImagesField ? JSON.parse(croppedImagesField) : [];
-                croppedImagesField.push(croppedImage);
-                document.getElementById("croppedImages").value = JSON.stringify(croppedImagesField);
-    
-                alert("Image cropped successfully!");
-              });
-            };
-    
-            reader.readAsDataURL(file);
-          }
-        });
-      
-    
-        document
-  .getElementById("submit-btn")
-  .addEventListener("click", function (e) {
-    e.preventDefault(); 
-
- 
-    const formData = new FormData();
-
   
-    formData.append("name", document.getElementById("productName").value);
-    formData.append("brand", document.getElementById("brandName").value);
-    formData.append("sizes", document.getElementById("availableSizes").value);
-    formData.append("color", document.getElementById("color").value);
-    formData.append("description", document.getElementById("productDescription").value);
-    formData.append("price", document.getElementById("productPrice").value);
-    formData.append("stock", document.getElementById("productStock").value);
-    formData.append("category", document.getElementById("productCategory").value);
-    
-    // Get the cropped images from the hidden input field
-    let croppedImagesField = document.getElementById("croppedImages").value;
-    let croppedImages = croppedImagesField ? JSON.parse(croppedImagesField) : [];
+          for (let i = 0; i < files.length; i++) {
+              const file = files[i];
+              const reader = new FileReader();
+  
+              const cropContainer = document.createElement("div");
+              cropContainer.classList.add("crop-container");
+  
+              const imagePreview = document.createElement("img");
+              imagePreview.classList.add("image-preview");
+              imagePreview.id = `imagePreview_${i}`;
+  
+              const cropButton = document.createElement("button");
+              cropButton.type = "button";
+              cropButton.classList.add("btn", "btn-primary", "mt-2");
+              cropButton.textContent = "Crop Image";
+              cropButton.id = `cropButton_${i}`;
+  
+              cropContainer.appendChild(imagePreview);
+              cropContainer.appendChild(cropButton);
+              container.appendChild(cropContainer);
+  
+              reader.onload = function (e) {
+                  imagePreview.src = e.target.result;
+                  imagePreview.style.display = "block";
+  
+                  const cropper = new Cropper(imagePreview, {
+                      aspectRatio: 1,
+                      viewMode: 1,
+                      autoCropArea: 1,
+                  });
+                  croppers[i] = cropper;
+  
+                  cropButton.addEventListener("click", function () {
+                      const canvas = cropper.getCroppedCanvas();
+                      const croppedImage = canvas.toDataURL("image/jpeg");
+  
+                      let croppedImagesField = document.getElementById("croppedImages").value;
+                      croppedImagesField = croppedImagesField ? JSON.parse(croppedImagesField) : [];
+                      croppedImagesField.push(croppedImage);
+                      document.getElementById("croppedImages").value = JSON.stringify(croppedImagesField);
+  
+                      alert("Image cropped successfully!");
+                  });
+              };
+  
+              reader.readAsDataURL(file);
+          }
+      });
+  
+      document.getElementById("addProductForm").addEventListener("submit", function (e) {
+    e.preventDefault();
 
-    
-    croppedImages.forEach((croppedImage, index) => {
-      const byteString = atob(croppedImage.split(",")[1]);
-      const arrayBuffer = new ArrayBuffer(byteString.length);
-      const uint8Array = new Uint8Array(arrayBuffer);
+    const name = document.getElementById("productName").value.trim();
+    const brand = document.getElementById("brandName").value.trim();
+    const color = document.getElementById("color").value.trim();
+    const description = document.getElementById("productDescription").value.trim();
+    const price = document.getElementById("productPrice").value.trim();
+    const category = document.getElementById("productCategory").value.trim();
 
-      for (let i = 0; i < byteString.length; i++) {
-        uint8Array[i] = byteString.charCodeAt(i);
-      }
+    if (!name || !/^[A-Za-z'0-9\s]+$/.test(name)) {
+        alert("Product name contains invalid characters or is empty.");
+        return;
+    }
 
-      const blob = new Blob([uint8Array], { type: "image/jpeg" });
-      formData.append("croppedImages", blob, `croppedImage_${index}.jpg`);
+    if (!brand || !/^[A-Za-z'0-9\s]+$/.test(brand)) {
+        alert("Brand contains invalid characters or is empty.");
+        return;
+    }
+
+    if (!color || !/^[A-Za-z'\s]+$/.test(color)) {
+        alert("Color contains invalid characters or is empty.");
+        return;
+    }
+
+    if (!description || !/^[A-Za-z'0-9\s]+$/.test(description)) {
+        alert("Description contains invalid characters or is empty.");
+        return;
+    }
+
+    if (!price || price <= 0) {
+        alert("Price must be greater than zero.");
+        return;
+    }
+
+    if (!category) {
+        alert("Product category is required.");
+        return;
+    }
+
+    const sizeStockData = [];
+    let isValidSizeStok=false
+    const sizeStockRows = document.querySelectorAll("#sizeContainer div");
+    sizeStockRows.forEach((row) => {
+        const size = row.querySelector('input[name="size"]').value.trim();
+        const stock = row.querySelector('input[name="stock"]').value.trim();
+        if (!size || !stock || stock < 1 || size < 1) {
+          isValidSizeStok=true
+            alert("Size or stock is missing or invalid.");
+            return;
+        }
+        sizeStockData.push({ size, stock });
+    });
+    if(isValidSizeStok) return 
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("brand", brand);
+    formData.append("color", color);
+    formData.append("description", description);
+    formData.append("price", price);
+    formData.append("category", category);
+    formData.append("availableSize", JSON.stringify(sizeStockData));
+
+    const croppedImages = document.getElementById("croppedImages").value;
+    const images = JSON.parse(croppedImages);
+    if (images.length < 3) {
+        alert("Please crop and select at least 3 images.");
+        return;
+    }
+
+    images.forEach((image, index) => {
+        const blob = dataURItoBlob(image);
+        formData.append("croppedImages", blob, `image_${index}.jpeg`); // You must name the file here
     });
 
-    
-    if (croppedImages.length !== 3) {
-      alert("Please crop and add all 3 images or Its not a image");
-      return;
-    }
-
-    
-    for (const [key, value] of formData.entries()) {
-      console.log(key, value);
-    }
-    const name=document.getElementById("productName").value.trim()
-    const brand=document.getElementById("brandName").value.trim()
-    const availableSizes=document.getElementById("availableSizes").value.trim()
-    const color=document.getElementById("color").value.trim()
-    const productDescription=document.getElementById("productDescription").value.trim()
-    const productPrice=document.getElementById("productPrice").value.trim()
-    const productStock=document.getElementById("productStock").value.trim()
-    const productCategory=document.getElementById("productCategory").value.trim()
-    if (name.length < 0 || !/^[A-Za-z'0-9\s]+$/.test(name)){
-      alert("Its not allowed spaces and special charecter")
-      return
-    }
-    if (brand.length < 0 || !/^[A-Za-z'0-9\s]+$/.test(brand)){
-      alert("Its not allowed spaces and special charecter")
-      return
-    }
-    if (color.length < 0 || !/^[A-Za-z'\s]+$/.test(color)){
-      alert("Its not allowed spaces and special charecter")
-      return
-    }
-    if (productDescription.length < 0 || !/^[A-Za-z'\s]+$/.test(productDescription)){
-      alert("Its not allowed spaces and special charecter")
-      return
-    }
-    if (name===""||brand ===""||availableSizes===""|| productDescription===""||productPrice===""||productStock===""||productCategory===""  ) {
-      alert("All fileds are required :)");
-      return
-    }
-    if(productPrice<1){
-      alert ("Peice not allowed Zero :)")
-      return
-    }
-    if(productStock<1){
-      alert ("Stock not allowed Zero :)")
-      return
-    }
-     const isOk=confirm("Are you sure add the product");
-     if(!isOk){
-      return
-     }
     axios
-  .post("/admin/products/add-products", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  })
-  .then((response) => {
-   
-    if (response.data.ok) {
-      console.log(response.data);
-      window.location.href =response.data.red;
-    } else {
-      alert(response.data.msg);
-      return 
-    }
-  })
-  .catch((error) => {
-    console.error("Error:", error);
-    alert("An error occurred while adding the product.");
-    return
-  });
-  });
+        .post("/admin/products/add-products", formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        })
+        .then(function (response) {
+            if (response.data.ok) {
+                alert(response.data.msg);
+                document.getElementById("addProductForm").reset();
+                window.location.href = response.data.red;
+            } else {
+                alert(response.data.msg);
+                return;
+            }
+        })
+        .catch(function (error) {
+            console.error("There was an error!", error);
+        });
+});
 
-    </script>
-    
+  
+      function dataURItoBlob(dataURI) {
+          const byteString = atob(dataURI.split(",")[1]);
+          const mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
+          const ab = new ArrayBuffer(byteString.length);
+          const ia = new Uint8Array(ab);
+          for (let i = 0; i < byteString.length; i++) {
+              ia[i] = byteString.charCodeAt(i);
+          }
+          return new Blob([ab], { type: mimeString });
+      }
+  </script>
+  
   </body>
 </html>

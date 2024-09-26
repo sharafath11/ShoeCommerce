@@ -2,10 +2,10 @@ import jwt from 'jsonwebtoken'
 
 export const adminLogin = (req, res) => {
 
-    if(!req.session.token){
+    // if(!req.session.token){
         return res.render("admin/login");
-    }
-    return res.redirect("/admin");
+    // }
+    // return res.redirect("/admin");
       
 };
 

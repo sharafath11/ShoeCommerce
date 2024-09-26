@@ -47,24 +47,25 @@ export const addProducts = async (req, res) => {
   let {
     name,
     brand,
-    sizes,
     price,
     description,
     category,
-    stock,
     block,
     color,
+    availableSize,  // Receive size and stock array here
   } = req.body;
-  
+
   try {
     const images = req.files ? req.files.map((file) => file.path) : [];
     brand = brand.charAt(0).toUpperCase() + brand.slice(1).toLowerCase();
     name = name.toUpperCase();
     color = color.charAt(0).toUpperCase() + color.slice(1).toLowerCase();
-    const productEist=await ProductModel.find({name:name});
-    if(productEist){
-      return res.status(200).json({ ok: false, msg: "Product alredy adedd",  });
+
+    const productExist = await ProductModel.findOne({ name: name });
+    if (productExist) {
+      return res.status(200).json({ ok: false, msg: "Product already added" });
     }
+
     const toTitleCase = (str) => {
       return str
         .toLowerCase()
@@ -73,15 +74,17 @@ export const addProducts = async (req, res) => {
         .join(" ");
     };
     description = toTitleCase(description);
-    
+
+    // Parse the availableSize data
+    const parsedSizeStock = JSON.parse(availableSize);
+
     const product = new ProductModel({
       name,
       brand,
-      availableSize: sizes.split(",").map((size) => size.trim()),
+      availableSize: parsedSizeStock,  // Store the parsed size and stock array
       price,
       description,
       color,
-      stock,
       blocked: block === "true",
       categoryId: category,
       images,
@@ -89,18 +92,16 @@ export const addProducts = async (req, res) => {
 
     await product.save();
     req.session.toast = "Product added successfully";
-    
+
     return res.status(200).json({ ok: true, msg: "Product added successfully", red: "/admin/products" });
   } catch (error) {
     console.error(error);
-    
     res.status(500).send(`
       <script>
         alert("An error occurred while adding the product! Please try again.");
         window.location.reload();
       </script>
     `);
-    
   }
 };
 
@@ -153,31 +154,31 @@ export const renderEditPage = async (req, res) => {
   }
 };
 export const editProducts = async (req, res) => {
+  console.log('====================================');
+  console.log(req.body); // Log incoming request body
+  console.log('====================================');
+
   let {
     id,
     name,
     brand,
-    sizes,
+    sizes, // This will be a JSON string
     price,
     description,
     category,
-    stock,
     block,
     color,
   } = req.body;
- console.log('====================================');
- console.log(brand);
- console.log('====================================');
-  const images = req.files ? req.files.map((file) => file.path) : [];
- 
-  // Console logs for debugging (optional)
-  // console.log('Body:', req.body);
-  // console.log('Files:', images);
 
+  // Handle file uploads, if any
+  const images = req.files ? req.files.map((file) => file.path) : [];
+
+  // Convert brand, name, and color to the desired formats
   brand = brand.charAt(0).toUpperCase() + brand.slice(1).toLowerCase();
   name = name.toUpperCase();
   color = color.charAt(0).toUpperCase() + color.slice(1).toLowerCase();
 
+  // Function to convert description to Title Case
   const toTitleCase = (str) => {
     return str
       .toLowerCase()
@@ -185,36 +186,44 @@ export const editProducts = async (req, res) => {
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
   };
-
+  
   description = toTitleCase(description);
   
   try {
+    // Parse sizes JSON string to an array of objects
+    let parsedSizes;
+    if (sizes) {
+      parsedSizes = JSON.parse(sizes); // Parse the sizes JSON string into an array of objects
+    } else {
+      parsedSizes = []; // Default to an empty array if sizes are not provided
+    }
+
+    // Prepare the data to update the product
     const updateData = {
       name,
       brand,
-      availableSize: sizes.split(",").map((size) => size.trim()),
+      availableSize: parsedSizes, // Use the parsed sizes directly
       price,
       description,
       color,
-      stock,
-      blocked: block === "true",
+      blocked: block === "true", // Convert block string to boolean
       categoryId: category,
     };
 
-   
+    // Add images to updateData if there are any
     if (images.length > 0) {
       updateData.images = images;
     }
 
-  
+    // Find and update the product by ID
     const updatedProduct = await ProductModel.findByIdAndUpdate(id, updateData, { new: true });
 
-    
     if (!updatedProduct) {
       req.session.toast = "Product not found";
       return res.redirect("/admin/products");
     }
 
+    // Set success message in session and send response
     req.session.toast = "Product updated successfully";
     res.status(200).json({ ok: true, msg: "Edited successfully", red: "/admin/products" });
   } catch (error) {

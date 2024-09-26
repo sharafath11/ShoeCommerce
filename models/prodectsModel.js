@@ -22,10 +22,19 @@ const productSchema = new mongoose.Schema(
       type: [String],
     },
 
-    availableSize: {
-      type: [String],
-      required: true,
-    },
+    availableSize: [
+      {
+        size: {
+          type: Number, 
+          required: true
+        },
+        stock: {
+          type: Number, 
+          required: true
+        }
+      }
+    ],
+     
     description: {
       type: String,
       required: true,
@@ -36,10 +45,7 @@ const productSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    stock: {
-      type: Number,
-      required: true,
-    },
+  
     blocked: {
       type: Boolean,
       default: false,
