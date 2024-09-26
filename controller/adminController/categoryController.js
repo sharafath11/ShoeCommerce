@@ -40,40 +40,44 @@ export const getAddCategory = (req, res) => {
 
 export const addCategory = async (req, res) => {
   try {
-    const { name, description } = req.body;
+    let { name, description } = req.body;
 
-    const existingCategory = await categoryModel.findOne({ name: { $regex: `^${name}$`, $options: '' } });
+    
+    const existingCategory = await categoryModel.findOne({ name: { $regex: `^${name}$`, $options: 'i' } });
+
+    
     if (existingCategory) {
-        return res.send(`
-      <html>
-          <body>
-              <script>
-                  alert("This categoris alredy uploaded");
-                  window.location.href = "/admin/category/addcategory"; 
-              </script>
-          </body>
-      </html>
-  `);
+      // return res.status(400).json({ ok: false, msg: "This category already exists." });
+      return res.status(200).json({ ok: false, msg: "This category already exists :)",  });
     }
-
+    const toTitleCase = (str) => {
+      return str
+        .toLowerCase()
+        .split(" ")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+    };
+    name = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+    description = toTitleCase(description)
     const newCategory = new categoryModel({
       name,
       description,
     });
 
     await newCategory.save();
-    req.session.toast = "category added successfully";
-    res.redirect("/admin/category")
+    req.session.toast="Categrios added succes full"
+    return res.status(200).json({ ok: true, msg: "Category added successfully.", red:"/admin/category" });
   } catch (error) {
     console.error("Error adding category:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ success: false, message: "Server error." });
   }
 };
+
 
 export const getEditCategory = async (req, res) => {
   const id = req.params.id;
 
-  // Check if the id is a valid ObjectId
+  
   if (!mongoose.Types.ObjectId.isValid(id)) {
     console.error("Invalid Category ID:", id);
     return res.status(400).send("Invalid Category ID");
@@ -96,30 +100,53 @@ export const getEditCategory = async (req, res) => {
 
 export const editCategory = async (req, res) => {
   const id = req.params.id;
-  const { name, description } = req.body;
+  let { name, description } = req.body;
 
+ 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).send("Invalid Category ID");
+    return res.status(400).json({ ok: false, msg: "Invalid Category ID" });
   }
 
   try {
     const category = await categoryModel.findOne({ _id: id });
 
     if (!category) {
-      return res.status(404).send("Category not found");
+      return res.status(404).json({ ok: false, msg: "Category not found" });
     }
 
-    // Update the category's fields
-    category.name = name || category.name;
-    category.description = description || category.description;
+ 
+    const toTitleCase = (str) => {
+      return str
+        .toLowerCase()
+        .split(" ")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+    };
+
+
+    if (!name || !description) {
+      return res.status(400).json({ ok: false, msg: "Name and Description are required" });
+    }
+
+    
+    name = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase(); 
+    description = toTitleCase(description); 
+
+  
+    category.name = name;
+    category.description = description;
+
+    
     await category.save();
-    req.session.toast = "Updated Category";
-    res.redirect('/admin/category');
+
+   
+    res.json({ ok: true, red: "/admin/category", msg: "Category updated successfully" });
   } catch (error) {
     console.error("Error updating category:", error);
-    return res.status(500).send("Internal Server Error");
+    return res.status(500).json({ ok: false, msg: "Internal Server Error" });
   }
 };
+
 export const categorieBlock = async (req, res) => {
   const id = req.params.id;
 
@@ -134,10 +161,10 @@ export const categorieBlock = async (req, res) => {
       return res.status(404).json({ success: false, message: "Category not found" });
     }
 
-    // Toggle the blocked status
+  
     category.blocked = !category.blocked;
+   
 
-    // Save the updated category
     await category.save();
 
     return res.status(200).json({

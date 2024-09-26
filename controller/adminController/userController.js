@@ -12,7 +12,7 @@ export const getUsers=async(req,res)=>{
             .skip(skip)
             .limit(limit);
     
-       
+            const SlNo=users.length*page
         const totalUsers = await userModel.countDocuments();
     
         const totalPages = Math.ceil(totalUsers / limit); 
@@ -26,7 +26,8 @@ export const getUsers=async(req,res)=>{
             Users: users,
             message: toastMessage,
             currentPage: page,
-            totalPages: totalPages
+            totalPages: totalPages,
+            
         });
     } catch (error) {
         console.error(error);

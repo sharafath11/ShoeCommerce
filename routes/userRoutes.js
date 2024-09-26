@@ -7,13 +7,14 @@ import passport from "passport";
 import '../controller/userConteroller/googleAuth.js'
 import { authFailure, authProtected, authSuccess, catchError, googleAuthCallback, } from "../controller/userConteroller/googleAuth.js";
 import { getSingleProdect } from "../controller/userConteroller/getSingleProdect.js";
-import { getCategory } from "../controller/userConteroller/categoryController.js";
 import { getCheckout } from "../controller/userConteroller/checkoutController.js";
 import { getContact } from "../controller/userConteroller/contactController.js";
 import {  addToCart, cartRenderPage, qtyHandler, removeCart} from "../controller/userConteroller/cartController.js";
 import {  protectedHand } from "../controller/userConteroller/protectedRoutes.js";
 import { logoutFn } from "../controller/userConteroller/logoutController.js";
 import { removeWhislist, renderWishlistPage, whislistFn } from "../controller/userConteroller/whislistController.js";
+import noCache from "../middleware/cachClear.js";
+import { shopDetialsRender } from "../controller/userConteroller/shopeDetials.js";
 
 const router=express.Router();
 
@@ -27,11 +28,11 @@ router.get('/auth/google/callback',catchError,passport.authenticate('google', { 
 router.get('/auth/google/success', authSuccess);
 router.get('/auth/google/failure', authFailure);
 
-router.get('/auth/protected', protectedHand, authProtected);
-router.get("/login",loginGetFn)
-router.post("/login",loginPost)
+router.get('/auth/protected', protectedHand,noCache, authProtected);
+router.get("/login",noCache,loginGetFn)
+router.post("/login",noCache,loginPost)
 router.get("/logout",logoutFn)
-router.get("/category",getCategory)
+// router.get("/category",getCategory)
 router.get("/checkout",protectedHand,getCheckout)
 router.get("/contact",getContact)
 router.post("/auth/google/login")
@@ -43,4 +44,5 @@ router.get("/addToCart/:id",protectedHand,addToCart)
 router.get("/cart",protectedHand,cartRenderPage)
 router.delete("/cart/remove/:id",removeCart)
 router.post('/cart/update-quantity',qtyHandler );
+router.get("/shopDetials",shopDetialsRender)
 export default router

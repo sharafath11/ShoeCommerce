@@ -36,7 +36,7 @@ export const googleAuthCallback = async (req, res) => {
   try {
     const { id, email } = req.user.profile;
     let user = await userModel.findOne({ googleId: id }) || await userModel.findOne({ email });
-    console.log("fhfghf",req.query);
+    
     
     if (user) {
     
@@ -48,13 +48,14 @@ export const googleAuthCallback = async (req, res) => {
         console.log("Updated existing user to Google user");
       }
       const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+      req.session.user=user
       req.session.token=token
-      res.render("user/index",{user})
+      res.redirect("/")
      
     } else {
     
       const { name } = req.user.profile || {};
-      const username = name ? `${name.givenName || ""} ${name.familyName || ""}`.trim() : "Anonymous";
+      const username = name ? `${name.givenName || ""} ${name.familyName || ""}`.trim() : "Aro";
       user = new userModel({
         username,
         email,

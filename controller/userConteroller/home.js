@@ -40,7 +40,8 @@ export const homeRender = async (req, res) => {
     const WishlistQty = uniqueProducts.length;
 
     req.session.WishlistQty = WishlistQty;
-
+   console.log(products);
+   
     res.render("user/index", {
       user: user,
       products: products || [],

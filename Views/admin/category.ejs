@@ -126,11 +126,18 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const buttons = document.querySelectorAll('.toggle-list-status');
-        
+           
+           
             buttons.forEach(button => {
                 button.addEventListener('click', async function (e) {
+                    const buttonText = this.textContent.trim()
+            
+            const oke=confirm(`Are you Sure ${ buttonText}`)
                     const categoryId = this.getAttribute('data-id');
                     
+                    if(!oke){
+            return 
+           }
                     try {
                         const response = await fetch(`/admin/category/toggle-category/${categoryId}`, {
                             method: 'POST',
@@ -142,9 +149,9 @@
                         const data = await response.json();
         
                         if (data.success) {
-                            // Update the button text based on the new blocked status
+                            
                             this.textContent = data.blocked ? 'Unblock' : 'Block';
-                            showToast(data.message); // Show the toast message
+                            showToast(data.message); 
                         } else {
                             showToast(data.message); // Show the error message
                         }

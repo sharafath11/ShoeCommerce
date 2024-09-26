@@ -108,51 +108,36 @@
               <div class="row mt-4">
                   <div class="col-md-8">
                       <div class="card">
-                          <div class="card-body">
-                              <h5 class="card-title">New Users</h5>
-                              <table class="table table-borderless">
-                                  <thead>
-                                      <tr>
-                                          <th>User ID</th>
-                                          <th>Name</th>
-                                          <th>Signup Date</th>
-                                          <th>Status</th>
-                                      </tr>
-                                  </thead>
-                                  <tbody>
-                                      <tr>
-                                          <td>001</td>
-                                          <td>John Doe</td>
-                                          <td>2024-09-10</td>
-                                          <td>Active</td>
-                                      </tr>
-                                      <tr>
-                                          <td>002</td>
-                                          <td>Jane Smith</td>
-                                          <td>2024-09-09</td>
-                                          <td>Inactive</td>
-                                      </tr>
-                                      <tr>
-                                          <td>003</td>
-                                          <td>Samuel Green</td>
-                                          <td>2024-09-08</td>
-                                          <td>Active</td>
-                                      </tr>
-                                      <tr>
-                                          <td>004</td>
-                                          <td>Lisa Brown</td>
-                                          <td>2024-09-07</td>
-                                          <td>Inactive</td>
-                                      </tr>
-                                  </tbody>
-                              </table>
-                          </div>
+                        <div class="card-body">
+                            <h5 class="card-title">New Users</h5>
+                            <table class="table table-borderless">
+                                <thead>
+                                    <tr>
+                                        <th>SLNO</th>
+                                        <th>Name</th>
+                                        <th>Signup Date</th>
+                                        <th>email</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% newUsers.forEach((user,index) => { %>
+                                        <tr>
+                                            <td><%= index+1%></td>
+                                            <td><%= user.username %></td>
+                                            <td><%= new Date(user.createdAt).toLocaleDateString() %></td>
+                                            <td><%= user.email %></td>
+                                        </tr>
+                                    <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                        
                       </div>
                   </div>
                   <div class="col-md-4">
                       <div class="card">
                           <div class="card-body">
-                              <h5 class="card-title">Recent Orders</h5>
+                              <h5 class="card-title">Recent order</h5>
                               <table class="table table-borderless">
                                   <thead>
                                       <tr>

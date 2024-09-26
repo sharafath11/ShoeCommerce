@@ -1,214 +1,289 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Dashboard - Add Product</title>
+    <title>Edit Product</title>
+    <!-- Bootstrap CSS -->
     <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
-      rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    />
+    <!-- Cropper.js CSS -->
+    <link
+        href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css"
+        rel="stylesheet"
     />
     <style>
-      body {
-        background-color: #f8f9fa;
-      }
-      .sidebar {
-        height: 100vh;
-        background-color: #343a40;
-        padding-top: 20px;
-      }
-      .sidebar a {
-        color: #ffffff;
-        text-decoration: none;
-        display: block;
-        padding: 10px 20px;
-      }
-      .sidebar a:hover {
-        background-color: #495057;
-      }
-      .form-container {
-        margin: 30px;
-      }
+        .image-preview {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border: 2px solid #ddd;
+        }
+        .row {
+            margin-bottom: 20px;
+        }
     </style>
-  </head>
-  <body>
-    <div class="container-fluid">
-      <div class="row">
-        <!-- Sidebar -->
-        <%- include('partials/sidebar') %>
-        <!-- Main Content -->
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-          <div class="form-container">
-            <h2>Add New Product</h2>
-            <form
-              action="/admin/products/add-products"
-              method="post"
-              enctype="multipart/form-data"
-            >
-              <div class="mb-3">
-                <label for="productName" class="form-label">Product Name</label>
+</head>
+<body>
+    <div class="container">
+        <h2>Edit Product</h2>
+
+        <form id="edit-product-form">
+            <input type="text" name="id" id="id" hidden value="<%= product._id %>">
+            <div class="mb-3">
+                <label for="name" class="form-label">Product Name</label>
                 <input
-                  type="text"
-                  name="name"
-                  class="form-control"
-                  id="productName"
-                  placeholder="Enter product name"
-                  required
-                  value="<%= product.name%>"
+                    type="text"
+                    class="form-control"
+                    id="name"
+                    name="name"
+                    value="<%= product.name %>"
+                    required
                 />
-              </div>
-              <div class="mb-3">
-                <label for="brandName" class="form-label">Brand Name</label>
+            </div>
+            <div class="mb-3">
+                <label for="brand" class="form-label">Brand</label>
                 <input
-                  type="text"
-                  name="brand"
-                  class="form-control"
-                  id="brandName"
-                  placeholder="Enter brand name"
-                  required
-                  value="<%= product.brand%>"
+                    type="text"
+                    class="form-control"
+                    id="brand"
+                    name="brand"
+                    value="<%= product.brand %>"
+                    required
                 />
-              </div>
-              <div class="mb-3">
-                <label for="availableSizes" class="form-label"
-                  >Available Sizes (comma separated)</label
-                >
+            </div>
+            <div class="mb-3">
+                <label for="sizes" class="form-label">Available Sizes (comma separated)</label>
                 <input
-                type="text"
-                name="sizes"
-                class="form-control"
-                id="availableSizes"
-                placeholder="Enter sizes, e.g., 37,38,39,40"
-                required
-                value="<%= product.availableSize ? product.availableSize.join(',') : '' %>"
-              />
-              </div>
-              <div class="mb-3">
-                <label for="productDescription" class="form-label"
-                  >Description</label
-                >
-                <input 
-                type="text" 
-                name="description" 
-                class="form-control" 
-                id="productDescription" 
-                placeholder="Enter product description" 
-                value="<%= product.description %>" 
-                required
-              />
-              </div>
-              <div class="row">  
-                <div class="col-md-6 mb-3">
-                  <label for="productPrice" class="form-label">Price</label>
-                  <input
+                    type="text"
+                    class="form-control"
+                    id="sizes"
+                    name="sizes"
+                    value="<%= product.availableSize.join(', ') %>"
+                    required
+                />
+            </div>
+            <div class="mb-3">
+                <label for="price" class="form-label">Price</label>
+                <input
                     type="number"
+                    class="form-control"
+                    id="price"
                     name="price"
-                    class="form-control"
-                    id="productPrice"
-                    placeholder="Enter price"
-                    min="1"
-                    required
                     value="<%= product.price %>"
-                  />
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label for="productStock" class="form-label">Stock</label>
-                  <input
-                    type="number"
-                    name="stock"
-                    class="form-control"
-                    id="productStock"
-                    placeholder="Enter stock quantity"
-                    min="1"
                     required
-                    value="<%= product.stock %>"
-                  />
-                </div>
-              </div>
-              <div class="mb-3">
-                <label for="productCategory" class="form-label">Category</label>
-                <select class="form-select" id="productCategory" name="category" required>
-                    <option value=""><%= product.categoryId.name %></option>
-                    <% categories.forEach(category => { %>
-                    <option value="<%= category._id %>" <%= (category._id.toString() === product.categoryId.name.toString()) ? 'selected' : '' %>>
-                        <%= category.name %>
-                    </option>
-                    <% }) %>
+                />
+            </div>
+            <div class="mb-3">
+                <label for="color" class="form-label">Color</label>
+                <input
+                    type="text"
+                    class="form-control"
+                    id="color"
+                    name="color"
+                    value="<%= product.color %>"
+                    required
+                />
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea
+                    class="form-control"
+                    id="description"
+                    name="description"
+                    rows="4"
+                    required
+                ><%= product.description %></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="category" class="form-label">Category</label>
+                <select id="category" name="category" class="form-select" required>
+                    <% categories.forEach(function(category) { %>
+                        <option
+                            value="<%= category._id %>"
+                            <%= category._id.equals(product.categoryId._id) ? 'selected' : '' %>
+                        >
+                            <%= category.name %>
+                        </option>
+                    <% }); %>
                 </select>
             </div>
-            
-              <!-- Image Upload Fields -->
-              <div class="d-flex flex-wrap" id="previewContainer">
-                <% if (product.images && product.images.length) { %>
-                    <% product.images.forEach((image, index) => { %>
-                        <div class="position-relative" id="imageContainer<%= index %>">
-                            <img src="<%= product.images[index].replace('public', '') %>" class="image-preview" data-index="<%= index %>" onclick="triggerFileUpload(<%= index %>)" />
-                            <input type="file" class="file-input" id="fileInput<%= index %>" onchange="handleFileChange(event, <%= index %>)" style="display: none;" accept="image/*" />
+            <div class="mb-3">
+                <label for="stock" class="form-label">Stock</label>
+                <input
+                    type="number"
+                    class="form-control"
+                    id="stock"
+                    name="stock"
+                    value="<%= product.stock %>"
+                    required
+                />
+            </div>
+            <div class="mb-3">
+                <label for="imageUpload" class="form-label">Images</label>
+                <input
+                    type="file"
+                    class="form-control"
+                    id="imageUpload"
+                    name="images"
+                    multiple
+                    accept="image/*"
+                    max="3"
+                />
+                <div id="imagePreviewContainer" class="row">
+                    <center>
+                        <h2 class="mt-5 p-5">Do you want to crop this image? Please upload that image.</h2>
+                    </center>
+                    <% product.images.forEach(function(image, index) { %>
+                        <div class="col-md-4">
+                            <img src="<%= product.images[index].replace('public', '') %>" class="image-preview" />
                         </div>
-                    <% }) %>
-                <% } else { %>
-                    <p>No images available.</p>
-                <% } %>
+                    <% }); %>
+                </div>
             </div>
-            
-              
-            </div>
-              <button type="submit" class="btn btn-dark" id="submit-btn">
-                Add Product
-              </button>
-            </form>
-          </div>
-        </main>
-      </div>
+            <input type="hidden" id="croppedImages" name="croppedImages" />
+            <button type="submit" class="btn btn-primary">Update Product</button>
+        </form>
     </div>
 
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
-    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
-    // Function to trigger the file upload when an image is clicked
-function triggerFileUpload(index) {
-    const fileInput = document.getElementById(`fileInput${index}`);
-    fileInput.click(); // Trigger the hidden file input
-}
+        let croppers = [];
 
-// Function to handle the file change event
-function handleFileChange(event, index) {
-    const file = event.target.files[0];
-    // Validate if the selected file is an image
-    if (file && file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const img = document.querySelector(`img[data-index="${index}"]`);
-            img.src = e.target.result; // Update the image preview with the new file
-        };
-        reader.readAsDataURL(file); // Read the file as a Data URL
-    } else {
-        alert('Please select a valid image file.'); // Alert for invalid file type
-        event.target.value = ''; // Clear the file input
+        document.getElementById("imageUpload").addEventListener("change", function (event) {
+            const files = event.target.files;
+            const previewContainer = document.getElementById("imagePreviewContainer");
+
+            previewContainer.innerHTML = ""; 
+            if (files.length !== 3) {
+                alert("Please upload exactly 3 images.");
+                event.target.value = "";
+                return;
+            }
+
+            Array.from(files).forEach((file) => {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    const colDiv = document.createElement("div");
+                    colDiv.className = "col-md-4";
+                    const image = new Image();
+                    image.src = e.target.result;
+                    image.className = "image-preview";
+                    colDiv.appendChild(image);
+                    previewContainer.appendChild(colDiv);
+
+                    const cropper = new Cropper(image, {
+                        aspectRatio: 1,
+                        autoCropArea: 1,
+                        responsive: true,
+                        scalable: false,
+                    });
+
+                    croppers.push(cropper);
+                };
+
+                reader.readAsDataURL(file);
+            });
+        });
+
+        document.getElementById("edit-product-form").addEventListener("submit", function (event) {
+          const name=document.getElementById("name").value.trim()
+    const brand=document.getElementById("brand").value.trim()
+    console.log('====================================');
+    console.log(brand);
+    console.log('====================================');
+    const availableSizes=document.getElementById("sizes").value.trim()
+    const color=document.getElementById("color").value.trim()
+    const productDescription=document.getElementById("description").value.trim()
+    const productPrice=document.getElementById("price").value.trim()
+    const productStock=document.getElementById("stock").value.trim()
+    const productCategory=document.getElementById("category").value.trim()
+    if (name.length < 0 || !/^[A-Za-z'0-9\s]+$/.test(name)){
+      alert("Its not allowed spaces and special charecter")
+      return
     }
-}
+    if (brand.length < 0 || !/^[A-Za-z'0-9\s]+$/.test(brand)){
+      alert("Its not allowed spaces and special charecter")
+      return
+    }
+    if (color.length < 0 || !/^[A-Za-z'\s]+$/.test(color)){
+      alert("Its not allowed spaces and special charecter")
+      return
+    }
+    if (productDescription.length < 0 || !/^[A-Za-z'\s]+$/.test(productDescription)){
+      alert("Its not allowed spaces and special charecter")
+      return
+    }
+    if (name===""||brand ===""||availableSizes===""|| productDescription===""||productPrice===""||productStock===""||productCategory===""  ) {
+      alert("All fileds are required :)");
+      return
+    }
+    if(productPrice<1){
+      alert ("Peice not allowed Zero :)")
+      return
+    }
+    if(productStock<1){
+      alert ("Stock not allowed Zero :)")
+      return
+    }
+            const isOk = confirm("Are you sure you want to edit the product?");
+            if (!isOk) {
+                return;
+            }
+            event.preventDefault();
+            const formData = new FormData();
 
-      document.getElementById("submit-btn").addEventListener("click", (e) => {
-        const stock = document.getElementById("productStock").value;
-        const price = document.getElementById("productPrice").value;
-        let errorMessage = "";
+            formData.append("id", document.getElementById("id").value);
+            formData.append("name",name);
+            formData.append("brand", brand);
+            formData.append("sizes", availableSizes);
+            formData.append("color", color);
+            formData.append("description", productDescription);
+            formData.append("price", productPrice);
+            formData.append("stock", productStock);
+            formData.append("category", productCategory);
 
-        if (stock < 1) {
-          errorMessage += "Stock must be greater than 0.\n";
-        }
+            croppers.forEach((cropper, index) => {
+                const croppedCanvas = cropper.getCroppedCanvas({
+                    width: 300,
+                    height: 300,
+                });
+                const croppedImage = croppedCanvas.toDataURL("image/jpeg");
 
-        
-        if (price < 1) {
-          errorMessage += "Price must be greater than 0.\n";
-        }
+                const byteString = atob(croppedImage.split(",")[1]);
+                const arrayBuffer = new ArrayBuffer(byteString.length);
+                const uint8Array = new Uint8Array(arrayBuffer);
 
-       
-        if (errorMessage) {
-          e.preventDefault();
-          alert(errorMessage.trim());
-        }
-      });
+                for (let i = 0; i < byteString.length; i++) {
+                    uint8Array[i] = byteString.charCodeAt(i);
+                }
+
+                const blob = new Blob([uint8Array], { type: "image/jpeg" });
+                formData.append(`croppedImages`, blob, `croppedImage_${index}.jpg`);
+            });
+
+            axios.post(`/admin/products/edit-products`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            })
+            .then((response) => {
+                if (response.data.ok) {
+                    window.location.href = response.data.red;
+                } else {
+                    alert("Failed to update product");
+                }
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+            });
+        });
     </script>
-  </body>
+</body>
 </html>

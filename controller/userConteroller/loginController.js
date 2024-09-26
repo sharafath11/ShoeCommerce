@@ -7,7 +7,10 @@ export const loginGetFn = (req, res) => {
   const user = req.session.user;
   const WishlistQty = req.session.WishlistQty;
   const cartQty = req.session.cartQty;
-  res.render("user/login", { user, WishlistQty, cartQty });
+ if(!user){
+  return res.render("user/login", { user, WishlistQty, cartQty });
+ }
+ return res.redirect("/")
 };
 
 export const loginPost = async (req, res) => {

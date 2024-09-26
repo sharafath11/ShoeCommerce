@@ -192,154 +192,24 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
-    <!-- <script>
-      let croppers = []; // Array to store multiple croppers
-
-      document
-        .getElementById("productImages")
-        .addEventListener("change", function (event) {
-          const files = event.target.files;
-          const container = document.getElementById("imageCropContainer");
-          container.innerHTML = ""; // Clear any previous images or croppers
-
-          if (files.length !== 3) {
-            alert("Please upload exactly 3 images.");
-            event.target.value = "";
-            return;
-          }
-
-          for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            const reader = new FileReader();
-
-            // Create a wrapper div for each image and its crop button
-            const cropContainer = document.createElement("div");
-            cropContainer.classList.add("crop-container");
-
-            const imagePreview = document.createElement("img");
-            imagePreview.classList.add("image-preview");
-            imagePreview.id = `imagePreview_${i}`;
-
-            const cropButton = document.createElement("button");
-            cropButton.type = "button";
-            cropButton.classList.add("btn", "btn-primary", "mt-2");
-            cropButton.textContent = "Crop Image";
-            cropButton.id = `cropButton_${i}`;
-
-            cropContainer.appendChild(imagePreview);
-            cropContainer.appendChild(cropButton);
-            container.appendChild(cropContainer);
-
-            reader.onload = function (e) {
-              imagePreview.src = e.target.result;
-              imagePreview.style.display = "block";
-
-              // Initialize Cropper.js for each image
-              const cropper = new Cropper(imagePreview, {
-                aspectRatio: 1,
-                viewMode: 1,
-                autoCropArea: 1,
-              });
-              croppers[i] = cropper;
-
-              cropButton.addEventListener("click", function () {
-                const canvas = cropper.getCroppedCanvas();
-                const croppedImage = canvas.toDataURL("image/jpeg");
-
-                // Append cropped image data to the hidden input
-                let croppedImagesField =
-                  document.getElementById("croppedImages").value;
-                croppedImagesField = croppedImagesField
-                  ? JSON.parse(croppedImagesField)
-                  : [];
-                croppedImagesField.push(croppedImage);
-                document.getElementById("croppedImages").value =
-                  JSON.stringify(croppedImagesField);
-
-                alert("Image cropped successfully!");
-              });
-            };
-
-            reader.readAsDataURL(file);
-          }
-        });
-
-      
-        document
-  .getElementById("submit-btn")
-  .addEventListener("click", function (e) {
-    e.preventDefault(); // Prevent default form submission
     
-    // Prepare FormData
-    const formData = new FormData(document.querySelector("form"));
-
-    // Get the cropped images from the hidden input field
-    let croppedImagesField = document.getElementById("croppedImages").value;
-    let croppedImages = croppedImagesField ? JSON.parse(croppedImagesField) : [];
-
-    // Append each cropped image (as a Blob) to the FormData
-    croppedImages.forEach((croppedImage, index) => {
-      const byteString = atob(croppedImage.split(",")[1]);
-      const arrayBuffer = new ArrayBuffer(byteString.length);
-      const uint8Array = new Uint8Array(arrayBuffer);
-
-      for (let i = 0; i < byteString.length; i++) {
-        uint8Array[i] = byteString.charCodeAt(i);
-      }
-
-      const blob = new Blob([uint8Array], { type: "image/jpeg" });
-      formData.append("croppedImages", blob, `croppedImage_${index}.jpg`);
-    });
-
-    // Validate images count before submission
-    if (croppedImages.length !== 3) {
-      alert("Please crop and add all 3 images.");
-      return;
-    }
-
-    // Log FormData entries
-    for (const [key, value] of formData.entries()) {
-      console.log("fghgsdfhgfdsgh",key, value);
-    }
-
-    axios
-      .post("/admin/products/add-products", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data", 
-        },
-      })
-      .then((response) => {
-        console.log(response.data);
-        alert("Product added successfully");
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-  });
-
-
-    </script> -->
     <script>
-      let croppers = []; // Array to store multiple croppers
+      let croppers = []; 
     
       document
         .getElementById("productImages")
         .addEventListener("change", function (event) {
           const files = event.target.files;
           const container = document.getElementById("imageCropContainer");
-          container.innerHTML = ""; // Clear any previous images or croppers
+          container.innerHTML = "";
     
-          if (files.length !== 3) {
-            alert("Please upload exactly 3 images.");
-            event.target.value = "";
-            return;
-          }
+          
     
           for (let i = 0; i < files.length; i++) {
             const file = files[i];
             const reader = new FileReader();
     
-            // Create a wrapper div for each image and its crop button
+           
             const cropContainer = document.createElement("div");
             cropContainer.classList.add("crop-container");
     
@@ -361,7 +231,7 @@
               imagePreview.src = e.target.result;
               imagePreview.style.display = "block";
     
-              // Initialize Cropper.js for each image
+             
               const cropper = new Cropper(imagePreview, {
                 aspectRatio: 1,
                 viewMode: 1,
@@ -373,7 +243,7 @@
                 const canvas = cropper.getCroppedCanvas();
                 const croppedImage = canvas.toDataURL("image/jpeg");
     
-                // Append cropped image data to the hidden input
+            
                 let croppedImagesField = document.getElementById("croppedImages").value;
                 croppedImagesField = croppedImagesField ? JSON.parse(croppedImagesField) : [];
                 croppedImagesField.push(croppedImage);
@@ -386,16 +256,17 @@
             reader.readAsDataURL(file);
           }
         });
+      
     
         document
   .getElementById("submit-btn")
   .addEventListener("click", function (e) {
-    e.preventDefault(); // Prevent default form submission
+    e.preventDefault(); 
 
-    // Create a new FormData object
+ 
     const formData = new FormData();
 
-    // Get values from form fields and append them to FormData
+  
     formData.append("name", document.getElementById("productName").value);
     formData.append("brand", document.getElementById("brandName").value);
     formData.append("sizes", document.getElementById("availableSizes").value);
@@ -409,7 +280,7 @@
     let croppedImagesField = document.getElementById("croppedImages").value;
     let croppedImages = croppedImagesField ? JSON.parse(croppedImagesField) : [];
 
-    // Append each cropped image (as a Blob) to the FormData
+    
     croppedImages.forEach((croppedImage, index) => {
       const byteString = atob(croppedImage.split(",")[1]);
       const arrayBuffer = new ArrayBuffer(byteString.length);
@@ -423,31 +294,77 @@
       formData.append("croppedImages", blob, `croppedImage_${index}.jpg`);
     });
 
-    // Validate images count before submission
+    
     if (croppedImages.length !== 3) {
-      alert("Please crop and add all 3 images.");
+      alert("Please crop and add all 3 images or Its not a image");
       return;
     }
 
-    // Log FormData entries for debugging
+    
     for (const [key, value] of formData.entries()) {
       console.log(key, value);
     }
-
-    // Send the FormData via Axios
+    const name=document.getElementById("productName").value.trim()
+    const brand=document.getElementById("brandName").value.trim()
+    const availableSizes=document.getElementById("availableSizes").value.trim()
+    const color=document.getElementById("color").value.trim()
+    const productDescription=document.getElementById("productDescription").value.trim()
+    const productPrice=document.getElementById("productPrice").value.trim()
+    const productStock=document.getElementById("productStock").value.trim()
+    const productCategory=document.getElementById("productCategory").value.trim()
+    if (name.length < 0 || !/^[A-Za-z'0-9\s]+$/.test(name)){
+      alert("Its not allowed spaces and special charecter")
+      return
+    }
+    if (brand.length < 0 || !/^[A-Za-z'0-9\s]+$/.test(brand)){
+      alert("Its not allowed spaces and special charecter")
+      return
+    }
+    if (color.length < 0 || !/^[A-Za-z'\s]+$/.test(color)){
+      alert("Its not allowed spaces and special charecter")
+      return
+    }
+    if (productDescription.length < 0 || !/^[A-Za-z'\s]+$/.test(productDescription)){
+      alert("Its not allowed spaces and special charecter")
+      return
+    }
+    if (name===""||brand ===""||availableSizes===""|| productDescription===""||productPrice===""||productStock===""||productCategory===""  ) {
+      alert("All fileds are required :)");
+      return
+    }
+    if(productPrice<1){
+      alert ("Peice not allowed Zero :)")
+      return
+    }
+    if(productStock<1){
+      alert ("Stock not allowed Zero :)")
+      return
+    }
+     const isOk=confirm("Are you sure add the product");
+     if(!isOk){
+      return
+     }
     axios
-      .post("/admin/products/add-products", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      .then((response) => {
-        console.log(response.data);
-        alert("Product added successfully");
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+  .post("/admin/products/add-products", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  })
+  .then((response) => {
+   
+    if (response.data.ok) {
+      console.log(response.data);
+      window.location.href =response.data.red;
+    } else {
+      alert(response.data.msg);
+      return 
+    }
+  })
+  .catch((error) => {
+    console.error("Error:", error);
+    alert("An error occurred while adding the product.");
+    return
+  });
   });
 
     </script>

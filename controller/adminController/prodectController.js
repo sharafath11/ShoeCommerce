@@ -26,7 +26,12 @@ export const renderProductsPage = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).send("Server Error");
+    res.status(500).send(`
+      <script>
+        alert("Server Error! Please try again.");
+        window.location.reload();
+      </script>
+    `);
   }
 };
 
@@ -37,69 +42,8 @@ export const renderAddProdects = async (req, res) => {
   } catch (error) {}
 };
 
-// export const addProducts = async (req, res) => {
-  
-  
-//   let {
-//     name,
-//     brand,
-//     sizes,
-//     price,
-//     description,
-//     category,
-//     stock,
-//     block,
-//     color,
-    
-//   } = req.body;
-  
-  
-   
-//   try {
-//     const images = req.files ? req.files.map((file) => file.path) : [];
-//     console.log(images);
-    
-//     brand = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
-//     //  description= description.charAt(0).toUpperCase() + description.slice(1).toLowerCase();
-//     name = name.toUpperCase();
-//     color = color.charAt(0).toUpperCase() + color.slice(1).toLowerCase();
-//     const toTitleCase = (str) => {
-//       return str
-//         .toLowerCase()
-//         .split(" ")
-//         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-//         .join(" ");
-//     };
 
-//     description = toTitleCase(description);
-
-//     const product = new ProductModel({
-//       name,
-//       brand,
-//       availableSize: sizes.split(",").map((size) => size.trim()),
-//       price,
-//       description,
-//       color,
-//       stock,
-//       blocked: block === "true",
-//       categoryId: category,
-//       images,
-//     });
-
-//     await product.save();
-//     req.session.toast = "Product added successfully";
-//     res.redirect("/admin/products");
-//   } catch (error) {
-//     console.error(error);
-//     res
-//       .status(500)
-//       .json({ error: "An error occurred while adding the product" });
-//   }
-// };
 export const addProducts = async (req, res) => {
-  console.log('====================================');
-  console.log(req.body);
-  console.log('====================================');
   let {
     name,
     brand,
@@ -111,13 +55,16 @@ export const addProducts = async (req, res) => {
     block,
     color,
   } = req.body;
-
+  
   try {
     const images = req.files ? req.files.map((file) => file.path) : [];
-    console.log(req.body); 
-    brand = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+    brand = brand.charAt(0).toUpperCase() + brand.slice(1).toLowerCase();
     name = name.toUpperCase();
     color = color.charAt(0).toUpperCase() + color.slice(1).toLowerCase();
+    const productEist=await ProductModel.find({name:name});
+    if(productEist){
+      return res.status(200).json({ ok: false, msg: "Product alredy adedd",  });
+    }
     const toTitleCase = (str) => {
       return str
         .toLowerCase()
@@ -126,8 +73,7 @@ export const addProducts = async (req, res) => {
         .join(" ");
     };
     description = toTitleCase(description);
-
-    // Save product to database
+    
     const product = new ProductModel({
       name,
       brand,
@@ -138,15 +84,23 @@ export const addProducts = async (req, res) => {
       stock,
       blocked: block === "true",
       categoryId: category,
-      images, // Save image paths
+      images,
     });
 
     await product.save();
     req.session.toast = "Product added successfully";
-    res.redirect("/admin/products");
+    
+    return res.status(200).json({ ok: true, msg: "Product added successfully", red: "/admin/products" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "An error occurred while adding the product" });
+    
+    res.status(500).send(`
+      <script>
+        alert("An error occurred while adding the product! Please try again.");
+        window.location.reload();
+      </script>
+    `);
+    
   }
 };
 
@@ -200,6 +154,7 @@ export const renderEditPage = async (req, res) => {
 };
 export const editProducts = async (req, res) => {
   let {
+    id,
     name,
     brand,
     sizes,
@@ -210,12 +165,19 @@ export const editProducts = async (req, res) => {
     block,
     color,
   } = req.body;
-  brand = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
-  //  description= description.charAt(0).toUpperCase() + description.slice(1).toLowerCase();
-  name = name.toUpperCase();
-  color = color.toUpperCase();
+ console.log('====================================');
+ console.log(brand);
+ console.log('====================================');
+  const images = req.files ? req.files.map((file) => file.path) : [];
+ 
+  // Console logs for debugging (optional)
+  // console.log('Body:', req.body);
+  // console.log('Files:', images);
+
+  brand = brand.charAt(0).toUpperCase() + brand.slice(1).toLowerCase();
   name = name.toUpperCase();
   color = color.charAt(0).toUpperCase() + color.slice(1).toLowerCase();
+
   const toTitleCase = (str) => {
     return str
       .toLowerCase()
@@ -225,34 +187,38 @@ export const editProducts = async (req, res) => {
   };
 
   description = toTitleCase(description);
+  
   try {
-    const updatedProduct = await ProductModel.findByIdAndUpdate(
-      id,
-      {
-        name,
-        brand,
-        availableSize: sizes.split(",").map((size) => size.trim()),
-        price,
-        description,
-        color,
-        stock,
-        blocked: block === "true",
-        categoryId: category,
-      },
-      { new: true }
-    );
+    const updateData = {
+      name,
+      brand,
+      availableSize: sizes.split(",").map((size) => size.trim()),
+      price,
+      description,
+      color,
+      stock,
+      blocked: block === "true",
+      categoryId: category,
+    };
 
+   
+    if (images.length > 0) {
+      updateData.images = images;
+    }
+
+  
+    const updatedProduct = await ProductModel.findByIdAndUpdate(id, updateData, { new: true });
+
+    
     if (!updatedProduct) {
       req.session.toast = "Product not found";
-      return res.redirect("/admin/prodects");
+      return res.redirect("/admin/products");
     }
 
     req.session.toast = "Product updated successfully";
-    res.redirect("/admin/prodects");
+    res.status(200).json({ ok: true, msg: "Edited successfully", red: "/admin/products" });
   } catch (error) {
     console.error(error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while updating the product" });
+    res.status(500).json({ error: "An error occurred while updating the product" });
   }
 };

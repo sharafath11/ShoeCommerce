@@ -69,7 +69,7 @@
                   <tbody id="userTableBody">
                     <% Users.forEach((user, index) => { %>
                       <tr data-username="<%= user.username.toLowerCase() %>" data-email="<%= user.email.toLowerCase() %>">
-                        <td><%= index + 1 %></td>
+                        <td><%= index  %></td>
                         <td><%= user.username %></td>
                         <td><%= user.email %></td>
                         <td><%= user.googleUser %></td>

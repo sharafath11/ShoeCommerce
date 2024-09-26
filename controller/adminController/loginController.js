@@ -1,7 +1,12 @@
 import jwt from 'jsonwebtoken'
 
 export const adminLogin = (req, res) => {
-    res.render("admin/login");
+
+    if(!req.session.token){
+        return res.render("admin/login");
+    }
+    return res.redirect("/admin");
+      
 };
 
 export const adminLoginPost = (req, res) => {
@@ -25,14 +30,15 @@ export const adminLoginPost = (req, res) => {
             msg: "Login successful",
             red:"/admin"
         });
-      
+       
     } else {
         res.status(401).json({ success: false, msg: "Somthing wrong" });
     }
 };
 
-// Admin logout route
+
 export const adminLogout = (req, res) => {
-    // Just redirect or clear client-side token, as JWT is stateless
-    res.redirect("/admin");
+    
+    req.session.token=''
+    res.redirect("/");
 };

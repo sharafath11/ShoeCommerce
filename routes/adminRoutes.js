@@ -4,6 +4,7 @@ import { getUsers, isBlockFn } from "../controller/adminController/userControlle
 import { adminLogin, adminLoginPost, adminLogout } from "../controller/adminController/loginController.js";
 import {  verifyToken } from "../controller/adminController/protectRoutes.js";
 import { getOrders } from "../controller/adminController/orderController.js";
+import noCache from "../middleware/cachClear.js";
 import { addProducts,editProducts,productListUnlist,renderAddProdects,renderEditPage,renderProductsPage } from "../controller/adminController/prodectController.js";
 import { addCategory, categorieBlock, editCategory, getAddCategory, getCategory, getEditCategory } from "../controller/adminController/categoryController.js";
 import multer from "multer";
@@ -22,8 +23,8 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 router.get("/",verifyToken, getAdmin)
-router.get("/login",adminLogin)
-router.post("/login",adminLoginPost)
+router.get("/login",noCache,adminLogin)
+router.post("/login",noCache,adminLoginPost)
 router.post("/logout",verifyToken,adminLogout)
 router.get("/orders",verifyToken,getOrders)
 router.get("/category",verifyToken,getCategory)
@@ -38,7 +39,7 @@ router.post("/products/add-products/",upload.array('croppedImages', 3),addProduc
 router.post('/products/list/:id',verifyToken,productListUnlist)
 router.post('/products/unlist/:id',verifyToken,productListUnlist)
 router.get("/products/edit/:id",verifyToken,renderEditPage)
-router.post("/products/edit-products",verifyToken,editProducts)
+router.post("/products/edit-products",verifyToken,upload.array('croppedImages', 3),editProducts)
 router.get("/users",verifyToken,getUsers)
 router.post('/users/toggle-block/:id',verifyToken,isBlockFn);
 
