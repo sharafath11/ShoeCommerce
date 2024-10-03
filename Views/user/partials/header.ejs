@@ -41,7 +41,7 @@
                         <li class="nav-item">
                             <a href="/wishlist" class="cart">
                                 <div class="cart-container">
-                                    <span class="qty" id="w-qty" ><%= WishlistQty %></span>
+                                    <span class="qty" id="w-qty" value="<%= WishlistQty %>" ><%= WishlistQty %></span>
                                     <span class="ti-heart"></span>
                                 </div>
                             </a>
@@ -52,7 +52,7 @@
                         <a href="/cart" class="cart">
                             <div class="cart-container">
                                 <% if (cartQty > 0) { %>
-                                    <span class="qty" id="cart-quantity" ><%= cartQty %></span>
+                                    <span class="qty" id="cart-quantity" value="<%= cartQty %>" ><%= cartQty %></span>
                                 <% } %>
                                 <span class="ti-bag"></span>
                             </div>
@@ -68,19 +68,19 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <% if (user) { %> 
-                                    <%= user.username %> <!-- Display username if user is logged in -->
+                                    <%= user.username %> 
                                 <% } else { %>
-                                    LOGIN <!-- Display "Login" if user is not logged in -->
+                                    LOGIN 
                                 <% } %>
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <% if (user) { %> 
-                                    <!-- Show the Profile link if user is logged in -->
+                                   
                                     <a class="dropdown-item" href="/profile">Profile</a>
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="/logout">Logout</a> <!-- Logout option for logged-in users -->
+                                    <a class="dropdown-item" href="/logout">Logout</a> 
                                 <% } else { %>
-                                    <!-- Show the Login link if user is not logged in -->
+                                   
                                     <a class="dropdown-item" href="/login">Login</a>
                                 <% } %>
                             </div>

@@ -18,11 +18,17 @@ export const loginPost = async (req, res) => {
 
   try {
     const user = await userModel.findOne({ email });
-
+    
     if (!user) {
       return res.status(400).json({
         success: false,
-        message: "User not found!",
+        msg: "User not found!",
+      });
+    }
+    if(user.block){
+      return res.status(400).json({
+        success: false,
+        msg: "This user is blocked!",
       });
     }
 

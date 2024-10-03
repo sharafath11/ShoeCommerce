@@ -28,6 +28,9 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    phone:{
+        type:Number
+    },
     googleId: {
         type: String,
         default: null

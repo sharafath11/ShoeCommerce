@@ -42,7 +42,7 @@
   <body>
     <div class="container-fluid">
       <div class="row">
-        <!-- Sidebar -->
+      
         <%- include('partials/sidebar') %>
         
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
@@ -53,7 +53,7 @@
             <div class="d-flex justify-content-between mb-3">
                 <input class="form-control w-25" type="text" placeholder="Search users..." id="searchInput">
               </div>
-            <!-- User Management Panel -->
+            
             <div class="card shadow-sm mb-4">
               <div class="card-body">
                 <table class="table" id="usersTable">
@@ -87,21 +87,21 @@
           </main>
           <nav aria-label="Page navigation example">
             <ul class="pagination justify-content-center">
-                <!-- Previous Button -->
+               
                 <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
                     <a class="page-link" href="/admin/users?page=<%= currentPage - 1 %>" tabindex="-1" aria-disabled="true">
-                        <i class="bi bi-arrow-left">Previous</i> <!-- Bootstrap icon -->
+                        <i class="bi bi-arrow-left">Previous</i> 
                     </a>
                 </li>
         
-                <!-- Page Numbers -->
+              
                 <% for (let i = 1; i <= totalPages; i++) { %>
                     <li class="page-item <%= currentPage === i ? 'active' : '' %>">
                         <a class="page-link" href="/admin/users?page=<%= i %>"><%= i %></a>
                     </li>
                 <% } %>
         
-                <!-- Next Button -->
+              
                 <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
                     <a class="page-link" href="/admin/users?page=<%= currentPage + 1 %>">
                         <i class="bi bi-arrow-right">Next</i> <!-- Bootstrap icon -->
@@ -112,7 +112,7 @@
       </div>
     </div>
 
-    <!-- Toastify JS -->
+   
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
     <script>
@@ -120,9 +120,9 @@
     document.querySelectorAll('.toggle-block-btn').forEach(button => {
         button.addEventListener('click', async function() {
             const userId = this.getAttribute('data-id');
-            const isBlocking = this.textContent.trim() === 'Block'; // Check the current action
+            const isBlocking = this.textContent.trim() === 'Block'; 
 
-            // Confirmation dialog
+           
             const confirmationMessage = isBlocking ? 
                 'Are you sure you want to block this user?' : 
                 'Are you sure you want to unblock this user?';
@@ -130,7 +130,7 @@
             const confirmed = confirm(confirmationMessage);
 
             if (!confirmed) {
-                return; // Stop if the admin cancels the action
+                return; 
             }
 
             try {
@@ -143,11 +143,11 @@
 
                 const result = await response.json();
                 if (result.ok) {
-                    // Update the button label and class based on the new block status
+                    
                     this.textContent = result.block ? 'Unblock' : 'Block';
                     this.className = `btn btn-sm btn-${result.block ? 'danger' : 'success'} toggle-block-btn`;
 
-                    // Show toast notification
+                   
                     showToast(`User ${result.block ? 'blocked' : 'unblocked'} successfully`);
                 }
             } catch (error) {
@@ -161,11 +161,11 @@ function showToast(message) {
     Toastify({
         text: message,
         duration: 3000,
-        gravity: 'top', // Toast position
-        position: 'right', // Toast location
-        backgroundColor: '#333', // Background color
-        stopOnFocus: true, // Stop on focus
-        close: true // Show close button
+        gravity: 'top', 
+        position: 'right', 
+        backgroundColor: '#333', 
+        stopOnFocus: true,
+        close: true 
     }).showToast();
 }
 

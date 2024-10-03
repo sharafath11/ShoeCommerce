@@ -1,25 +1,14 @@
 import jwt from "jsonwebtoken";
-import userModel from "../../models/userModel.js";
-import { verifyUser } from "./verifyUser.js";
+import userModel from "../models/userModel.js";
+import { logoutFn } from "../controller/userConteroller/logoutController.js";
+
 
 export const protectedHand = async (req, res, next) => {
   const token = req.session?.token;
   const userLogged = req.session?.user;
   if(!userLogged){
-    // return res.status(202).json({success:false,msg:"user not Login"})
-    return res.send(`
-      <html>
-          <head>
-              <title>Alert</title>
-          </head>
-          <body>
-              <script>
-                  alert("Please login");
-                  window.location.href = "/login"; 
-              </script>
-          </body>
-      </html>
-  `);
+   return res.redirect("/ShowLoginMsg")
+  
   }
     
     const user = await userModel.findById(userLogged._id);
@@ -34,8 +23,7 @@ export const protectedHand = async (req, res, next) => {
 
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
-      console.log("Token verification failed:", err);
-     verifyUser();
+      logoutFn()
       
     }
 

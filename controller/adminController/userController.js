@@ -8,7 +8,7 @@ export const getUsers=async(req,res)=>{
         const skip = (page - 1) * limit;
     
        
-        const users = await userModel.find()
+        const users = await userModel.find().sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit);
     
@@ -43,6 +43,6 @@ export const isBlockFn= async (req, res) => {
         res.json({ ok: true, block: user.block,msg:"Are you sure " });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ success: false, error: 'An error occurred while updating block status' });
+        res.status(500).json({ ok:false, error: 'An error occurred while updating block status' });
     }
 }

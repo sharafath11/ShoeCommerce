@@ -30,6 +30,7 @@
     <link rel="stylesheet" href="css/magnific-popup.css">
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 <style>
     .cart-image {
@@ -72,7 +73,7 @@
                                 <th scope="col">Price</th>
                                 <th scope="col">Quantity</th>
                                 <th scope="col">Total</th>
-                                <th scope="col">Action</th> <!-- New Action column -->
+                                <th scope="col">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -102,7 +103,7 @@
                                 </td>
                                 <td class="total-price">$<%= product.productId.price * product.quantity %></td> <!-- Total price cell -->
                                 <td>
-                                    <!-- try ajax -->
+                               
                                     <button class="btn btn-danger remove-cart-btn" data-id="<%= product.productId._id %>">Remove</button>
                                 </td>
                             </tr>
@@ -133,8 +134,8 @@
                                 <td></td>
                                 <td>
                                     <div class="checkout_btn_inner d-flex align-items-center">
-                                        <a class="gray_btn" href="#">Continue Shopping</a>
-                                        <a class="primary-btn" href="#">Proceed to checkout</a>
+                                        <a class="gray_btn" href="/">Continue Shopping</a>
+                                        <a class="primary-btn" href="/checkout">Proceed to checkout</a>
                                     </div>
                                 </td>
                             </tr>
@@ -163,108 +164,123 @@
     <script src="js/main.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 </body>
-
-</script>
-<!-- <% if (typeof message !== undefined && message) { %>
-  <script>
-      document.addEventListener('DOMContentLoaded', function() {
-          function showToast(message) {
-              Toastify({
-                  text: message,
-                  duration: 2000, // duration in ms
-                  gravity: "top", // `top` or `bottom`
-                  position: "right", // `left`, `center` or `right`
-                  backgroundColor: "#333", // background color
-                  stopOnFocus: true // stop on focus
-              }).showToast();
-          }
-          showToast('<%= message %>');
-      });
-  </script>
-  <% } %> -->
-  <script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+<script>
+  
     function updateQuantity(productId, action) {
         var qtyInput = document.getElementById('sst-' + productId);
         var currentQty = parseInt(qtyInput.value);
-    
+       
         if (action === 'increase') {
             currentQty++;
         } else if (action === 'decrease' && currentQty > 1) {
             currentQty--;
         } else {
-            return;
+            return; 
         }
-    
-       
-        qtyInput.value = currentQty;
-    
-       
-        $.ajax({
-            url: '/cart/update-quantity',  
-            method: 'POST',
-            data: {
-                productId: productId,
-                quantity: currentQty
-            },
-            success: function(response) {
-              
-                
+        function showToast(message) {
+                Toastify({
+                    text: message,
+                    duration: 2000,
+                    gravity: "top", 
+                    position: "right", 
+                    backgroundColor: "#333", 
+                    stopOnFocus: true
+                }).showToast();
+            }
+        if(currentQty<=3){
+          
+        }
+        else{
+            showToast('maimum qountyty is 3');
+            return
+        }
+        qtyInput.value = currentQty; 
+
+        axios.post('/cart/update-quantity', {
+            productId: productId,
+            quantity: currentQty
+        })
+        .then(function(response) {
+            if (response.data.success) {
                 var pricePerUnit = parseFloat(qtyInput.dataset.pricePerUnit); 
                 var totalCell = qtyInput.closest('tr').querySelector('.total-price'); 
-                totalCell.textContent = '$' + (currentQty * pricePerUnit).toFixed(2); // Update total price
-
-                // document.addEventListener('DOMContentLoaded', function() {
-                // })
+                totalCell.textContent = '$' + (currentQty * pricePerUnit).toFixed(2); 
                 console.log('Quantity and total price updated successfully');
-            },
-            error: function(error) {
-                console.error('Error updating quantity:', error);
-               
+            } else {
+                console.error('Error in response:', response.data.message);
+                
                 qtyInput.value = parseInt(qtyInput.value) + (action === 'increase' ? -1 : 1);
             }
-                // location.reload();  
-                // document.getElementsByClassName('qty').value=
-            
-           
+        })
+        .catch(function(error) {
+            console.error('Error updating quantity:', error);
+       
+            qtyInput.value = parseInt(qtyInput.value) + (action === 'increase' ? -1 : 1);
         });
     }
-    </script>
+    function confirmAction(title, text, confirmButtonText) {
+    return Swal.fire({
+        title: title,
+        text: text,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: confirmButtonText
+    });
+}
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
     
-    <script>
-        $(document).ready(function() {
-            $('.remove-cart-btn').on('click', function(event) {
-                var $button = $(this);
-                event.preventDefault(); // Prevent the default button action
-    
-                var productId = $(this).data('id'); // Get product ID from data attribute
-                function showToast(message) {
-              Toastify({
-                  text: message,
-                  duration: 2000, // duration in ms
-                  gravity: "top", // `top` or `bottom`
-                  position: "right", // `left`, `center` or `right`
-                  backgroundColor: "#333", // background color
-                  stopOnFocus: true // stop on focus
-              }).showToast();
-          }
-                $.ajax({
-                    url: '/cart/remove/' + productId, 
-                    method: 'DELETE',
-                    success: function(response) {
-                        if (response.success) {
-                            
-                            $button.closest('tr').remove();
-                            
-                            showToast(response.message)
-                        }
-                    },
-                    error: function(error) {
-                        console.error('Error removing item from cart:', error);
-                        alert('Failed to remove item from cart.');
+    const removeCartButtons = document.querySelectorAll('.remove-cart-btn');
+
+   
+    removeCartButtons.forEach(function(button) {
+        button.addEventListener('click', function(event) {
+            event.preventDefault(); 
+
+            const productId = button.getAttribute('data-id'); 
+
+            
+            function showToast(message) {
+                Toastify({
+                    text: message,
+                    duration: 2000,
+                    gravity: "top", 
+                    position: "right", 
+                    backgroundColor: "#333", 
+                    stopOnFocus: true
+                }).showToast();
+            }
+
+            
+            axios.delete('/cart/remove/' + productId)
+            .then(function(response) {
+                const data = response.data; 
+                if (data.success) {
+                 
+                    const tableRow = button.closest('tr');
+                    if (tableRow) {
+                        tableRow.remove();
                     }
-                });
+
+                    
+                    showToast(data.message);
+                }
+            })
+            .catch(function(error) {
+                console.error('Error removing item from cart:', error);
+                alert('Failed to remove item from cart.');
             });
         });
-    </script>
+    });
+});
+    
+</script>
+
     
 </html>

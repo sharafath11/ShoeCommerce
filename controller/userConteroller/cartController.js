@@ -22,6 +22,7 @@ export const cartRenderPage = async (req, res) => {
       WishlistQty,
       user,
       message: toastMessage,
+
       cartProducts: cart ? cart.products : [],
     });
   } catch (error) {
@@ -31,6 +32,9 @@ export const cartRenderPage = async (req, res) => {
 };
 
 export const removeCart = async (req, res) => {
+  console.log('====================================');
+  console.log('fjbgvhfudn');
+  console.log('====================================');
   try {
     const productId = req.params.id;
     const user = req.session.user;
@@ -121,5 +125,78 @@ export const addToCart = async (req, res) => {
   } catch (error) {
     console.error("Error adding to cart:", error);
     return res.status(500).json({ message: "Server error", error });
+  }
+};
+export const decreasCartQty = async (req, res) => {
+  console.log('diccc');
+  
+  try {
+    const userId = req.session.user._id;
+    const productId = req.body.productId;
+
+    const cart = await CartModel.findOne({ userId: userId });
+
+    if (!cart) {
+      return res.json({ success: false, message: "Cart not found" });
+    }
+
+    const product = cart.products.find(
+      (item) => item.productId.toString() === productId
+    );
+
+    if (!product) {
+      return res.json({ success: false, message: "Product not found in cart" });
+    }
+
+    if (product.quantity > 1) {
+      product.quantity -= 1;
+    } else {
+      cart.products = cart.products.filter(
+        (item) => item.productId.toString() !== productId
+      );
+    }
+
+    await cart.save();
+
+    const newTotal = cart.products.reduce(
+      (total, item) => total + item.price * item.quantity,
+      0
+    );
+
+    res.json({
+      success: true,
+      newQuantity: product.quantity || 0,
+      newTotal: newTotal,
+    });
+  } catch (error) {
+    console.error(error);
+    res.json({ success: false, message: "Error decreasing quantity" });
+  }
+};
+export const cartQtyIncreasing = async (req, res) => {
+  console.log('inccc');
+  
+  const { productId, userId } = req.body;
+
+  try {
+    let cart = await CartModel.findOne({ userId });
+
+    if (!cart) {
+      return res.status(404).json({ message: "Cart not found" });
+    }
+
+    let product = cart.products.find((p) => p.productId === productId);
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found in cart" });
+    }
+
+    product.quantity += 1;
+
+    await cart.save();
+
+    res.json({ message: "Quantity increased", product });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
   }
 };

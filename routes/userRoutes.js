@@ -7,14 +7,16 @@ import passport from "passport";
 import '../controller/userConteroller/googleAuth.js'
 import { authFailure, authProtected, authSuccess, catchError, googleAuthCallback, } from "../controller/userConteroller/googleAuth.js";
 import { getSingleProdect } from "../controller/userConteroller/getSingleProdect.js";
-import { getCheckout } from "../controller/userConteroller/checkoutController.js";
+import { checkoutFn, getCheckout } from "../controller/userConteroller/checkoutController.js";
 import { getContact } from "../controller/userConteroller/contactController.js";
-import {  addToCart, cartRenderPage, qtyHandler, removeCart} from "../controller/userConteroller/cartController.js";
-import {  protectedHand } from "../controller/userConteroller/protectedRoutes.js";
+import {  addToCart, cartQtyIncreasing, cartRenderPage, decreasCartQty, qtyHandler, removeCart} from "../controller/userConteroller/cartController.js";
+import {  protectedHand } from "../middleware/protectedRoutes.js";
 import { logoutFn } from "../controller/userConteroller/logoutController.js";
 import { removeWhislist, renderWishlistPage, whislistFn } from "../controller/userConteroller/whislistController.js";
 import noCache from "../middleware/cachClear.js";
 import { shopDetialsRender } from "../controller/userConteroller/shopeDetials.js";
+import { addAddress, getOrderReanderPage, profileRender, removeAddress, removeOrders, renderAddresPage, updateAddress, updateProfile } from "../controller/userConteroller/profileController.js";
+import { showLogin } from "../middleware/showLogin.js";
 
 const router=express.Router();
 
@@ -27,13 +29,14 @@ router.get('/auth/google', passport.authenticate('google', { scope: ['email', 'p
 router.get('/auth/google/callback',catchError,passport.authenticate('google', { session: false }),googleAuthCallback);
 router.get('/auth/google/success', authSuccess);
 router.get('/auth/google/failure', authFailure);
-
+router.get("/ShowLoginMsg",showLogin)
 router.get('/auth/protected', protectedHand,noCache, authProtected);
 router.get("/login",noCache,loginGetFn)
 router.post("/login",noCache,loginPost)
 router.get("/logout",logoutFn)
 // router.get("/category",getCategory)
 router.get("/checkout",protectedHand,getCheckout)
+router.post("/checkout",protectedHand,checkoutFn)
 router.get("/contact",getContact)
 router.post("/auth/google/login")
 router.get("/singleprodect/:id",getSingleProdect)
@@ -43,6 +46,16 @@ router.get("/remove-from-wishlist/:id",removeWhislist)
 router.get("/addToCart/:id",protectedHand,addToCart)
 router.get("/cart",protectedHand,cartRenderPage)
 router.delete("/cart/remove/:id",removeCart)
+// router.post('/cart/decrease-quantity',decreasCartQty)
+// router.post("/cart/increase-quantity",cartQtyIncreasing)
 router.post('/cart/update-quantity',qtyHandler );
-router.get("/shopDetials",shopDetialsRender)
+router.get("/shopDetials",shopDetialsRender);
+router.get("/profile",profileRender)
+router.post("/update-profile/:id",updateProfile);
+router.get("/address",renderAddresPage)
+router.post("/addAddress",addAddress);
+router.delete("/removeAddress/:id",removeAddress);
+router.post("/updateAddress",updateAddress);
+router.get("/orders",getOrderReanderPage)
+router.delete("/removeOrder/:id",removeOrders)
 export default router

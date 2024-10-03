@@ -3,7 +3,7 @@ import { getAdmin } from "../controller/adminController/homeController.js";
 import { getUsers, isBlockFn } from "../controller/adminController/userController.js";
 import { adminLogin, adminLoginPost, adminLogout } from "../controller/adminController/loginController.js";
 import {  verifyToken } from "../controller/adminController/protectRoutes.js";
-import { getOrders } from "../controller/adminController/orderController.js";
+import { getOrders, updateOrder } from "../controller/adminController/orderController.js";
 import noCache from "../middleware/cachClear.js";
 import { addProducts,editProducts,productListUnlist,renderAddProdects,renderEditPage,renderProductsPage } from "../controller/adminController/prodectController.js";
 import { addCategory, categorieBlock, editCategory, getAddCategory, getCategory, getEditCategory } from "../controller/adminController/categoryController.js";
@@ -27,6 +27,7 @@ router.get("/login",noCache,adminLogin)
 router.post("/login",noCache,adminLoginPost)
 router.post("/logout",verifyToken,adminLogout)
 router.get("/orders",verifyToken,getOrders)
+router.post("/updateOrder",verifyToken,updateOrder)
 router.get("/category",verifyToken,getCategory)
 router.get("/category/addcategory",verifyToken,getAddCategory)
 router.post("/category/add-category",verifyToken,addCategory)

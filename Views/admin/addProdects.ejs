@@ -328,9 +328,10 @@
 
     images.forEach((image, index) => {
         const blob = dataURItoBlob(image);
-        formData.append("croppedImages", blob, `image_${index}.jpeg`); // You must name the file here
+        formData.append(`croppedImages`, blob, `croppedImage_${index}.jpg`); 
     });
-
+    const okee=confirm("Are you sure add the prduct")
+    if(!okee) return 
     axios
         .post("/admin/products/add-products", formData, {
             headers: {

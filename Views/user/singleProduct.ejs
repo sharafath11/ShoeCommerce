@@ -4,19 +4,33 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Product Page</title>
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Page</title>
+
+
   <link rel="stylesheet" href="css/linearicons.css">
-  <link rel="stylesheet" href="css/font-awesome.min.css">
-  <link rel="stylesheet" href="css/themify-icons.css">
-  <link rel="stylesheet" href="css/bootstrap.css">
-  <link rel="stylesheet" href="css/owl.carousel.css"> 
-  <link rel="stylesheet" href="css/nice-select.css">
+  <link rel="stylesheet" href="/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/css/themify-icons.css">
+  <link rel="stylesheet" href="/css/bootstrap.css">
+  <link rel="stylesheet" href="/css/owl.carousel.css"> 
+  <link rel="stylesheet" href="/css/nice-select.css">
   <link rel="stylesheet" href="css/nouislider.min.css">
-  <link rel="stylesheet" href="css/ion.rangeSlider.css" />
-  <link rel="stylesheet" href="css/ion.rangeSlider.skinFlat.css" />
+  <link rel="stylesheet" href="css/ion.rangeSlider.css">
+  <link rel="stylesheet" href="css/ion.rangeSlider.skinFlat.css">
   <link rel="stylesheet" href="css/magnific-popup.css">
-  <link rel="stylesheet" href="css/main.css">
+  
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+
+</head>
+<body>
   <style>
     .product-title {
       font-size: 24px;
@@ -55,7 +69,7 @@
       color: gold;
     }
 
-    /* Thumbnail images style */
+   
     .thumbnails {
       margin-top: 20px;
     }
@@ -73,7 +87,7 @@
       border-color: #28a745;
     }
 
-    /* Zoom effect styles */
+
     .zoom-container {
       position: relative;
       display: inline-block;
@@ -82,7 +96,7 @@
     .zoomed-image {
       top: 0px;
     left: 550px;
-    /* right: 76px; */
+   
     position: absolute;
     border: 2px solid #28a745;
     border-radius: 5px;
@@ -94,48 +108,50 @@
     z-index: 10;
     }
 
-    /* Focus area styles */
+  
     .focus-area {
       position: absolute;
-    /* Dashed border for focus area */
-      border-radius: 50%; /* Circular shape */
-      width: 100px; /* Diameter of the focus area */
-      height: 100px; /* Diameter of the focus area */
-      pointer-events: none; /* Prevent mouse events on the focus area */
-      display: none; /* Hidden by default */
-      z-index: 20; /* Above the zoom image */
+ 
+      border-radius: 50%; 
+      width: 100px; 
+      height: 100px; 
+      pointer-events: none; 
+      display: none; 
+      z-index: 20;
     }
   </style>
-</head>
-<body>
   <%- include('partials/header') %>
-  <div class="container mt-4">
-    <div class="row">
-      <div class="col-md-6">
-        <!-- Product Image with Zoom -->
-        <div class="zoom-container">
+  
+  <div class="container mt-4 p-5">
+    <div class="row mt-5">
+      <div class="col-md-6 mt-5">        <div class="zoom-container">
           <img id="main-image" src="<%= product.images[0].replace('public', '') %>" alt="<%= product.name %>" class="img-fluid">
           <div id="zoomed-image" class="zoomed-image"></div>
-          <div id="focus-area" class="focus-area"></div> <!-- Added focus area -->
+          <div id="focus-area" class="focus-area"></div> 
         </div>
 
-        <!-- Thumbnails -->
+    
         <div class="thumbnails d-flex">
           <% product.images.slice(0, 4).forEach(image => { %>
             <img src="<%= image.replace('public', '') %>" alt="<%= product.name %>" class="thumbnail-img">
           <% }) %>
         </div>
       </div>
-
-      <div class="col-md-6">
+      
+      <div class="col-md-6 p-5">
         <!-- Product Details -->
         <h1 class="product-title"><%= product.name %></h1>
         <p class="product-price">$ <%= product.price %></p>
+        <% if (product.categoryId) { %>
+          <span value="<%= product.categoryId._id %>" >
+              <%= product.categoryId.name %>
+          </span>
+      <% } %>
         <p class="product-description">
           <%= product.description %>
         </p>
-
-        <!-- Size Options -->
+        
+      
         <% product.availableSize.forEach((sizeObj, index) => { %>
           <div class="form-check form-check-inline">
             <input class="form-check-input" type="radio" name="sizeOptions" id="<%= sizeObj.size.toString().toLowerCase() %>" value="<%= sizeObj.size.toString().toLowerCase() %>" <%= index === 0 ? 'checked' : '' %>>
@@ -150,7 +166,7 @@
           <button class="btn btn-outline-secondary" type="button" id="button-plus">+</button>
         </div>
 
-        <button class="btn btn-dark w-100">Add to Cart</button>
+        <button class="btn btn-dark w-100"  onclick="addToCart(event,'<%= product._id %>')">Add to Cart</button>
       </div>
     </div>
 
@@ -178,10 +194,28 @@
     </div>
 
   </div>
-
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-
+ 
+  <script src="js/vendor/jquery-2.2.4.min.js"></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"
+    integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+    crossorigin="anonymous"
+  ></script>
+  <script src="js/vendor/bootstrap.min.js"></script>
+  <script src="js/jquery.ajaxchimp.min.js"></script>
+  <script src="js/jquery.nice-select.min.js"></script>
+  <script src="js/jquery.sticky.js"></script>
+  <script src="js/nouislider.min.js"></script>
+  <script src="js/countdown.js"></script>
+  <script src="js/jquery.magnific-popup.min.js"></script>
+  <script src="js/owl.carousel.min.js"></script>
+  <!--gmaps Js-->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjCGmQ0Uq4exrzdcL6rvxywDDOvfAu6eE"></script>
+  <script src="js/gmaps.min.js"></script>
+  <script src="js/main.js"></script>
+ 
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>  
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
   <script>
     document.getElementById('button-minus').addEventListener('click', function() {
       var input = document.getElementById('input-value');
@@ -197,44 +231,84 @@
       input.value = `${currentValue + 1}`;
     });
 
-    // Change main image when thumbnail is clicked
+
     document.querySelectorAll('.thumbnail-img').forEach(img => {
       img.addEventListener('click', function() {
         const mainImage = document.getElementById('main-image');
         const zoomedImage = document.getElementById('zoomed-image');
         mainImage.src = this.src;
-        zoomedImage.style.backgroundImage = `url('${this.src}')`; // Update zoom image
+        zoomedImage.style.backgroundImage = `url('${this.src}')`; 
       });
     });
 
-    // Zoom functionality
+   
     const mainImage = document.getElementById('main-image');
     const zoomedImage = document.getElementById('zoomed-image');
     const focusArea = document.getElementById('focus-area');
 
     mainImage.addEventListener('mousemove', function(e) {
       const rect = mainImage.getBoundingClientRect();
-      const x = e.clientX - rect.left; // Mouse X position
-      const y = e.clientY - rect.top; // Mouse Y position
+      const x = e.clientX - rect.left; 
+      const y = e.clientY - rect.top;
 
-      // Show zoomed area
       zoomedImage.style.display = 'block';
       zoomedImage.style.backgroundImage = `url('${mainImage.src}')`;
 
-      // Position the focus area
+  
       focusArea.style.display = 'block';
-      focusArea.style.left = `${e.pageX - 50}px`; // Center focus area
-      focusArea.style.top = `${e.pageY - 50}px`; // Center focus area
+      focusArea.style.left = `${e.pageX - 50}px`; 
+      focusArea.style.top = `${e.pageY - 50}px`;
 
-      // Calculate zoomed image position
-      const zoomFactor = 3; // Adjust this to control the zoom level
+      
+      const zoomFactor = 3; 
       zoomedImage.style.backgroundPosition = `-${(x * zoomFactor) - 200}px -${(y * zoomFactor) - 140}px`;
     });
 
     mainImage.addEventListener('mouseleave', function() {
       zoomedImage.style.display = 'none'; 
-      focusArea.style.display = 'none'; // Hide focus area
+      focusArea.style.display = 'none';
     });
   </script>
+  <script>
+    function addToCart(event,productId) {
+      console.log('====================================');
+      console.log(productId);
+      console.log('====================================');
+        console.log('Adding product to cart');
+        axios.get(`/addToCart/${productId}`)
+        .then(function(response) {  
+            if (response.data.success) {
+                showToast(response.data.message);
+                return updateCartQuantity();
+            } else {
+                if(response.data.message){
+                    return showToast(response.data.message);
+                } else {
+                    window.location.href='/ShowLoginMsg';
+                }
+            }
+        })
+        .catch(function(error) {
+            showToast('Please login :)');
+            console.log(error);
+        });
+    }
+
+    function showToast(message) {
+        Toastify({
+            text: message,
+            duration: 2000,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "#333",
+            stopOnFocus: true
+        }).showToast();
+    }
+
+    function updateCartQuantity() {
+        let currentCartQty = parseInt(document.getElementById('cart-quantity').innerText);
+        document.getElementById('cart-quantity').innerText = currentCartQty + 1;
+    }
+</script>
 </body>
 </html>

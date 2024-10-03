@@ -1,25 +1,25 @@
 <!DOCTYPE html>
 <html lang="zxx" class="no-js">
   <head>
-    <!-- Mobile Specific Meta -->
+  
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-    <!-- Favicon -->
+    
     <link rel="shortcut icon" href="img/fav.png" />
-    <!-- Author Meta -->
+   
     <meta name="author" content="CodePixar" />
-    <!-- Meta Description -->
+    
     <meta name="description" content="" />
-    <!-- Meta Keyword -->
+ 
     <meta name="keywords" content="" />
-    <!-- Meta character set -->
+    
     <meta charset="UTF-8" />
-    <!-- Site Title -->
+   
     <title>ST SHOES</title>
 
-    <!-- CSS Files -->
+    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <link rel="stylesheet" href="css/linearicons.css" />
     <link rel="stylesheet" href="css/font-awesome.min.css" />
@@ -600,11 +600,11 @@
           function showToast(message) {
               Toastify({
                   text: message,
-                  duration: 2000, // duration in ms
-                  gravity: "top", // `top` or `bottom`
-                  position: "right", // `left`, `center` or `right`
-                  backgroundColor: "#333", // background color
-                  stopOnFocus: true // stop on focus
+                  duration: 2000, 
+                  gravity: "top",
+                  position: "right", 
+                  backgroundColor: "#333", 
+                  stopOnFocus: true 
               }).showToast();
           }
           showToast('<%= message %>');
@@ -614,29 +614,31 @@
  
 
   <script>
+    
     function addToCart(productId) {
         console.log('Adding product to cart');
         
-        $.ajax({
-            url: `/addToCart/${productId}`,  
-            method: 'GET',
-            success: function(response) {
-                
-                showToast(response.message);
-                if (response.success) {
-                    updateCartQuantity();
+        axios.get(`/addToCart/${productId}`)
+        .then(function(response) {  
+            if (response.data.success) {
+                showToast(response.data.message);
+               return updateCartQuantity();
+            } else {
+                if(response.data.message){
+                  return showToast(response.data.message);
+                } 
+                else{
+                  window.location.href='/ShowLoginMsg'
                 }
-            },
-            error: function(xhr, status, error) {
-                
-                showToast('Please login :) ');
-                console.log(error);
-                
             }
+        })
+        .catch(function(error) {
+            // showToast('Please login :)');
+            console.log(error);
         });
     }
 
-    // Function to show toast notification
+    
     function showToast(message) {
         Toastify({
             text: message,
@@ -648,52 +650,57 @@
         }).showToast();
     }
 
-    // Function to update the cart quantity
+    
     function updateCartQuantity() {
-        // Get the current cart quantity
-        let currentCartQty = parseInt($('#cart-quantity').text());
-        
-       
-        $('#cart-quantity').text(currentCartQty + 1);
+        let currentCartQty = parseInt(document.getElementById('cart-quantity').innerText);
+        document.getElementById('cart-quantity').innerText = currentCartQty + 1;
     }
 </script>
+
 <script>
-  function addToWishList(productId) {
-      $.ajax({
-          url: `/whislistAdd/${productId}`, 
-          method: 'POST', 
-          success: function(response) {
-              if (response.success) {
-                  showToast(response.message);
-                  addWishlistQty()
-              } else {
-                  showToast(response.message); 
-              }
-          },
-          error: function(xhr, status, error) {
-              showToast('Plese login :)');
-              // console.log(error);
-              // window.location.href = '/login';
-              
-          }
-      });
-  }
-  function addWishlistQty() {
-    // Get the current quantity from the DOM
-    let currentWtQty = parseInt($('#w-qty').text());
-    $('#w-qty').text(currentWtQty + 1);
-}
-  // Toast notification function (optional)
-  function showToast(message) {
-      Toastify({
-          text: message,
-          duration: 3000,
-          gravity: "top",
-          position: "right",
-          backgroundColor: "#333",
-          stopOnFocus: true
-      }).showToast();
-  }
-  </script>
+    function addToWishList(productId) {
+        axios.post(`/whislistAdd/${productId}`)
+        .then(function(response) {  
+            if (response.data.success) {
+                showToast(response.data.message);
+               return addWishlistQty();
+            } else {
+                if(response.data.message){
+                  return showToast(response.data.message);
+                } 
+                else{
+                  window.location.href='/ShowLoginMsg'
+                }
+            }
+        })
+        .catch(function(error) {
+            showToast('Please login :)');
+            console.log(error);
+           
+        });
+    }
+
+   
+    function addWishlistQty() {
+        let currentWtQty = parseInt(document.getElementById('w-qty').innerText);
+        document.getElementById('w-qty').innerText = currentWtQty + 1;
+    }
+
+   
+    function showToast(message) {
+        Toastify({
+            text: message,
+            duration: 3000,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "#333",
+            stopOnFocus: true
+        }).showToast();
+    }
+</script>
+
+<!-- Make sure to include Axios -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
   </body>
 </html>

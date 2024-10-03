@@ -318,6 +318,9 @@ document.getElementById("imageUpload").addEventListener("change", function (even
                             alert(response.data.msg);
                             window.location.href=response.data.red
                         }
+                        else{
+                             alert(response.data.error)
+                        }
                     })
                     .catch((error) => {
                         console.error(error);

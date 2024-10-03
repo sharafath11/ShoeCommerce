@@ -1,208 +1,408 @@
 <!DOCTYPE html>
 <html lang="zxx" class="no-js">
-
-<head>
+  <head>
     <!-- Mobile Specific Meta -->
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
     <!-- Favicon-->
-    <link rel="shortcut icon" href="img/fav.png">
+    <link rel="shortcut icon" href="img/fav.png" />
     <!-- Author Meta -->
-    <meta name="author" content="CodePixar">
+    <meta name="author" content="CodePixar" />
     <!-- Meta Description -->
-    <meta name="description" content="">
+    <meta name="description" content="" />
     <!-- Meta Keyword -->
-    <meta name="keywords" content="">
+    <meta name="keywords" content="" />
     <!-- meta character set -->
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <!-- Site Title -->
     <title>Karma Shop</title>
 
-    <!--
-            CSS
-            ============================================= -->
-            <link rel="stylesheet" href="css/linearicons.css">
-            <link rel="stylesheet" href="css/font-awesome.min.css">
-            <link rel="stylesheet" href="css/themify-icons.css">
-            <link rel="stylesheet" href="css/bootstrap.css">
-            <link rel="stylesheet" href="css/owl.carousel.css">
-            <link rel="stylesheet" href="css/nice-select.css">
-            <link rel="stylesheet" href="css/nouislider.min.css">
-            <link rel="stylesheet" href="css/ion.rangeSlider.css" />
-            <link rel="stylesheet" href="css/ion.rangeSlider.skinFlat.css" />
-            <link rel="stylesheet" href="css/magnific-popup.css">
-            <link rel="stylesheet" href="css/main.css">
-</head>
+    <link rel="stylesheet" href="/css/linearicons.css" />
+    <link rel="stylesheet" href="/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="/css/themify-icons.css" />
+    <link rel="stylesheet" href="/css/bootstrap.css" />
+    <link rel="stylesheet" href="/css/owl.carousel.css" />
+    <link rel="stylesheet" href="/css/nice-select.css" />
+    <link rel="stylesheet" href="/css/nouislider.min.css" />
+    <link rel="stylesheet" href="/css/ion.rangeSlider.css" />
+    <link rel="stylesheet" href="/css/ion.rangeSlider.skinFlat.css" />
+    <link rel="stylesheet" href="/css/magnific-popup.css" />
+    <link rel="stylesheet" href="/css/main.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+    />
+  </head>
 
-<body>
+  <body>
+    <style>
+      .primary-btn {
+        margin-top: 20px;
+        background-color: #3498db;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+      }
+
+      .primary-btn:hover {
+        background-color: #2980b9;
+      }
+
+      .form-check-input {
+        width: 20px;
+        height: 20px;
+        background-color: #f0f0f0;
+        border-radius: 3px;
+        border: 2px solid #ddd;
+      }
+
+      .form-check-input:checked {
+        background-color: #007bff;
+        border-color: #007bff;
+      }
+
+      .form-check-label {
+        padding-left: 8px;
+        font-size: 16px;
+      }
+    </style>
 
     <!-- Start Header Area -->
-	<%- include('partials/header') %>
-	<!-- End Header Area -->
+    <%- include('partials/header') %>
+    <!-- End Header Area -->
 
     <!-- Start Banner Area -->
     <section class="banner-area organic-breadcrumb">
-        <div class="container">
-            <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
-                <div class="col-first">
-                    <h1>Checkout</h1>
-                    <nav class="d-flex align-items-center">
-                        <a href="index.html">Home<span class="lnr lnr-arrow-right"></span></a>
-                        <a href="single-product.html">Checkout</a>
-                    </nav>
-                </div>
-            </div>
+      <div class="container">
+        <div
+          class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end"
+        >
+          <div class="col-first">
+            <h1>Checkout</h1>
+            <nav class="d-flex align-items-center">
+              <a href="/">Home<span class="lnr lnr-arrow-right"></span></a>
+              <a href="/checkout">Checkout</a>
+            </nav>
+          </div>
         </div>
+      </div>
     </section>
     <!-- End Banner Area -->
 
     <!--================Checkout Area =================-->
     <section class="checkout_area section_gap">
-        <div class="container">
-            <div class="returning_customer">
-                <div class="check_title">
-                    <h2>Returning Customer? <a href="#">Click here to login</a></h2>
-                </div>
-                <p>If you have shopped with us before, please enter your details in the boxes below. If you are a new
-                    customer, please proceed to the Billing & Shipping section.</p>
-                <form class="row contact_form" action="#" method="post" novalidate="novalidate">
-                    <div class="col-md-6 form-group p_star">
-                        <input type="text" class="form-control" id="name" name="name">
-                        <span class="placeholder" data-placeholder="Username or Email"></span>
-                    </div>
-                    <div class="col-md-6 form-group p_star">
-                        <input type="password" class="form-control" id="password" name="password">
-                        <span class="placeholder" data-placeholder="Password"></span>
-                    </div>
-                    <div class="col-md-12 form-group">
-                        <button type="submit" value="submit" class="primary-btn">login</button>
-                        <div class="creat_account">
-                            <input type="checkbox" id="f-option" name="selector">
-                            <label for="f-option">Remember me</label>
-                        </div>
-                        <a class="lost_pass" href="#">Lost your password?</a>
-                    </div>
-                </form>
-            </div>
-            <div class="cupon_area">
-                <div class="check_title">
-                    <h2>Have a coupon? <a href="#">Click here to enter your code</a></h2>
-                </div>
-                <input type="text" placeholder="Enter coupon code">
-                <a class="tp_btn" href="#">Apply Coupon</a>
-            </div>
-            <div class="billing_details">
-                <div class="row">
-                    <div class="col-lg-8">
-                        <h3>Billing Details</h3>
-                        <form class="row contact_form" action="#" method="post" novalidate="novalidate">
-                            <div class="col-md-6 form-group p_star">
-                                <input type="text" class="form-control" id="first" name="name">
-                                <span class="placeholder" data-placeholder="First name"></span>
-                            </div>
-                            <div class="col-md-6 form-group p_star">
-                                <input type="text" class="form-control" id="last" name="name">
-                                <span class="placeholder" data-placeholder="Last name"></span>
-                            </div>
-                            <div class="col-md-12 form-group">
-                                <input type="text" class="form-control" id="company" name="company" placeholder="Company name">
-                            </div>
-                            <div class="col-md-6 form-group p_star">
-                                <input type="text" class="form-control" id="number" name="number">
-                                <span class="placeholder" data-placeholder="Phone number"></span>
-                            </div>
-                            <div class="col-md-6 form-group p_star">
-                                <input type="text" class="form-control" id="email" name="compemailany">
-                                <span class="placeholder" data-placeholder="Email Address"></span>
-                            </div>
-                            <div class="col-md-12 form-group p_star">
-                                <select class="country_select">
-                                    <option value="1">Country</option>
-                                    <option value="2">Country</option>
-                                    <option value="4">Country</option>
-                                </select>
-                            </div>
-                            <div class="col-md-12 form-group p_star">
-                                <input type="text" class="form-control" id="add1" name="add1">
-                                <span class="placeholder" data-placeholder="Address line 01"></span>
-                            </div>
-                            <div class="col-md-12 form-group p_star">
-                                <input type="text" class="form-control" id="add2" name="add2">
-                                <span class="placeholder" data-placeholder="Address line 02"></span>
-                            </div>
-                            <div class="col-md-12 form-group p_star">
-                                <input type="text" class="form-control" id="city" name="city">
-                                <span class="placeholder" data-placeholder="Town/City"></span>
-                            </div>
-                            <div class="col-md-12 form-group p_star">
-                                <select class="country_select">
-                                    <option value="1">District</option>
-                                    <option value="2">District</option>
-                                    <option value="4">District</option>
-                                </select>
-                            </div>
-                            <div class="col-md-12 form-group">
-                                <input type="text" class="form-control" id="zip" name="zip" placeholder="Postcode/ZIP">
-                            </div>
-                            <div class="col-md-12 form-group">
-                                <div class="creat_account">
-                                    <input type="checkbox" id="f-option2" name="selector">
-                                    <label for="f-option2">Create an account?</label>
-                                </div>
-                            </div>
-                            <div class="col-md-12 form-group">
-                                <div class="creat_account">
-                                    <h3>Shipping Details</h3>
-                                    <input type="checkbox" id="f-option3" name="selector">
-                                    <label for="f-option3">Ship to a different address?</label>
-                                </div>
-                                <textarea class="form-control" name="message" id="message" rows="1" placeholder="Order Notes"></textarea>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="order_box">
-                            <h2>Your Order</h2>
-                            <ul class="list">
-                                <li><a href="#">Product <span>Total</span></a></li>
-                                <li><a href="#">Fresh Blackberry <span class="middle">x 02</span> <span class="last">$720.00</span></a></li>
-                                <li><a href="#">Fresh Tomatoes <span class="middle">x 02</span> <span class="last">$720.00</span></a></li>
-                                <li><a href="#">Fresh Brocoli <span class="middle">x 02</span> <span class="last">$720.00</span></a></li>
-                            </ul>
-                            <ul class="list list_2">
-                                <li><a href="#">Subtotal <span>$2160.00</span></a></li>
-                                <li><a href="#">Shipping <span>Flat rate: $50.00</span></a></li>
-                                <li><a href="#">Total <span>$2210.00</span></a></li>
-                            </ul>
-                            <div class="payment_item">
-                                <div class="radion_btn">
-                                    <input type="radio" id="f-option5" name="selector">
-                                    <label for="f-option5">Check payments</label>
-                                    <div class="check"></div>
-                                </div>
-                                <p>Please send a check to Store Name, Store Street, Store Town, Store State / County,
-                                    Store Postcode.</p>
-                            </div>
-                            <div class="payment_item active">
-                                <div class="radion_btn">
-                                    <input type="radio" id="f-option6" name="selector">
-                                    <label for="f-option6">Paypal </label>
-                                    <img src="img/product/card.jpg" alt="">
-                                    <div class="check"></div>
-                                </div>
-                                <p>Pay via PayPal; you can pay with your credit card if you don’t have a PayPal
-                                    account.</p>
-                            </div>
-                            <div class="creat_account">
-                                <input type="checkbox" id="f-option4" name="selector">
-                                <label for="f-option4">I’ve read and accept the </label>
-                                <a href="#">terms & conditions*</a>
-                            </div>
-                            <a class="primary-btn" href="#">Proceed to Paypal</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+      <div class="container">
+        <div class="cupon_area">
+          <div class="check_title">
+            <h2>
+              Have a coupon? <a href="#">Click here to enter your code</a>
+            </h2>
+          </div>
+          <input type="text" placeholder="Enter coupon code" />
+          <a class="tp_btn" href="#">Apply Coupon</a>
         </div>
+        <div class="billing_details">
+          <div class="row">
+            <div class="col-lg-8">
+              <h3>Billing Details</h3>
+              <!-- kaka -->
+
+              <form>
+                <% addresses.forEach((address, index) => { %>
+                <div class="address-group mb-4">
+                  <div
+                    class="d-flex justify-content-between align-items-center mb-3"
+                  >
+                    <h6>Address <%= index + 1 %> (<%= address.type %>)</h6>
+
+                    <input
+                      type="checkbox"
+                      name="selectedAddresses"
+                      id="check<%= index %>"
+                      value="<%= index %>"
+                    />
+                    <label for="check<%= index %>"></label>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-md-4">
+                      <label for="type<%= index %>" class="form-label"
+                        >Type</label
+                      >
+                      <input
+                        type="text"
+                        name="type"
+                        class="form-control"
+                        id="type<%= index %>"
+                        placeholder="Home"
+                        value="<%= address.type %>"
+                        required
+                      />
+                    </div>
+                    <div class="col-md-8">
+                      <label for="streetAddress<%= index %>" class="form-label"
+                        >Street Address</label
+                      >
+                      <input
+                        type="text"
+                        name="streetAddress"
+                        class="form-control"
+                        id="streetAddress<%= index %>"
+                        placeholder="123 Main St"
+                        value="<%= address.streetAddress %>"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <label for="city<%= index %>" class="form-label"
+                        >City</label
+                      >
+                      <input
+                        type="text"
+                        name="city"
+                        class="form-control"
+                        id="city<%= index %>"
+                        placeholder="City"
+                        value="<%= address.city %>"
+                        required
+                      />
+                    </div>
+                    <div class="col-md-6">
+                      <label for="state" class="form-label"
+                        >State/Province</label
+                      >
+                      <input
+                        type="text"
+                        name="state"
+                        class="form-control"
+                        id="state<%= index %>"
+                        value="<%= address.state %>"
+                        placeholder="state"
+                        required
+                      />
+                    </div>
+                    <div class="col-md-6">
+                      <label for="zip<%= index %>" class="form-label"
+                        >Zip Code</label
+                      >
+                      <input
+                        type="text"
+                        name="zip"
+                        class="form-control"
+                        id="zip<%= index %>"
+                        placeholder="Zip Code"
+                        value="<%= address.postalCode %>"
+                        required
+                      />
+                    </div>
+                    <div class="col-md-6">
+                      <label for="country" class="form-label">Country</label>
+                      <input
+                        type="text"
+                        name="country"
+                        class="form-control"
+                        id="country<%= index %>"
+                        value="<%= address.country %>"
+                        placeholder="United States"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <hr class="mt-4" />
+                </div>
+                <% }); %>
+              </form>
+
+              <!-- kakk kaynju -->
+              <h2>New Address</h2>
+              <form
+                id="addressForm"
+                onsubmit="return addAddress(event,'<%= user._id %>')"
+              >
+                <div class="row mb-3">
+                  <div class="col-md-4">
+                    <label for="type" class="form-label">Type</label>
+                    <input
+                      type="text"
+                      name="type"
+                      class="form-control"
+                      id="type"
+                      placeholder="Home"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-8">
+                    <label for="streetAddress" class="form-label"
+                      >Street Address</label
+                    >
+                    <input
+                      type="text"
+                      name="streetAddress"
+                      class="form-control"
+                      id="streetAddress"
+                      placeholder="123 Main St"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-md-4">
+                    <label for="city" class="form-label">City</label>
+                    <input
+                      type="text"
+                      name="city"
+                      class="form-control"
+                      id="city"
+                      placeholder="Anytown"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-4">
+                    <label for="state" class="form-label">State/Province</label>
+                    <input
+                      type="text"
+                      name="state"
+                      class="form-control"
+                      id="state"
+                      placeholder="ST"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-4">
+                    <label for="postalCode" class="form-label"
+                      >ZIP/Postal Code</label
+                    >
+                    <input
+                      type="text"
+                      name="postalCode"
+                      class="form-control"
+                      id="postalCode"
+                      placeholder="12345"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <label for="country" class="form-label">Country</label>
+                    <input
+                      type="text"
+                      name="country"
+                      class="form-control"
+                      id="country"
+                      placeholder="United States"
+                      required
+                    />
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary mt-3">
+                  Add Address
+                </button>
+              </form>
+            </div>
+
+            <div class="col-lg-4">
+              <div class="order_box">
+                <h2>Your Order</h2>
+                <ul class="list">
+                  <li>
+                    <a href="#">Product <span>Total</span></a>
+                  </li>
+                  <% cartItems.forEach((item, index) => { %>
+                    <!-- <% console.log(item.product. _id); %>  -->
+                    <input id="productId-<%=index%>" type="hidden" value="<%= item.product. _id%>">
+                  <li id="product-item-<%= index %>">
+                    <a href="/singleprodect/<%= item.product. _id%>">
+                      <strong id="product-name-<%= index %>"
+                        ><%= item.product.name %></strong
+                      >
+                      <span class="middle"
+                        >x
+                        <span id="product-quantity-<%= index %>"
+                          ><%= item.quantity %></span
+                        ></span
+                      >
+                      <span class="last" id="product-price-<%= index %>"
+                        >$<%= item.product.price * item.quantity %></span
+                      >
+                    </a>
+                  </li>
+                  <% }) %>
+                </ul>
+
+                <ul class="list list_2">
+                  <li>
+                    <a href="#"
+                      >Subtotal
+                      <span>
+                        $<%= cartItems.reduce((total, item) => total +
+                        (item.product.price * item.quantity), 0) %>
+                      </span></a
+                    >
+                  </li>
+                  <li>
+                    <a href="#">Shipping <span>Flat rate: $50.00</span></a>
+                  </li>
+                  <li>
+                    <a href="#"
+                      >Total
+                      <span>
+                        $<%= cartItems.reduce((total, item) => total +
+                        (item.product.price * item.quantity), 0) + 50 %>
+                      </span></a
+                    >
+                  </li>
+                </ul>
+                <div class="payment_item">
+                  <div class="radion_btn">
+                  
+
+                    <button
+                      class="primary-btn"
+                      onclick="checkoutHandler(event,'<%=cartItems %>')"
+                    >
+                      Proceed to CAHS ON DELIVERY
+                    </button>
+                  </div>
+                  <p>
+                    Please send a check to Store Name, Store Street, Store Town,
+                    Store State / County, Store Postcode.
+                  </p>
+                </div>
+                <div class="payment_item active">
+                  <div class="radion_btn">
+                    <input type="radio" id="f-option6" name="selector" />
+                    <label for="f-option6">Paypal</label>
+                    <img src="img/product/card.jpg" alt="" />
+                    <div class="check"></div>
+                  </div>
+                  <p>
+                    Pay via PayPal; you can pay with your credit card if you
+                    don’t have a PayPal account.
+                  </p>
+                </div>
+                <div class="creat_account">
+                  <input type="checkbox" id="f-option4" name="selector" />
+                  <label for="f-option4">I’ve read and accept the </label>
+                  <a href="#">terms & conditions*</a>
+                </div>
+                <a class="primary-btn" href="#">Proceed to Paypal</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
     <!--================End Checkout Area =================-->
 
@@ -210,10 +410,12 @@
     <%- include('partials/footer') %>
     <!-- End footer Area -->
 
-
     <script src="js/vendor/jquery-2.2.4.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
-        crossorigin="anonymous"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"
+      integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+      crossorigin="anonymous"
+    ></script>
     <script src="js/vendor/bootstrap.min.js"></script>
     <script src="js/jquery.ajaxchimp.min.js"></script>
     <script src="js/jquery.nice-select.min.js"></script>
@@ -225,8 +427,198 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjCGmQ0Uq4exrzdcL6rvxywDDOvfAu6eE"></script>
     <script src="js/gmaps.min.js"></script>
     <script src="js/main.js"></script>
-</body>
-<script>
-    
-</script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </body>
+  <script>
+    function checkoutHandler(e) {
+      e.preventDefault();
+      const selectedCheckboxes = document.querySelectorAll(
+        'input[name="selectedAddresses"]:checked'
+      );
+     
+      const addAddress = [];
+      const selectedAddresses = Array.from(selectedCheckboxes).map(
+        (checkbox) => {
+          const index = checkbox.value;
+
+          const address = {
+            type: document.getElementById(`type${index}`).value,
+            streetAddress: document.getElementById(`streetAddress${index}`)
+              .value,
+            city: document.getElementById(`city${index}`).value,
+            state: document.getElementById(`state${index}`).value,
+            zip: document.getElementById(`zip${index}`).value,
+            country: document.getElementById(`country${index}`).value,
+          };
+
+          addAddress.push(address);
+
+          return address;
+        }
+      );
+
+      const orderItems = gatherOrderData();
+
+      const datas = {
+        selectedAddresses: addAddress,
+        cartItems: orderItems,
+      };
+      if(selectedAddresses.length==0){
+        showToast('Please select a addres');
+        return
+      }
+      confirmAction(
+        "Are you sure?",
+        "Order the Products?",
+        "Yes, Order it!"
+      ).then((result) => {
+        if (result.isConfirmed) {
+          axios
+            .post("/checkout", datas)
+            .then((response) => {
+              if (response.data.ok) {
+                showToast(response.data.msg);
+                        setTimeout(() => {
+                            window.location.href=response.data.red;
+                        }, 1000);
+              } else {
+                showToast(response.data.msg);
+              }
+            })
+            .catch((error) => {
+              console.error("Checkout Error:", error);
+              showToast("Checkout failed. Please try again.");
+            });
+        }
+      });
+    }
+    function confirmAction(title, text, confirmButtonText) {
+      return Swal.fire({
+        title: title,
+        text: text,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: confirmButtonText,
+      });
+    }
+    function showToast(message) {
+      Toastify({
+        text: message,
+        duration: 2000,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "#333",
+        stopOnFocus: true,
+      }).showToast();
+    }
+    function isValidPincode(pincode) {
+      const indiaPinPattern = /^\d{6}$/;
+      return indiaPinPattern.test(pincode);
+    }
+    function gatherOrderData() {
+      const orderData = [];
+      const items = document.querySelectorAll('.list li[id^="product-item-"]');
+
+      items.forEach((item, index) => {
+        const productId=document.getElementById(`productId-${index}`).value
+        console.log('====================================');
+        console.log(productId,"uyhgujhbojkbhouhjbbh");
+        console.log('====================================');
+        const productName = document.getElementById(
+          `product-name-${index}`
+        ).innerText;
+        const quantity = document.getElementById(
+          `product-quantity-${index}`
+        ).innerText;
+        const price = document
+          .getElementById(`product-price-${index}`)
+          .innerText.replace("$", "");
+     
+        orderData.push({
+            productId,
+          name: productName,
+
+          quantity: parseInt(quantity, 10),
+          price: parseFloat(price),
+          total: parseFloat(price) * parseInt(quantity, 10),
+        });
+      });
+
+      return orderData;
+    }
+
+    function addAddress(event, userId) {
+    event.preventDefault(); 
+    const type = document.getElementById('type').value;
+    const streetAddress = document.getElementById('streetAddress').value;
+   const city = document.getElementById('city').value;
+   const state = document.getElementById('state').value;
+   const postalCode = document.getElementById('postalCode').value;
+   const country = document.getElementById('country').value;
+const formData = {
+    type: type,
+    streetAddress: streetAddress,
+    city: city,
+    state: state,
+    postalCode: postalCode,
+    country: country,
+    userId: userId 
+}
+
+if (!isValidPincode(postalCode)) { 
+        showToast("Invalid postal code");
+        return;
+    } 
+    if (type.length < 3) {
+        showToast("Type must be at least 3 characters long.");
+        return;
+    }
+    if (streetAddress.length < 5) {
+        showToast("Street address must be at least 5 characters long.");
+        return;
+    }
+    if (!/^[a-zA-Z\s]*$/.test(city)) {
+        showToast("City name should contain only letters.");
+        return;
+    }
+    if (!/^[a-zA-Z\s]*$/.test(state)) {
+        showToast("State name should contain only letters.");
+        return;
+    }
+    if (!/^[a-zA-Z\s]*$/.test(country)) {
+        showToast("Country name should contain only letters.");
+        return;
+    }
+    confirmAction('Are you sure?', 'Add the address?', 'Yes, Add it!')
+        .then((result) => {
+            console.log(result);
+            
+            if(result.isConfirmed){
+                axios.post('/addAddress', formData)
+                .then(response => {
+                   if(response.data.ok){
+                    showToast(response.data.msg)
+                    setTimeout(() => {
+                        window.location.reload()
+                    })
+                    
+                   }
+                   else{
+                    showToast(response.data.msg)
+                   }
+                })
+                .catch(error => {
+                    showToast('There was an error adding the address:', error);
+                });
+
+            return false;
+            }
+        });
+}
+  </script>
+
 </html>

@@ -39,7 +39,14 @@ export const renderAddProdects = async (req, res) => {
   try {
     const categories = await categoryModel.find({});
     res.render("admin/addProdects", { categories });
-  } catch (error) {}
+  } catch (error) {
+    res.status(500).send(`
+      <script>
+        alert("Server Error! ${error}");
+        window.location.reload();
+      </script>
+    `);
+  }
 };
 
 
@@ -52,7 +59,7 @@ export const addProducts = async (req, res) => {
     category,
     block,
     color,
-    availableSize,  // Receive size and stock array here
+    availableSize,  
   } = req.body;
 
   try {
@@ -75,13 +82,13 @@ export const addProducts = async (req, res) => {
     };
     description = toTitleCase(description);
 
-    // Parse the availableSize data
+    
     const parsedSizeStock = JSON.parse(availableSize);
 
     const product = new ProductModel({
       name,
       brand,
-      availableSize: parsedSizeStock,  // Store the parsed size and stock array
+      availableSize: parsedSizeStock,  
       price,
       description,
       color,
@@ -96,12 +103,7 @@ export const addProducts = async (req, res) => {
     return res.status(200).json({ ok: true, msg: "Product added successfully", red: "/admin/products" });
   } catch (error) {
     console.error(error);
-    res.status(500).send(`
-      <script>
-        alert("An error occurred while adding the product! Please try again.");
-        window.location.reload();
-      </script>
-    `);
+    return res.status(200).json({ ok: false, msg: `Somthing wrong `,  });
   }
 };
 
@@ -154,15 +156,11 @@ export const renderEditPage = async (req, res) => {
   }
 };
 export const editProducts = async (req, res) => {
-  console.log('====================================');
-  console.log(req.body); // Log incoming request body
-  console.log('====================================');
-
   let {
     id,
     name,
     brand,
-    sizes, // This will be a JSON string
+    sizes, 
     price,
     description,
     category,
@@ -170,15 +168,15 @@ export const editProducts = async (req, res) => {
     color,
   } = req.body;
 
-  // Handle file uploads, if any
+
   const images = req.files ? req.files.map((file) => file.path) : [];
 
-  // Convert brand, name, and color to the desired formats
+ 
   brand = brand.charAt(0).toUpperCase() + brand.slice(1).toLowerCase();
   name = name.toUpperCase();
   color = color.charAt(0).toUpperCase() + color.slice(1).toLowerCase();
 
-  // Function to convert description to Title Case
+
   const toTitleCase = (str) => {
     return str
       .toLowerCase()
@@ -190,32 +188,32 @@ export const editProducts = async (req, res) => {
   description = toTitleCase(description);
   
   try {
-    // Parse sizes JSON string to an array of objects
+
     let parsedSizes;
     if (sizes) {
-      parsedSizes = JSON.parse(sizes); // Parse the sizes JSON string into an array of objects
+      parsedSizes = JSON.parse(sizes); 
     } else {
-      parsedSizes = []; // Default to an empty array if sizes are not provided
+      parsedSizes = []; 
     }
 
-    // Prepare the data to update the product
+    
     const updateData = {
       name,
       brand,
-      availableSize: parsedSizes, // Use the parsed sizes directly
+      availableSize: parsedSizes, 
       price,
       description,
       color,
-      blocked: block === "true", // Convert block string to boolean
+      blocked: block === "true",
       categoryId: category,
     };
 
-    // Add images to updateData if there are any
+   
     if (images.length > 0) {
       updateData.images = images;
     }
 
-    // Find and update the product by ID
+   
     const updatedProduct = await ProductModel.findByIdAndUpdate(id, updateData, { new: true });
 
     if (!updatedProduct) {
@@ -223,7 +221,7 @@ export const editProducts = async (req, res) => {
       return res.redirect("/admin/products");
     }
 
-    // Set success message in session and send response
+   
     req.session.toast = "Product updated successfully";
     res.status(200).json({ ok: true, msg: "Edited successfully", red: "/admin/products" });
   } catch (error) {
