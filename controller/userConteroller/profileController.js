@@ -156,13 +156,13 @@ export const getOrderReanderPage=async(req,res)=>{
   req.session.cartQty = cartItem?.products?.length
   const cartQty=req.session.cartQty
   req.session.WishlistQty = WishlistQty;
-   const orders=await OrderModel.find({user:user._id});
+  const orders = await OrderModel.find({ user: user._id }).sort({ orderDate: -1 });
   res.render("user/orders",{WishlistQty,cartQty,user,orders});
 }
 export const removeOrders=async(req,res)=>{
   const  orderId=req.params.id
   try {
-    const result = await OrderModel.findByIdAndDelete(orderId);
+    const result = await OrderModel.findByIdAndUpdate(orderId,{isCanceld:true});
 
     if (!result) {
       return res.status(404).json({ ok: false, msg: "orders not found." });

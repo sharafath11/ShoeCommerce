@@ -88,6 +88,9 @@
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
                     <h1 class="h2">Orders Management</h1>
                 </div>
+                <div>
+                    <a href="/admin/orders/canceld">Cancled orders</a>
+                </div>
 
                 <!-- Orders Management Panel -->
                 <div class="card shadow-sm mb-4">
@@ -127,7 +130,7 @@
                                         
                                         <td>$<%= order.totalAmount %></td>
                                         <td class="dpa">
-                                            <a href="/orders/<%= order.id %>" class="btn btn-sm btn-primary">View</a>
+                                            <a href="/admin/order/singleOrder/<%= order.id %>" class="btn btn-sm btn-primary">View</a>
                                             <div class="custom-dropdown">
                                                 <form id="orderForm_<%= order.id %>">
                                                     <select id="orderStatus_<%= order.id %>" name="status" class="form-select form-select-sm">
@@ -184,7 +187,6 @@
                             badgeElement.textContent = 'Shipped';
                         }
                     }
-                    
                             showToast(response.data.msg, "success");
                         } else {
                             showToast(response.data.msg, "error");

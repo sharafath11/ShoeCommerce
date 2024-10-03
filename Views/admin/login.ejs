@@ -67,7 +67,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('login-form').addEventListener('submit', function(event) {
-                event.preventDefault(); // Prevent default form submission
+                event.preventDefault(); 
     
                 const email = document.getElementById('email').value;
                 const password = document.getElementById('password').value;
@@ -76,21 +76,20 @@
                     .then(function(response) {
                        
     
-                        // Assuming the token is in response.data.token
+                       
                         if (response.data.success) {
                             
     
-                            // Redirect to admin page
+                           
                             window.location.href = '/admin'; 
                         } else {
-                            // Handle unexpected response status
+                          
                             document.getElementById('error-message').textContent = 'Unexpected response status: ' + response.status;
                             document.getElementById('error-message').style.display = 'block';
                         }
                     })
                     .catch(function(error) {
-                        // Display error message based on status code
-                        if (error.response) {
+                    if (error.response) {
                             document.getElementById('error-message').textContent = error.response.data.message || 'An error occurred.';
                         } else if (error.request) {
                             document.getElementById('error-message').textContent = 'No response from the server. Please try again.';

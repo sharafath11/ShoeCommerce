@@ -14,6 +14,13 @@
         href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css"
         rel="stylesheet"
     />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<!-- SweetAlert JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- Toastify CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+<!-- Toastify JS -->
+<script src="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.js"></script>
     <style>
         .image-preview {
             width: 100%;
@@ -138,48 +145,59 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
-          let croppers = [];
-
-document.getElementById("imageUpload").addEventListener("change", function (event) {
-    const files = event.target.files;
-    const previewContainer = document.getElementById("imagePreviewContainer");
-
-    previewContainer.innerHTML = ""; 
-    if (files.length !== 3) {
-        alert("Please upload exactly 3 images.");
-        event.target.value = "";
-        return;
-    }
-
-    Array.from(files).forEach((file) => {
-        const reader = new FileReader();
-
-        reader.onload = function (e) {
-            const colDiv = document.createElement("div");
-            colDiv.className = "col-md-4";
-            const image = new Image();
-            image.src = e.target.result;
-            image.className = "image-preview";
-            colDiv.appendChild(image);
-            previewContainer.appendChild(colDiv);
-
-            const cropper = new Cropper(image, {
-                aspectRatio: 1,
-                autoCropArea: 1,
-                responsive: true,
-                scalable: false,
+        let croppers = [];
+    
+        // Function to show Toastify notifications
+        function showToast(message) {
+            Toastify({
+                text: message,
+                duration: 3000,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+            }).showToast();
+        }
+    
+        document.getElementById("imageUpload").addEventListener("change", function (event) {
+            const files = event.target.files;
+            const previewContainer = document.getElementById("imagePreviewContainer");
+    
+            previewContainer.innerHTML = ""; 
+            if (files.length !== 3) {
+                showToast("Please upload exactly 3 images.");
+                event.target.value = "";
+                return;
+            }
+    
+            Array.from(files).forEach((file) => {
+                const reader = new FileReader();
+    
+                reader.onload = function (e) {
+                    const colDiv = document.createElement("div");
+                    colDiv.className = "col-md-4";
+                    const image = new Image();
+                    image.src = e.target.result;
+                    image.className = "image-preview";
+                    colDiv.appendChild(image);
+                    previewContainer.appendChild(colDiv);
+    
+                    const cropper = new Cropper(image, {
+                        aspectRatio: 1,
+                        autoCropArea: 1,
+                        responsive: true,
+                        scalable: false,
+                    });
+    
+                    croppers.push(cropper);
+                };
+    
+                reader.readAsDataURL(file);
             });
-
-            croppers.push(cropper);
-        };
-
-        reader.readAsDataURL(file);
-    });
-});
+        });
+    
         const sizeContainer = document.getElementById('sizeContainer');
         const addSizeStockButton = document.getElementById('addSizeStock');
     
-     
         addSizeStockButton.addEventListener('click', () => {
             const sizeStockRow = document.createElement('div');
             sizeStockRow.classList.add('d-flex', 'mb-2', 'size-stock-row');
@@ -191,17 +209,8 @@ document.getElementById("imageUpload").addEventListener("change", function (even
     
             sizeContainer.appendChild(sizeStockRow);
     
-         
             sizeStockRow.querySelector('.remove-size-stock').addEventListener('click', () => {
                 sizeContainer.removeChild(sizeStockRow);
-            });
-        });
-    
-        
-        document.querySelectorAll('.remove-size-stock').forEach((button) => {
-            button.addEventListener('click', function () {
-                const row = this.closest('.size-stock-row');
-                sizeContainer.removeChild(row);
             });
         });
     
@@ -217,61 +226,62 @@ document.getElementById("imageUpload").addEventListener("change", function (even
             const productCategory = document.getElementById("category").value.trim();
     
             if (name === "" || brand === "" || color === "" || productDescription === "" || productPrice === "" || productCategory === "") {
-                alert("All fields are required!");
+                showToast("All fields are required!");
                 return;
             }
     
             if (productPrice < 1) {
-                alert("Price must be greater than zero.");
+                showToast("Price must be greater than zero.");
                 return;
             }
     
-         let isValidSizeStok=false
-         
+            let isValidSizeStock = false;
+    
             document.querySelectorAll('.size-stock-row').forEach(row => {
                 const size = row.querySelector('input[name="size"]').value.trim();
                 const stock = row.querySelector('input[name="stock"]').value.trim();
-                
-                
-                if(size<=1){
-                    isValidSizeStok=true
-                    alert("size must be greater than zero.");
-                
-                
+    
+                if (size <= 1) {
+                    isValidSizeStock = true;
+                    showToast("Size must be greater than zero.");
+                    return;
                 }
-                if(stock<0){
-                    isValidSizeStok=true
-                    alert("Stock not allowed lesthan zero :)")
-                    return
+                if (stock < 0) {
+                    isValidSizeStock = true;
+                    showToast("Stock not allowed less than zero.");
+                    return;
                 }
                 if (size && stock) {
                     availableSizes.push({ size, stock });
                 }
             });
-            if(isValidSizeStok) return 
+            if (isValidSizeStock) return;
     
-            
             if (availableSizes.length === 0) {
-                alert("Please add at least one size and stock.");
+                showToast("Please add at least one size and stock.");
                 return;
             }
-            if (!color || !/^[A-Za-z'\s]+$/.test(color)) {
-              alert("Color contains invalid characters or is empty.");
-              return;
-          }
-    if (!brand ||!/^[A-Za-z'\s]+$/.test(brand)) {
-        alert("Brand contains invalid characters or is empty.");
-        return;
-    }
-    if (!name||!/^[A-Za-z'0-9\s]+$/.test(name)) {
-        alert("Name contains invalid characters or is empty.");
-        return;
-    }   if (!productDescription||!/^[A-Za-z'0-9\s]+$/.test(productDescription)) {
-        alert("Description contains invalid characters or is empty.");
-        return;
-    }
     
-           
+            if (!color || !/^[A-Za-z'\s]+$/.test(color)) {
+                showToast("Color contains invalid characters or is empty.");
+                return;
+            }
+    
+            if (!brand || !/^[A-Za-z'\s]+$/.test(brand)) {
+                showToast("Brand contains invalid characters or is empty.");
+                return;
+            }
+    
+            if (!name || !/^[A-Za-z'0-9\s]+$/.test(name)) {
+                showToast("Name contains invalid characters or is empty.");
+                return;
+            }
+    
+            if (!productDescription || !/^[A-Za-z'0-9\s]+$/.test(productDescription)) {
+                showToast("Description contains invalid characters or is empty.");
+                return;
+            }
+    
             const formData = new FormData();
             formData.append("id", document.getElementById("id").value);
             formData.append("name", name);
@@ -281,55 +291,58 @@ document.getElementById("imageUpload").addEventListener("change", function (even
             formData.append("price", productPrice);
             formData.append("category", productCategory);
             
-          
             formData.append("sizes", JSON.stringify(availableSizes));
             croppers.forEach((cropper, index) => {
-
                 const croppedCanvas = cropper.getCroppedCanvas({
                     width: 300,
                     height: 300,
                 });
                 const croppedImage = croppedCanvas.toDataURL("image/jpeg");
-
+    
                 const byteString = atob(croppedImage.split(",")[1]);
                 const arrayBuffer = new ArrayBuffer(byteString.length);
                 const uint8Array = new Uint8Array(arrayBuffer);
-
+    
                 for (let i = 0; i < byteString.length; i++) {
                     uint8Array[i] = byteString.charCodeAt(i);
                 }
-
+    
                 const blob = new Blob([uint8Array], { type: "image/jpeg" });
                 formData.append(`croppedImages`, blob, `croppedImage_${index}.jpg`);
             });
-            
-              const okke=confirm("Are you sure edit the product :)");
-              if(!okke){
-                return
-              }
-                axios
-                    .post("/admin/products/edit-products", formData, {
-                        headers: {
-                            "Content-Type": "multipart/form-data",
-                        },
-                    })
-                    .then((response) => {
-                        if(response.data.ok){
-                            alert(response.data.msg);
-                            window.location.href=response.data.red
-                        }
-                        else{
-                             alert(response.data.error)
-                        }
-                    })
-                    .catch((error) => {
-                        console.error(error);
-                        alert("An error occurred while updating the product.");
-                        return
-                    });
+    
+            SweetAlert.fire({
+                title: "Are you sure?",
+                text: "Do you want to edit the product?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, edit it!",
+                cancelButtonText: "No, cancel!",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    axios
+                        .post("/admin/products/edit-products", formData, {
+                            headers: {
+                                "Content-Type": "multipart/form-data",
+                            },
+                        })
+                        .then((response) => {
+                            if (response.data.ok) {
+                                showToast(response.data.msg);
+                                window.location.href = response.data.red;
+                            } else {
+                                showToast(response.data.error);
+                            }
+                        })
+                        .catch((error) => {
+                            console.error(error);
+                            showToast("An error occurred while updating the product.");
+                        });
+                }
             });
-       ;
+        });
     </script>
+    
     
 </body>
 </html>

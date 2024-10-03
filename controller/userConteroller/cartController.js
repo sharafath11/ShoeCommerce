@@ -2,6 +2,7 @@ import ProductModel from "../../models/prodectsModel.js";
 import CartModel from "../../models/cartModel.js";
 
 export const cartRenderPage = async (req, res) => {
+ 
   try {
     const user = req.session.user;
     const WishlistQty = req.session.WishlistQty;
@@ -12,18 +13,21 @@ export const cartRenderPage = async (req, res) => {
       return res.redirect("/login");
     }
 
-    const cart = await CartModel.findOne({ userId: user._id }).populate(
-      "products.productId"
-    );
+   
+    const cart = await CartModel.findOne({ userId: user._id }).populate({
+      path: "products.productId",
+      select: "name price images availableSize", 
+    });
+
     const cartQty = req.session.cartQty;
 
+   
     res.render("user/cart", {
       cartQty,
       WishlistQty,
       user,
       message: toastMessage,
-
-      cartProducts: cart ? cart.products : [],
+      cartProducts: cart ? cart.products : [], 
     });
   } catch (error) {
     console.error("Error fetching cart:", error);
@@ -32,9 +36,6 @@ export const cartRenderPage = async (req, res) => {
 };
 
 export const removeCart = async (req, res) => {
-  console.log('====================================');
-  console.log('fjbgvhfudn');
-  console.log('====================================');
   try {
     const productId = req.params.id;
     const user = req.session.user;
@@ -59,18 +60,34 @@ export const removeCart = async (req, res) => {
   }
 };
 export const qtyHandler = async (req, res) => {
-  const { productId, quantity } = req.body;
+  const { productId, quantity, size } = req.body; 
   const user = req.session.user;
-
+console.log('====================================');
+console.log(size);
+console.log('====================================');
   try {
-    await CartModel.updateOne(
-      { userId: user._id, "products.productId": productId },
-      { $set: { "products.$.quantity": quantity } }
-    );
-    res.json({ success: true });
+
+      const product = await ProductModel.findById(productId);
+      if (!product) {
+          return res.status(404).json({ success: false, message: 'Product not found' });
+      }
+     
+      const sizeDetails = product.availableSize.find(s => s.size === parseInt(size));
+      if (!sizeDetails) {
+          return res.status(400).json({ success: false, message: 'Size not available' });
+      }
+      if (quantity > sizeDetails.stock) {
+          return res.status(400).json({ success: false, message: 'Requested quantity exceeds available stock.' });
+      }
+      await CartModel.updateOne(
+          { userId: user._id, "products.productId": productId, "products.size": size },
+          { $set: { "products.$.quantity": quantity } }
+      );
+
+      res.json({ success: true });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false });
+      console.error(error);
+      res.status(500).json({ success: false });
   }
 };
 export const addToCart = async (req, res) => {
@@ -128,8 +145,8 @@ export const addToCart = async (req, res) => {
   }
 };
 export const decreasCartQty = async (req, res) => {
-  console.log('diccc');
-  
+  console.log("diccc");
+
   try {
     const userId = req.session.user._id;
     const productId = req.body.productId;
@@ -174,8 +191,8 @@ export const decreasCartQty = async (req, res) => {
   }
 };
 export const cartQtyIncreasing = async (req, res) => {
-  console.log('inccc');
-  
+  console.log("inccc");
+
   const { productId, userId } = req.body;
 
   try {
@@ -198,5 +215,53 @@ export const cartQtyIncreasing = async (req, res) => {
     res.json({ message: "Quantity increased", product });
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
+  }
+};
+export const updateSize = async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const { size } = req.body; // Get the new size from the request body
+    const userId = req.session.user ? req.session.user._id : null;
+
+    if (!userId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User not logged in" });
+    }
+
+    // Find the cart of the logged-in user
+    const cart = await CartModel.findOne({ userId });
+
+    if (!cart) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Cart not found" });
+    }
+
+    // Find the product in the cart
+    const productInCart = cart.products.find(
+      (item) => item.productId.toString() === productId
+    );
+
+    if (!productInCart) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Product not found in cart" });
+    }
+
+    // Update the size of the product
+    productInCart.size = size;
+
+    // Save the updated cart
+    await cart.save();
+
+    return res
+      .status(200)
+      .json({ success: true, message: "Size updated successfully" });
+  } catch (error) {
+    console.error("Error updating size in cart:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Server error", error });
   }
 };

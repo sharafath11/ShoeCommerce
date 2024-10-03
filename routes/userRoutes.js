@@ -9,7 +9,7 @@ import { authFailure, authProtected, authSuccess, catchError, googleAuthCallback
 import { getSingleProdect } from "../controller/userConteroller/getSingleProdect.js";
 import { checkoutFn, getCheckout } from "../controller/userConteroller/checkoutController.js";
 import { getContact } from "../controller/userConteroller/contactController.js";
-import {  addToCart, cartQtyIncreasing, cartRenderPage, decreasCartQty, qtyHandler, removeCart} from "../controller/userConteroller/cartController.js";
+import {  addToCart, cartQtyIncreasing, cartRenderPage, decreasCartQty, qtyHandler, removeCart, updateSize} from "../controller/userConteroller/cartController.js";
 import {  protectedHand } from "../middleware/protectedRoutes.js";
 import { logoutFn } from "../controller/userConteroller/logoutController.js";
 import { removeWhislist, renderWishlistPage, whislistFn } from "../controller/userConteroller/whislistController.js";
@@ -36,7 +36,7 @@ router.post("/login",noCache,loginPost)
 router.get("/logout",logoutFn)
 // router.get("/category",getCategory)
 router.get("/checkout",protectedHand,getCheckout)
-router.post("/checkout",protectedHand,checkoutFn)
+router.post("/checkout/cod",protectedHand,checkoutFn)
 router.get("/contact",getContact)
 router.post("/auth/google/login")
 router.get("/singleprodect/:id",getSingleProdect)
@@ -49,6 +49,7 @@ router.delete("/cart/remove/:id",removeCart)
 // router.post('/cart/decrease-quantity',decreasCartQty)
 // router.post("/cart/increase-quantity",cartQtyIncreasing)
 router.post('/cart/update-quantity',qtyHandler );
+router.post("/cart/updateSize/:productId",updateSize)
 router.get("/shopDetials",shopDetialsRender);
 router.get("/profile",profileRender)
 router.post("/update-profile/:id",updateProfile);

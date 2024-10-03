@@ -13,6 +13,15 @@
       rel="stylesheet"
     />
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- SweetAlert CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<!-- SweetAlert JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- Toastify CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+<!-- Toastify JS -->
+<script src="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.js"></script>
+
 
     <style>
       body {
@@ -182,8 +191,10 @@
 
     <script>
       let croppers = [];
-  
-      document.getElementById("addSizeStockBtn").addEventListener("click", function () {
+
+      document
+        .getElementById("addSizeStockBtn")
+        .addEventListener("click", function () {
           const sizeContainer = document.getElementById("sizeContainer");
           const sizeStockRow = document.createElement("div");
           sizeStockRow.classList.add("d-flex", "align-items-center", "mb-2");
@@ -193,178 +204,218 @@
               <button type="button" class="btn btn-danger remove-size-stock">Remove</button>
           `;
           sizeContainer.appendChild(sizeStockRow);
-      });
-  
-      document.getElementById("sizeContainer").addEventListener("click", function (e) {
+        });
+
+      document
+        .getElementById("sizeContainer")
+        .addEventListener("click", function (e) {
           if (e.target.classList.contains("remove-size-stock")) {
-              e.target.parentElement.remove();
+            e.target.parentElement.remove();
           }
-      });
-  
-      document.getElementById("productImages").addEventListener("change", function (event) {
+        });
+
+      document
+        .getElementById("productImages")
+        .addEventListener("change", function (event) {
           const files = event.target.files;
-         
+
           const container = document.getElementById("imageCropContainer");
           container.innerHTML = "";
-  
+
           for (let i = 0; i < files.length; i++) {
-              const file = files[i];
-              const reader = new FileReader();
-  
-              const cropContainer = document.createElement("div");
-              cropContainer.classList.add("crop-container");
-  
-              const imagePreview = document.createElement("img");
-              imagePreview.classList.add("image-preview");
-              imagePreview.id = `imagePreview_${i}`;
-  
-              const cropButton = document.createElement("button");
-              cropButton.type = "button";
-              cropButton.classList.add("btn", "btn-primary", "mt-2");
-              cropButton.textContent = "Crop Image";
-              cropButton.id = `cropButton_${i}`;
-  
-              cropContainer.appendChild(imagePreview);
-              cropContainer.appendChild(cropButton);
-              container.appendChild(cropContainer);
-  
-              reader.onload = function (e) {
-                  imagePreview.src = e.target.result;
-                  imagePreview.style.display = "block";
-  
-                  const cropper = new Cropper(imagePreview, {
-                      aspectRatio: 1,
-                      viewMode: 1,
-                      autoCropArea: 1,
-                  });
-                  croppers[i] = cropper;
-  
-                  cropButton.addEventListener("click", function () {
-                      const canvas = cropper.getCroppedCanvas();
-                      const croppedImage = canvas.toDataURL("image/jpeg");
-  
-                      let croppedImagesField = document.getElementById("croppedImages").value;
-                      croppedImagesField = croppedImagesField ? JSON.parse(croppedImagesField) : [];
-                      croppedImagesField.push(croppedImage);
-                      document.getElementById("croppedImages").value = JSON.stringify(croppedImagesField);
-  
-                      alert("Image cropped successfully!");
-                  });
-              };
-  
-              reader.readAsDataURL(file);
+            const file = files[i];
+            const reader = new FileReader();
+
+            const cropContainer = document.createElement("div");
+            cropContainer.classList.add("crop-container");
+
+            const imagePreview = document.createElement("img");
+            imagePreview.classList.add("image-preview");
+            imagePreview.id = `imagePreview_${i}`;
+
+            const cropButton = document.createElement("button");
+            cropButton.type = "button";
+            cropButton.classList.add("btn", "btn-primary", "mt-2");
+            cropButton.textContent = "Crop Image";
+            cropButton.id = `cropButton_${i}`;
+
+            cropContainer.appendChild(imagePreview);
+            cropContainer.appendChild(cropButton);
+            container.appendChild(cropContainer);
+
+            reader.onload = function (e) {
+              imagePreview.src = e.target.result;
+              imagePreview.style.display = "block";
+
+              const cropper = new Cropper(imagePreview, {
+                aspectRatio: 1,
+                viewMode: 1,
+                autoCropArea: 1,
+              });
+              croppers[i] = cropper;
+
+              cropButton.addEventListener("click", function () {
+                const canvas = cropper.getCroppedCanvas();
+                const croppedImage = canvas.toDataURL("image/jpeg");
+
+                let croppedImagesField =
+                  document.getElementById("croppedImages").value;
+                croppedImagesField = croppedImagesField
+                  ? JSON.parse(croppedImagesField)
+                  : [];
+                croppedImagesField.push(croppedImage);
+                document.getElementById("croppedImages").value =
+                  JSON.stringify(croppedImagesField);
+
+                showToast("Image cropped successfully!");
+              });
+            };
+
+            reader.readAsDataURL(file);
           }
-      });
-  
-      document.getElementById("addProductForm").addEventListener("submit", function (e) {
-    e.preventDefault();
-
-    const name = document.getElementById("productName").value.trim();
-    const brand = document.getElementById("brandName").value.trim();
-    const color = document.getElementById("color").value.trim();
-    const description = document.getElementById("productDescription").value.trim();
-    const price = document.getElementById("productPrice").value.trim();
-    const category = document.getElementById("productCategory").value.trim();
-
-    if (!name || !/^[A-Za-z'0-9\s]+$/.test(name)) {
-        alert("Product name contains invalid characters or is empty.");
-        return;
-    }
-
-    if (!brand || !/^[A-Za-z'0-9\s]+$/.test(brand)) {
-        alert("Brand contains invalid characters or is empty.");
-        return;
-    }
-
-    if (!color || !/^[A-Za-z'\s]+$/.test(color)) {
-        alert("Color contains invalid characters or is empty.");
-        return;
-    }
-
-    if (!description || !/^[A-Za-z'0-9\s]+$/.test(description)) {
-        alert("Description contains invalid characters or is empty.");
-        return;
-    }
-
-    if (!price || price <= 0) {
-        alert("Price must be greater than zero.");
-        return;
-    }
-
-    if (!category) {
-        alert("Product category is required.");
-        return;
-    }
-
-    const sizeStockData = [];
-    let isValidSizeStok=false
-    const sizeStockRows = document.querySelectorAll("#sizeContainer div");
-    sizeStockRows.forEach((row) => {
-        const size = row.querySelector('input[name="size"]').value.trim();
-        const stock = row.querySelector('input[name="stock"]').value.trim();
-        if (!size || !stock || stock < 1 || size < 1) {
-          isValidSizeStok=true
-            alert("Size or stock is missing or invalid.");
-            return;
-        }
-        sizeStockData.push({ size, stock });
-    });
-    if(isValidSizeStok) return 
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("brand", brand);
-    formData.append("color", color);
-    formData.append("description", description);
-    formData.append("price", price);
-    formData.append("category", category);
-    formData.append("availableSize", JSON.stringify(sizeStockData));
-
-    const croppedImages = document.getElementById("croppedImages").value;
-    const images = JSON.parse(croppedImages);
-    if (images.length < 3) {
-        alert("Please crop and select at least 3 images.");
-        return;
-    }
-
-    images.forEach((image, index) => {
-        const blob = dataURItoBlob(image);
-        formData.append(`croppedImages`, blob, `croppedImage_${index}.jpg`); 
-    });
-    const okee=confirm("Are you sure add the prduct")
-    if(!okee) return 
-    axios
-        .post("/admin/products/add-products", formData, {
-            headers: {
-                "Content-Type": "multipart/form-data",
-            },
-        })
-        .then(function (response) {
-            if (response.data.ok) {
-                alert(response.data.msg);
-                document.getElementById("addProductForm").reset();
-                window.location.href = response.data.red;
-            } else {
-                alert(response.data.msg);
-                return;
-            }
-        })
-        .catch(function (error) {
-            console.error("There was an error!", error);
         });
-});
 
-  
-      function dataURItoBlob(dataURI) {
-          const byteString = atob(dataURI.split(",")[1]);
-          const mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
-          const ab = new ArrayBuffer(byteString.length);
-          const ia = new Uint8Array(ab);
-          for (let i = 0; i < byteString.length; i++) {
-              ia[i] = byteString.charCodeAt(i);
+      document
+        .getElementById("addProductForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const name = document.getElementById("productName").value.trim();
+          const brand = document.getElementById("brandName").value.trim();
+          const color = document.getElementById("color").value.trim();
+          const description = document
+            .getElementById("productDescription")
+            .value.trim();
+          const price = document.getElementById("productPrice").value.trim();
+          const category = document
+            .getElementById("productCategory")
+            .value.trim();
+
+          if (!name || !/^[A-Za-z'0-9\s]+$/.test(name)) {
+            alert("Product name contains invalid characters or is empty.");
+            return;
           }
-          return new Blob([ab], { type: mimeString });
+
+          if (!brand || !/^[A-Za-z'0-9\s]+$/.test(brand)) {
+            showToast("Brand contains invalid characters or is empty.");
+            return;
+          }
+
+          if (!color || !/^[A-Za-z'\s]+$/.test(color)) {
+            showToast("Color contains invalid characters or is empty.");
+            return;
+          }
+
+          if (!description || !/^[A-Za-z'0-9\s]+$/.test(description)) {
+            showToast("Description contains invalid characters or is empty.");
+            return;
+          }
+
+          if (!price || price <= 0) {
+            showToast("Price must be greater than zero.");
+            return;
+          }
+
+          if (!category) {
+            showToast("Product category is required.");
+            return;
+          }
+
+          const sizeStockData = [];
+          let isValidSizeStok = false;
+          const sizeStockRows = document.querySelectorAll("#sizeContainer div");
+          sizeStockRows.forEach((row) => {
+            const size = row.querySelector('input[name="size"]').value.trim();
+            const stock = row.querySelector('input[name="stock"]').value.trim();
+            if (!size || !stock || stock < 1 || size < 1) {
+              isValidSizeStok = true;
+              showToast("Size or stock is missing or invalid.");
+              return;
+            }
+            sizeStockData.push({ size, stock });
+          });
+          if (isValidSizeStok) return;
+          const formData = new FormData();
+          formData.append("name", name);
+          formData.append("brand", brand);
+          formData.append("color", color);
+          formData.append("description", description);
+          formData.append("price", price);
+          formData.append("category", category);
+          formData.append("availableSize", JSON.stringify(sizeStockData));
+
+          const croppedImages = document.getElementById("croppedImages").value;
+          const images = JSON.parse(croppedImages);
+          if (images.length < 3) {
+            showToast("Please crop and select at least 3 images.");
+            return;
+          }
+
+          images.forEach((image, index) => {
+            const blob = dataURItoBlob(image);
+            formData.append(`croppedImages`, blob, `croppedImage_${index}.jpg`);
+          });
+
+          confirmAction(
+            "Are you sure?",
+            "Add the Product?",
+            "Yes, Add it!"
+          ).then((result) => {
+            if (result.isConfirmed) {
+              axios
+                .post("/admin/products/add-products", formData, {
+                  headers: {
+                    "Content-Type": "multipart/form-data",
+                  },
+                })
+                .then(function (response) {
+                  if (response.data.ok) {
+                    alert(response.data.msg);
+                    document.getElementById("addProductForm").reset();
+                    window.location.href = response.data.red;
+                  } else {
+                    showToast(response.data.msg);
+                    return;
+                  }
+                })
+                .catch(function (error) {
+                  console.error("There was an error!", error);
+                });
+            }
+          });
+        });
+
+      function dataURItoBlob(dataURI) {
+        const byteString = atob(dataURI.split(",")[1]);
+        const mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
+        const ab = new ArrayBuffer(byteString.length);
+        const ia = new Uint8Array(ab);
+        for (let i = 0; i < byteString.length; i++) {
+          ia[i] = byteString.charCodeAt(i);
+        }
+        return new Blob([ab], { type: mimeString });
       }
-  </script>
-  
+      function confirmAction(title, text, confirmButtonText) {
+        return Swal.fire({
+          title: title,
+          text: text,
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: confirmButtonText,
+        });
+      }
+      function showToast(message) {
+      Toastify({
+        text: message,
+        duration: 2000,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "#333",
+        stopOnFocus: true,
+      }).showToast();
+    }
+    </script>
   </body>
 </html>

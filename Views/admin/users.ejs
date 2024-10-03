@@ -12,6 +12,13 @@
     <!-- Toastify CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <!-- SweetAlert JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Toastify CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <!-- Toastify JS -->
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.js"></script>
   </head>
   <style>
     body {
@@ -59,7 +66,6 @@
                 <table class="table" id="usersTable">
                   <thead>
                     <tr>
-                      <th>SL NO</th>
                       <th>Name</th>
                       <th>Email</th>
                       <th>Google user</th>
@@ -69,7 +75,6 @@
                   <tbody id="userTableBody">
                     <% Users.forEach((user, index) => { %>
                       <tr data-username="<%= user.username.toLowerCase() %>" data-email="<%= user.email.toLowerCase() %>">
-                        <td><%= index  %></td>
                         <td><%= user.username %></td>
                         <td><%= user.email %></td>
                         <td><%= user.googleUser %></td>
@@ -116,76 +121,84 @@
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
     <script>
-    document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.toggle-block-btn').forEach(button => {
-        button.addEventListener('click', async function() {
-            const userId = this.getAttribute('data-id');
-            const isBlocking = this.textContent.trim() === 'Block'; 
-
-           
-            const confirmationMessage = isBlocking ? 
-                'Are you sure you want to block this user?' : 
-                'Are you sure you want to unblock this user?';
-                
-            const confirmed = confirm(confirmationMessage);
-
-            if (!confirmed) {
-                return; 
-            }
-
-            try {
-                const response = await fetch(`/admin/users/toggle-block/${userId}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                const result = await response.json();
-                if (result.ok) {
-                    
-                    this.textContent = result.block ? 'Unblock' : 'Block';
-                    this.className = `btn btn-sm btn-${result.block ? 'danger' : 'success'} toggle-block-btn`;
-
-                   
-                    showToast(`User ${result.block ? 'blocked' : 'unblocked'} successfully`);
-                }
-            } catch (error) {
-                console.error('Error toggling block status:', error);
-            }
-        });
-    });
-});
-
-function showToast(message) {
-    Toastify({
-        text: message,
-        duration: 3000,
-        gravity: 'top', 
-        position: 'right', 
-        backgroundColor: '#333', 
-        stopOnFocus: true,
-        close: true 
-    }).showToast();
-}
-
-    </script>
-    <script>
-        document.getElementById('searchInput').addEventListener('input', function () {
+      document.addEventListener('DOMContentLoaded', () => {
+          document.querySelectorAll('.toggle-block-btn').forEach(button => {
+              button.addEventListener('click', async function() {
+                  const userId = this.getAttribute('data-id');
+                  const isBlocking = this.textContent.trim() === 'Block';
+  
+                  const confirmationMessage = isBlocking ? 
+                      'Are you sure you want to block this user?' : 
+                      'Are you sure you want to unblock this user?';
+  
+                  // Use SweetAlert for confirmation
+                  const result = await Swal.fire({
+                      title: 'Confirmation',
+                      text: confirmationMessage,
+                      icon: 'warning',
+                      showCancelButton: true,
+                      confirmButtonText: 'Yes',
+                      cancelButtonText: 'No'
+                  });
+  
+                  if (!result.isConfirmed) {
+                      return; 
+                  }
+  
+                  try {
+                      const response = await fetch(`/admin/users/toggle-block/${userId}`, {
+                          method: 'POST',
+                          headers: {
+                              'Content-Type': 'application/json'
+                          }
+                      });
+  
+                      const result = await response.json();
+                      if (result.ok) {
+                          this.textContent = result.block ? 'Unblock' : 'Block';
+                          this.className = `btn btn-sm btn-${result.block ? 'danger' : 'success'} toggle-block-btn`;
+  
+                          showToast(`User ${result.block ? 'blocked' : 'unblocked'} successfully`);
+                      }
+                  } catch (error) {
+                      console.error('Error toggling block status:', error);
+                  }
+              });
+          });
+      });
+  
+      function showToast(message) {
+          Toastify({
+              text: message,
+              duration: 3000,
+              gravity: 'top', 
+              position: 'right', 
+              backgroundColor: '#333', 
+              stopOnFocus: true,
+              close: true 
+          }).showToast();
+      }
+  
+      document.getElementById('searchInput').addEventListener('input', function () {
           const searchTerm = this.value.toLowerCase();
           const rows = document.querySelectorAll('#userTableBody tr');
-      
+  
           rows.forEach(row => {
-            const username = row.getAttribute('data-username');
-            const email = row.getAttribute('data-email');
-      
-            if (username.includes(searchTerm) || email.includes(searchTerm)) {
-              row.style.display = '';
-            } else {
-              row.style.display = 'none';
-            }
+              const username = row.getAttribute('data-username');
+              const email = row.getAttribute('data-email');
+  
+              if (username.includes(searchTerm) || email.includes(searchTerm)) {
+                  row.style.display = '';
+              } else {
+                  row.style.display = 'none';
+              }
           });
-        });
-      </script>
+      });
+  </script>
+  
+  <!-- Include SweetAlert CSS and JS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
   </body>
 </html>

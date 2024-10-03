@@ -23,6 +23,7 @@ export const getCheckout = async (req, res) => {
         return {
           product: productDetails,
           quantity: cartItem.quantity,
+          size:cartItem.size
         };
       })
     );
@@ -44,21 +45,37 @@ export const checkoutFn = async (req, res) => {
     const { cartItems, selectedAddresses } = req.body; 
 
     const orderItems = cartItems.map(item => ({
-      productId:item.productId,
+      productId: item.productId,
       name: item.name,
+      size: item.size,
       description: item.description,
       imageUrl: item.imageUrl,
       price: item.price,
       quantity: item.quantity,
-     
     }));
-    const totalAmount = orderItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
-    const userId=req.session.user._id  
+    const totalAmount = orderItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    const userId = req.session.user._id;  
     const selectedAddress = selectedAddresses[0]; 
-    
+
+    for (const item of orderItems) {
+      const product = await ProductModel.findById(item.productId); 
+
+      if (!product) {
+        return res.status(404).json({ ok: false, msg: "Product not found", red: "/cart" });
+      }
+      const sizeVariant = product.availableSize.find(size => size.size === item.size);
+
+      if (!sizeVariant || sizeVariant.stock < item.quantity) {
+        return res.status(400).json({ ok: false, msg: `Insufficient stock for size ${item.size}`, red: "/cart" });
+      }
+
+      sizeVariant.stock -= item.quantity;
+      await product.save();
+    }
+
     const newOrder = new OrderModel({
-      user:userId,
+      user: userId,
       items: orderItems,
       address: {
         type: selectedAddress.type,
@@ -70,13 +87,16 @@ export const checkoutFn = async (req, res) => {
       }, 
       totalAmount: totalAmount,
     });
-    
+
     await newOrder.save();
-    return res.status(201).json({ok:true, msg: "Order placed successfully!",red:"/orders"});
-  } catch (error) {
+    const cart = await CartModel.deleteOne({ userId: userId });
+    return res.status(201).json({ ok: true, msg: "Order placed successfully!", red: "/orders" });
+    
+} catch (error) {
     console.error("Error saving order:", error);
-    return res.status(500).json({ok:false, msg: "Internal Server Error", error: error.message });
-  }
+    return res.status(500).json({ ok: false, msg: "Internal Server Error", error: error.message });
+}
+
 };
 
 

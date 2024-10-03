@@ -1,149 +1,225 @@
 <!DOCTYPE html>
 <html lang="zxx" class="no-js">
-
-<head>
+  <head>
     <!-- Mobile Specific Meta -->
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
     <!-- Favicon-->
-    <link rel="shortcut icon" href="img/fav.png">
+    <link rel="shortcut icon" href="img/fav.png" />
     <!-- Author Meta -->
-    <meta name="author" content="CodePixar">
+    <meta name="author" content="CodePixar" />
     <!-- Meta Description -->
-    <meta name="description" content="">
+    <meta name="description" content="" />
     <!-- Meta Keyword -->
-    <meta name="keywords" content="">
+    <meta name="keywords" content="" />
     <!-- meta character set -->
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <!-- Site Title -->
     <title>Karma Shop</title>
 
     <!-- CSS Files -->
-    <link rel="stylesheet" href="css/linearicons.css">
-    <link rel="stylesheet" href="css/font-awesome.min.css">
-    <link rel="stylesheet" href="css/themify-icons.css">
-    <link rel="stylesheet" href="css/bootstrap.css">
-    <link rel="stylesheet" href="css/owl.carousel.css">
-    <link rel="stylesheet" href="css/nice-select.css">
-    <link rel="stylesheet" href="css/nouislider.min.css">
+    <link rel="stylesheet" href="css/linearicons.css" />
+    <link rel="stylesheet" href="css/font-awesome.min.css" />
+    <link rel="stylesheet" href="css/themify-icons.css" />
+    <link rel="stylesheet" href="css/bootstrap.css" />
+    <link rel="stylesheet" href="css/owl.carousel.css" />
+    <link rel="stylesheet" href="css/nice-select.css" />
+    <link rel="stylesheet" href="css/nouislider.min.css" />
     <link rel="stylesheet" href="css/ion.rangeSlider.css" />
     <link rel="stylesheet" href="css/ion.rangeSlider.skinFlat.css" />
-    <link rel="stylesheet" href="css/magnific-popup.css">
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-</head>
-<style>
+    <link rel="stylesheet" href="css/magnific-popup.css" />
+    <link rel="stylesheet" href="css/main.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+    />
+  </head>
+  <style>
     .cart-image {
-        max-width: 150px; /* Adjust as needed */
-        height: auto;
+      max-width: 150px; /* Adjust as needed */
+      height: auto;
     }
-</style>
+  </style>
 
-<body>
-
+  <body>
     <!-- Start Header Area -->
     <%- include('partials/header') %>
     <!-- End Header Area -->
 
     <!-- Start Banner Area -->
     <section class="banner-area organic-breadcrumb">
-        <div class="container">
-            <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
-                <div class="col-first">
-                    <h1>Shopping Cart</h1>
-                    <nav class="d-flex align-items-center">
-                        <a href="index.html">Home<span class="lnr lnr-arrow-right"></span></a>
-                        <a href="category.html">Cart</a>
-                    </nav>
-                </div>
-            </div>
+      <div class="container">
+        <div
+          class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end"
+        >
+          <div class="col-first">
+            <h1>Shopping Cart</h1>
+            <nav class="d-flex align-items-center">
+              <a href="/">Home<span class="lnr lnr-arrow-right"></span></a>
+              <a href="/cart">Cart</a>
+            </nav>
+          </div>
         </div>
+      </div>
     </section>
     <!-- End Banner Area -->
 
     <!--================Cart Area =================-->
     <section class="cart_area">
-        <div class="container">
-            <div class="cart_inner">
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">Product</th>
-                                <th scope="col">Price</th>
-                                <th scope="col">Quantity</th>
-                                <th scope="col">Total</th>
-                                <th scope="col">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% cartProducts.forEach(product => { %>
-                            <tr>
-                                <td>
-                                    <div class="media">
-                                        <div class="d-flex">
-                                            <img class="img-fluid cart-image" src="<%= product.productId.images[0].replace('public', '') %>" alt="<%= product.productId.name %>" />
-                                        </div>
-                                        <div class="media-body">
-                                            <p><%= product.productId.name %></p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <h5>$<%= product.productId.price %></h5>
-                                </td>
-                                
-                                
-                                <td>
-                                    <div class="product_count">
-                                        <input type="text" name="qty" id="sst-<%= product.productId._id %>" maxlength="12" value="<%= product.quantity %>" title="Quantity:" class="input-text qty" readonly data-price-per-unit="<%= product.productId.price %>">
-                                        <button onclick="updateQuantity('<%= product.productId._id %>', 'increase')" class="increase items-count" type="button"><i class="lnr lnr-chevron-up"></i></button>
-                                        <button onclick="updateQuantity('<%= product.productId._id %>', 'decrease')" class="reduced items-count" type="button"><i class="lnr lnr-chevron-down"></i></button>
-                                    </div>
-                                </td>
-                                <td class="total-price">$<%= product.productId.price * product.quantity %></td> <!-- Total price cell -->
-                                <td>
-                               
-                                    <button class="btn btn-danger remove-cart-btn" data-id="<%= product.productId._id %>">Remove</button>
-                                </td>
-                            </tr>
-                            <% }); %>
-    
-                            <tr class="bottom_button">
-                                <td>
-                                    <a class="gray_btn" href="#">Update Cart</a>
-                                </td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-    
-                            <!-- Assuming subtotal is calculated in the backend -->
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td><h5>Subtotal</h5></td>
-                                <td><h5>$<%= cartProducts.reduce((sum, product) => sum + (product.productId.price * product.quantity), 0) %></h5></td>
-                                <td></td>
-                            </tr>
-    
-                            <tr class="out_button_area">
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td>
-                                    <div class="checkout_btn_inner d-flex align-items-center">
-                                        <a class="gray_btn" href="/">Continue Shopping</a>
-                                        <a class="primary-btn" href="/checkout">Proceed to checkout</a>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+      <div class="container">
+        <div class="cart_inner">
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">Product</th>
+                  <th scope="col">Price</th>
+                  <th scope="col">Quantity</th>
+                  <th scope="col">Total</th>
+                  <th scope="col">Size</th>
+                  <!-- Added Size Column -->
+                  <th scope="col">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% cartProducts.forEach((product,index) => { %>
+                <tr>
+                  <td>
+                    <div class="media">
+                      <div class="d-flex">
+                        <a href="/singleprodect/<%= product.productId._id %>">
+                          <img
+                            class="img-fluid cart-image"
+                            src="<%= product.productId.images[0].replace('public', '') %>"
+                            alt="<%= product.productId.name %>"
+                          />
+                        </a>
+                      </div>
+                      <div class="media-body">
+                        <p><%= product.productId.name %></p>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <h5>$<%= product.productId.price %></h5>
+                  </td>
+                  <td>
+                    <div class="product_count">
+                      <input
+                        type="text"
+                        name="qty"
+                        id="sst-<%= product.productId._id %>"
+                        maxlength="12"
+                        value="<%= product.quantity %>"
+                        title="Quantity:"
+                        class="input-text qty"
+                        readonly
+                        data-price-per-unit="<%= product.productId.price %>"
+                      />
+                      <button
+                        onclick="updateQuantity('<%= product.productId._id %>', 'increase')"
+                        class="increase items-count"
+                        type="button"
+                      >
+                        <i class="lnr lnr-chevron-up"></i>
+                      </button>
+                      <button
+                        onclick="updateQuantity('<%= product.productId._id %>', 'decrease')"
+                        class="reduced items-count"
+                        type="button"
+                      >
+                        <i class="lnr lnr-chevron-down"></i>
+                      </button>
+                    </div>
+                  </td>
+                  <td class="total-price">
+                    $<%= product.productId.price * product.quantity %>
+                  </td>
+
+                  <!-- Size Selection -->
+
+                  <td>
+                    <% if (product.size) { %>
+                    <p id="display-size-<%= product.productId._id %>">
+                      <%= product.size %>
+                    </p>
+                    <!-- Added ID for dynamic updates -->
+                    <% } else if (product.productId.availableSize.length > 0) {
+                    %>
+                    <select
+                      class="form-control size-select"
+                      id="size-<%= product.productId._id %>"
+                      onchange="updateSize('<%= product.productId._id %>')"
+                    >
+                      <option value="">Select Size</option>
+                      <% product.productId.availableSize.forEach(size => { %> <%
+                      if (size.stock > 0) { %>
+                      <option value="<%= size.size %>"><%= size.size %></option>
+                      <% } %> <% }) %>
+                    </select>
+                    <% } else { %>
+                    <p>No size available</p>
+                    <% } %>
+                  </td>
+
+                  <td>
+                    <button
+                      class="btn btn-danger remove-cart-btn"
+                      data-id="<%= product.productId._id %>"
+                    >
+                      Remove
+                    </button>
+                  </td>
+                </tr>
+                <% }); %>
+
+                <tr class="bottom_button">
+                  <td>
+                    <a class="gray_btn" href="#">Update Cart</a>
+                  </td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td><h5>Subtotal</h5></td>
+                  <td>
+                    <h5>
+                      $<%= cartProducts.reduce((sum, product) => sum +
+                      (product.productId.price * product.quantity), 0) %>
+                    </h5>
+                  </td>
+                  <td></td>
+                </tr>
+
+                <tr class="out_button_area">
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>
+                    <div class="checkout_btn_inner d-flex align-items-center">
+                      <a class="gray_btn" href="/">Continue Shopping</a>
+                      <a class="primary-btn" href="/checkout"
+                        >Proceed to checkout</a
+                      >
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
+      </div>
     </section>
     <!--================End Cart Area =================-->
 
@@ -152,8 +228,11 @@
     <!-- End footer Area -->
 
     <script src="js/vendor/jquery-2.2.4.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
-        crossorigin="anonymous"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"
+      integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+      crossorigin="anonymous"
+    ></script>
     <script src="js/vendor/bootstrap.min.js"></script>
     <script src="js/jquery.ajaxchimp.min.js"></script>
     <script src="js/jquery.nice-select.min.js"></script>
@@ -163,124 +242,182 @@
     <script src="js/owl.carousel.min.js"></script>
     <script src="js/main.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-</body>
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
-<script>
-  
+  </body>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+  <script>
     function updateQuantity(productId, action) {
-        var qtyInput = document.getElementById('sst-' + productId);
-        var currentQty = parseInt(qtyInput.value);
-       
-        if (action === 'increase') {
-            currentQty++;
-        } else if (action === 'decrease' && currentQty > 1) {
-            currentQty--;
-        } else {
-            return; 
-        }
-        function showToast(message) {
-                Toastify({
-                    text: message,
-                    duration: 2000,
-                    gravity: "top", 
-                    position: "right", 
-                    backgroundColor: "#333", 
-                    stopOnFocus: true
-                }).showToast();
-            }
-        if(currentQty<=3){
-          
-        }
-        else{
-            showToast('maimum qountyty is 3');
-            return
-        }
-        qtyInput.value = currentQty; 
+      const qtyInput = document.getElementById("sst-" + productId);
+      let currentQty = parseInt(qtyInput.value);
+      const sizeElement = document.getElementById(`display-size-${productId}`);
+      const size = sizeElement ? sizeElement.innerText : null;
 
-        axios.post('/cart/update-quantity', {
-            productId: productId,
-            quantity: currentQty
+      if (!size) {
+        showToast("Please select size");
+        return;
+      }
+
+      const MAX_QUANTITY = 3;
+
+      if (action === "increase") {
+        if (currentQty < MAX_QUANTITY) {
+          currentQty++;
+        } else {
+          showToast("Maximum quantity is " + MAX_QUANTITY);
+          return;
+        }
+      } else if (action === "decrease" && currentQty > 1) {
+        currentQty--;
+      } else {
+        return;
+      }
+
+      qtyInput.value = currentQty;
+
+      axios
+        .post("/cart/update-quantity", {
+          productId: productId,
+          quantity: currentQty,
+          size: size,
         })
-        .then(function(response) {
-            if (response.data.success) {
-                var pricePerUnit = parseFloat(qtyInput.dataset.pricePerUnit); 
-                var totalCell = qtyInput.closest('tr').querySelector('.total-price'); 
-                totalCell.textContent = '$' + (currentQty * pricePerUnit).toFixed(2); 
-                console.log('Quantity and total price updated successfully');
-            } else {
-                console.error('Error in response:', response.data.message);
-                
-                qtyInput.value = parseInt(qtyInput.value) + (action === 'increase' ? -1 : 1);
-            }
+        .then(function (response) {
+          if (response.data.success) {
+            const pricePerUnit = parseFloat(qtyInput.dataset.pricePerUnit);
+            const totalCell = qtyInput
+              .closest("tr")
+              .querySelector(".total-price");
+            totalCell.textContent =
+              "$" + (currentQty * pricePerUnit).toFixed(2);
+            console.log("Quantity and total price updated successfully");
+          } else {
+            showToast(response.data.message);
+            qtyInput.value = currentQty - (action === "increase" ? 1 : -1);
+          }
         })
-        .catch(function(error) {
-            console.error('Error updating quantity:', error);
-       
-            qtyInput.value = parseInt(qtyInput.value) + (action === 'increase' ? -1 : 1);
+        .catch(function (error) {
+          showToast("Requested quantity exceeds available stock !");
+          console.error("Error updating quantity:", error);
+          qtyInput.value = currentQty - (action === "increase" ? 1 : -1);
         });
     }
+
+    function showToast(message) {
+      Toastify({
+        text: message,
+        duration: 2000,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "#333",
+        stopOnFocus: true,
+      }).showToast();
+    }
+  </script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const removeCartButtons = document.querySelectorAll(".remove-cart-btn");
+
+      removeCartButtons.forEach(function (button) {
+        button.addEventListener("click", function (event) {
+          event.preventDefault();
+
+          const productId = button.getAttribute("data-id");
+
+          confirmAction(
+            "Are you sure?",
+            "Do you want to remove this item from your cart?",
+            "Yes, remove it"
+          ).then((result) => {
+            if (result.isConfirmed) {
+              axios
+                .delete("/cart/remove/" + productId)
+                .then(function (response) {
+                  const data = response.data;
+                  if (data.success) {
+                    const tableRow = button.closest("tr");
+                    if (tableRow) {
+                      tableRow.remove();
+                    }
+                    showToast(data.message);
+                  }
+                })
+                .catch(function (error) {
+                  console.error("Error removing item from cart:", error);
+                  alert("Failed to remove item from cart.");
+                });
+            }
+          });
+        });
+      });
+    });
+
     function confirmAction(title, text, confirmButtonText) {
-    return Swal.fire({
+      return Swal.fire({
         title: title,
         text: text,
-        icon: 'warning',
+        icon: "warning",
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: confirmButtonText
-    });
-}
-</script>
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: confirmButtonText,
+      });
+    }
+  </script>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-    
-    const removeCartButtons = document.querySelectorAll('.remove-cart-btn');
+  <script>
+    function updateSize(productId) {
+      const selectedSize = document.getElementById(`size-${productId}`).value;
 
-   
-    removeCartButtons.forEach(function(button) {
-        button.addEventListener('click', function(event) {
-            event.preventDefault(); 
+      if (selectedSize) {
+        axios
+          .post(`/cart/updateSize/${productId}`, {
+            size: selectedSize,
+          })
+          .then((response) => {
+            if (response.data.success) {
+              const sizeDisplayElement = document.getElementById(
+                `display-size-${productId}`
+              );
+              if (sizeDisplayElement) {
+                sizeDisplayElement.textContent = selectedSize;
+              }
+              window.location.reload();
 
-            const productId = button.getAttribute('data-id'); 
-
-            
-            function showToast(message) {
-                Toastify({
-                    text: message,
-                    duration: 2000,
-                    gravity: "top", 
-                    position: "right", 
-                    backgroundColor: "#333", 
-                    stopOnFocus: true
-                }).showToast();
+              Toastify({
+                text: "Size updated successfully!",
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "green",
+                stopOnFocus: true,
+              }).showToast();
+            } else {
+              Toastify({
+                text: "Failed to update size!",
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "red",
+                stopOnFocus: true,
+              }).showToast();
             }
+          })
+          .catch((error) => {
+            console.error("Error updating size:", error);
 
-            
-            axios.delete('/cart/remove/' + productId)
-            .then(function(response) {
-                const data = response.data; 
-                if (data.success) {
-                 
-                    const tableRow = button.closest('tr');
-                    if (tableRow) {
-                        tableRow.remove();
-                    }
-
-                    
-                    showToast(data.message);
-                }
-            })
-            .catch(function(error) {
-                console.error('Error removing item from cart:', error);
-                alert('Failed to remove item from cart.');
-            });
-        });
-    });
-});
-    
-</script>
-
-    
+            Toastify({
+              text: "Error updating size!",
+              duration: 3000,
+              close: true,
+              gravity: "top",
+              position: "right",
+              backgroundColor: "red",
+              stopOnFocus: true,
+            }).showToast();
+          });
+      }
+    }
+  </script>
 </html>

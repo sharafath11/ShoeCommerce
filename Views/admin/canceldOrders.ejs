@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+    <!-- SweetAlert CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <!-- Toastify CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+    <style>
+        .dpa {
+            display: flex;
+            align-items: center;
+            gap: 8px; /* Reduced gap for a tighter layout */
+        }
+
+        body {
+            font-family: "Arial", sans-serif;
+        }
+
+        .sidebar {
+            height: 100vh;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar .nav-link {
+            font-size: 16px;
+        }
+
+        .sidebar-heading {
+            font-size: 1.5rem;
+            color: #333;
+        }
+
+        .card {
+            border-radius: 10px;
+            border: none;
+        }
+
+        .card .form-control {
+            border-radius: 20px;
+        }
+
+        .table th {
+            font-weight: 600;
+        }
+
+        .table td,
+        .table th {
+            vertical-align: middle;
+        }
+
+        .badge {
+            font-size: 14px;
+            padding: 5px 10px;
+        }
+
+        .table .btn {
+            font-size: 12px;
+            padding: 5px 10px;
+        }
+
+        .custom-dropdown {
+            display: inline-block;
+            width: 120px; /* Set a fixed width for the dropdown */
+        }
+
+        .custom-dropdown .form-select {
+            width: 100%; /* Make the select fill the container */
+            padding: 5px; /* Adjust padding if needed */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <%- include('partials/sidebar') %>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+                    <h1 class="h2">Canceled Orders </h1>
+                </div>
+
+                <!-- Orders Management Panel -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-3">
+                            <input class="form-control w-25" type="text" placeholder="Search orders..." />
+                        </div>
+
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Order Id</th>
+                                    <th>Date</th>
+                                    <th>Total</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% orders.forEach((order, index) => { %>
+                                    <tr>
+                                        <td><%= index + 1 %></td>
+                                        <td><%= order._id %></td>
+                                        <td><%= order.orderDate.toISOString().split('T')[0] %></td>
+                                        
+                                        
+                                        <td>$<%= order.totalAmount %></td>
+                                        <td class="dpa">
+                                            <a href="/admin/order/singleOrder/<%= order.id %>" class="btn btn-sm btn-primary">View</a>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> <!-- Axios script -->
+
+   
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

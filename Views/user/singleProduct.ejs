@@ -130,6 +130,8 @@
           <div id="focus-area" class="focus-area"></div> 
         </div>
 
+        
+        
     
         <div class="thumbnails d-flex">
           <% product.images.slice(0, 4).forEach(image => { %>
@@ -147,24 +149,29 @@
               <%= product.categoryId.name %>
           </span>
       <% } %>
+     
+      <p>Available Sizes: 
+        <% product.availableSize.forEach(sizeObj => { %>
+          <% if (sizeObj.stock > 0) { %> <!-- Check if stock is greater than zero -->
+            <strong>[ <%= sizeObj.size %> ]</strong>
+          <% } %>
+        <% }) %>
+      </p>
+      
+      
         <p class="product-description">
           <%= product.description %>
         </p>
         
       
-        <% product.availableSize.forEach((sizeObj, index) => { %>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="sizeOptions" id="<%= sizeObj.size.toString().toLowerCase() %>" value="<%= sizeObj.size.toString().toLowerCase() %>" <%= index === 0 ? 'checked' : '' %>>
-            <label class="form-check-label" for="<%= sizeObj.size.toString().toLowerCase() %>"><%= sizeObj.size %></label>
-          </div>
-        <% }) %>
+       
 
         <!-- Add to Cart -->
-        <div class="input-group mb-3" style="max-width: 120px;">
+        <!-- <div class="input-group mb-3" style="max-width: 120px;">
           <button class="btn btn-outline-secondary" type="button" id="button-minus">-</button>
           <input type="text" class="form-control text-center" id="input-value" value="1">
           <button class="btn btn-outline-secondary" type="button" id="button-plus">+</button>
-        </div>
+        </div> -->
 
         <button class="btn btn-dark w-100"  onclick="addToCart(event,'<%= product._id %>')">Add to Cart</button>
       </div>
@@ -271,10 +278,7 @@
   </script>
   <script>
     function addToCart(event,productId) {
-      console.log('====================================');
-      console.log(productId);
-      console.log('====================================');
-        console.log('Adding product to cart');
+        
         axios.get(`/addToCart/${productId}`)
         .then(function(response) {  
             if (response.data.success) {

@@ -320,13 +320,16 @@
                     <a href="#">Product <span>Total</span></a>
                   </li>
                   <% cartItems.forEach((item, index) => { %>
-                    <!-- <% console.log(item.product. _id); %>  -->
+                      
                     <input id="productId-<%=index%>" type="hidden" value="<%= item.product. _id%>">
                   <li id="product-item-<%= index %>">
+                   
                     <a href="/singleprodect/<%= item.product. _id%>">
+                   
                       <strong id="product-name-<%= index %>"
-                        ><%= item.product.name %></strong
+                        ><%= item.product.name %> </strong
                       >
+                      <strong  class="ml-3" id="product-size-<%= index %>"><%= item.size %></strong>
                       <span class="middle"
                         >x
                         <span id="product-quantity-<%= index %>"
@@ -460,15 +463,20 @@
       );
 
       const orderItems = gatherOrderData();
-
+     if(orderItems.length===0){
+      showToast("Please add some products in Cart");
+      return;
+     }
       const datas = {
         selectedAddresses: addAddress,
         cartItems: orderItems,
       };
+      const ok=false
       if(selectedAddresses.length==0){
         showToast('Please select a addres');
-        return
+       ok=true
       }
+      if(ok)return
       confirmAction(
         "Are you sure?",
         "Order the Products?",
@@ -476,7 +484,7 @@
       ).then((result) => {
         if (result.isConfirmed) {
           axios
-            .post("/checkout", datas)
+            .post("/checkout/cod", datas)
             .then((response) => {
               if (response.data.ok) {
                 showToast(response.data.msg);
@@ -525,9 +533,13 @@
 
       items.forEach((item, index) => {
         const productId=document.getElementById(`productId-${index}`).value
+        const size=document.getElementById(`product-size-${index}`).innerText;
         console.log('====================================');
-        console.log(productId,"uyhgujhbojkbhouhjbbh");
-        console.log('====================================');
+        console.log(size);
+        if(!size){
+          showToast("Please selecet you want size in cart")
+          return
+        }
         const productName = document.getElementById(
           `product-name-${index}`
         ).innerText;
@@ -537,11 +549,11 @@
         const price = document
           .getElementById(`product-price-${index}`)
           .innerText.replace("$", "");
-     
+      
         orderData.push({
             productId,
           name: productName,
-
+          size:parseInt(size),
           quantity: parseInt(quantity, 10),
           price: parseFloat(price),
           total: parseFloat(price) * parseInt(quantity, 10),
