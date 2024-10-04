@@ -104,11 +104,10 @@
               <div class="head">Brands</div>
               <form action="#">
                 <ul>
-                  <% // uniq kittan const 
-				  brandsSet = new Set();
+                  <%
+				           brandsSet = new Set();
                   products.forEach(product => { brandsSet.add(product.brand);
-                  }); const uniqueBrands = Array.from(brandsSet); %> <%=
-                  console.log(products) %> <% uniqueBrands.forEach(brand => { %>
+                  }); const uniqueBrands = Array.from(brandsSet); %> <% uniqueBrands.forEach(brand => { %>
                   <li class="filter-list">
                     <input
                       class="pixel-radio"

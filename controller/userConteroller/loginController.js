@@ -32,15 +32,13 @@ export const loginPost = async (req, res) => {
       });
     }
 
-    const isMatch =  bcrypt.compare(password, user.password);
-
-    if (!isMatch || user.block) {
+    const isMatch =  await bcrypt.compare(password, user.password);
+    if (!isMatch || user.block) { 
       return res.status(400).json({
         success: false,
         msg: "Invalid password! User is blocked or password is incorrect.",
       });
     }
-
     const token = jwt.sign(
       { id: user._id, email: user.email },
       process.env.JWT_SECRET,

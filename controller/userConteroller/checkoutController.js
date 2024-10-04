@@ -14,8 +14,9 @@ export const getCheckout = async (req, res) => {
     const cartDetails = await CartModel.findOne({ userId: user._id });
     const addresses = await AddressModel.find({ userId: user._id }).sort({ createdAt: -1 });
     if (!cartDetails) {
-      return res.render("user/checkout", { user, WishlistQty, cartQty, cartItems: [] });
+      return res.render("user/checkout", { user, WishlistQty, cartQty, cartItems: [],addresses });
     }
+   
 
     const cartItemsWithDetails = await Promise.all(
       cartDetails.products.map(async (cartItem) => {
@@ -27,7 +28,7 @@ export const getCheckout = async (req, res) => {
         };
       })
     );
-
+  
     res.render("user/checkout", {
       user,
       WishlistQty,

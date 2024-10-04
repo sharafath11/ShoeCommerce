@@ -17,6 +17,8 @@ import noCache from "../middleware/cachClear.js";
 import { shopDetialsRender } from "../controller/userConteroller/shopeDetials.js";
 import { addAddress, getOrderReanderPage, profileRender, removeAddress, removeOrders, renderAddresPage, updateAddress, updateProfile } from "../controller/userConteroller/profileController.js";
 import { showLogin } from "../middleware/showLogin.js";
+import { forgetPassword, forgetPasswordRender, renderResetPasswordPage, resetPassword } from "../controller/userConteroller/forgotPassword.js";
+import { changePassword, renderSettings } from "../controller/userConteroller/settings.js";
 
 const router=express.Router();
 
@@ -59,4 +61,10 @@ router.delete("/removeAddress/:id",removeAddress);
 router.post("/updateAddress",updateAddress);
 router.get("/orders",getOrderReanderPage)
 router.delete("/removeOrder/:id",removeOrders)
+router.get("/forgot-password",forgetPasswordRender )
+router.post("/forgot-password",forgetPassword )
+router.get('/reset-password/:token', renderResetPasswordPage);
+router.post('/reset-password', resetPassword);
+router.get("/settings",renderSettings);
+router.post("/changepassword",changePassword)
 export default router

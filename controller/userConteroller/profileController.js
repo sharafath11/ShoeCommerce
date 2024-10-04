@@ -42,7 +42,7 @@ export const updateProfile = async (req, res) => {
     if (!user) {
       return res.status(404).json({ ok: false, msg: "User not found" });
     }
-
+   req.session.user.username=username
     res.status(200).json({ ok: true, msg: "Profile updated successfully" });
   } catch (error) {
     console.error("Error updating profile:", error);

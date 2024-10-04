@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const userSchema = new mongoose.Schema({
     username: {
         type: String,
-        // required: true,
+        // required: true, //
         trim: true
     },
     email: {
@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        // required: true
+        // required: true //
     },
     isVerified: {
         type: Boolean,
@@ -28,12 +28,18 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    phone:{
-        type:Number
+    phone: {
+        type: Number
     },
     googleId: {
         type: String,
         default: null
+    },
+    resetToken: {
+        type: String 
+    },
+    resetTokenExpiration: {
+        type: Date
     }
 }, { timestamps: true });
 

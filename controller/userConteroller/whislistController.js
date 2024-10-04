@@ -7,9 +7,6 @@ export const whislistFn = async (req, res) => {
     const productId = req.params.id;
     const userId = req.session.user._id;
 
-    console.log("Product ID:", productId);
-    console.log("User:", req.session.user);
-
     if (!userId) {
       return res
         .status(400)
@@ -29,7 +26,10 @@ export const whislistFn = async (req, res) => {
     let wishlist = await Wishlist.findOne({ user: userId });
     if (!wishlist) {
       wishlist = new whislist({ user: userId, products: [productId] });
-      req.session.toast = "Wishlist added successfully";
+      await wishlist.save();
+      return res
+      .status(200)
+      .json({ message: "Product added in wishlist", success: true });
     } else {
       if (wishlist.products.includes(productId)) {
         req.session.toast = "Product already in wishlist";
