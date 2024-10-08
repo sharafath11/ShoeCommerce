@@ -69,6 +69,17 @@
           <div class="sidebar-categories">
             <div class="head">Browse Categories</div>
             <ul class="main-categories">
+              <li class="main-nav-list">
+                <a
+                 
+                  href="/shopDetials"
+                 
+                >
+                  <span class="lnr lnr-arrow-right"></span>
+          
+                 All categories
+                </a>
+              </li>
               <% categories.forEach(category => { %>
                 <li class="main-nav-list">
                   <a
@@ -100,119 +111,69 @@
               <div class="head">Brands</div>
               <form action="#">
                 <ul>
-                  <%
-				           brandsSet = new Set();
-                  products.forEach(product => { brandsSet.add(product.brand);
-                  }); const uniqueBrands = Array.from(brandsSet); %> <% uniqueBrands.forEach(brand => { %>
+                  <% brandsSet = new Set(); %>
+                  <% products.forEach((product, index) => { brandsSet.add(product.brand); }); %>
+                  <% const uniqueBrands = Array.from(brandsSet); %>
+                  <% uniqueBrands.forEach((brand, index) => { %>
                   <li class="filter-list">
                     <input
                       class="pixel-radio"
                       type="radio"
-                      id="<%= brand.toLowerCase() %>"
+                      id="brand<%= index %>"
                       name="brand"
+                      value="<%= brand %>"
                     />
-                    <label for="<%= brand.toLowerCase() %>">
+                    <label for="brand<%= index %>">
                       <%= brand %>
-                      <span
-                        >( <% const count = products.filter(product =>
-                        product.brand === brand).length; %><%= count %> )</span
-                      >
+                      <span>(<%= products.filter(product => product.brand === brand).length %>)</span>
                     </label>
                   </li>
                   <% }) %>
                 </ul>
               </form>
             </div>
+          
             <div class="common-filter">
               <div class="head">Color</div>
               <form action="#">
                 <ul>
-                  <% products.forEach(item => { %>
+                  <% const colorsSet = new Set(products.map(product => product.color)); %>
+                  <% const uniqueColors = Array.from(colorsSet); %>
+                  <% uniqueColors.forEach((color, index) => { %>
                   <li class="filter-list">
                     <input
                       class="pixel-radio"
                       type="radio"
-                      id="<%= item.color.replace(/\s+/g, '').toLowerCase() %>"
+                      id="color<%= index %>"
                       name="color"
+                      value="<%= color %>" 
                     />
-                    <label
-                      for="<%= item.color.replace(/\s+/g, '').toLowerCase() %>"
-                    >
-                      <%= item.color %>
-                      <span
-                        >( <%= products.filter(product => product.color ===
-                        item.color).length %> )</span
-                      >
+                    <label for="color<%= index %>">
+                      <%= color %>
+                      <span>(<%= products.filter(product => product.color === color).length %>)</span>
                     </label>
                   </li>
                   <% }) %>
                 </ul>
               </form>
             </div>
-            <div class="common-filter">
-              <div class="head">Color</div>
-              <form action="#">
-                <ul>
-                  <% 
-                    // Use a Set to store unique colors
-                    const uniqueColors = [...new Set(products.map(item => item.color))]; 
-                  %>
-                  
-                  <% uniqueColors.forEach(color => { %>
-                    <li class="filter-list">
-                      <input
-                        class="pixel-radio"
-                        type="radio"
-                        id="<%= color.replace(/\s+/g, '').toLowerCase() %>"
-                        name="color"
-                      />
-                      <label for="<%= color.replace(/\s+/g, '').toLowerCase() %>">
-                        <%= color %>
-                        <span>
-                          ( <%= products.filter(product => product.color === color).length %> )
-                        </span>
-                      </label>
-                    </li>
-                  <% }) %>
-                </ul>
-                
-              </form>
+          
+            <div class="mt-5">
+              <center>
+                <button class="btn btn-primary bg-dark" onclick="filterHandler()">Start to filter</button>
+              </center>
             </div>
-
-            <div class="common-filter">
-              <div class="head">Price</div>
-              <div class="price-range-area">
-                <div id="price-range"></div>
-                <div class="value-wrapper d-flex">
-                  <div class="price">Price:</div>
-                  <span>$</span>
-                  <div id="lower-value"></div>
-                  <div class="to">to</div>
-                  <span>$</span>
-                  <div id="upper-value"></div>
-                </div>
-              </div>
-            </div>
-           <div class="mt-5">
-            <center> <button class="btn btn-primary bg-dark " onclick="filterHandler()">Start to filter</button></center>
-           </div>
           </div>
+          
         </div>
         <div class="col-xl-9 col-lg-8 col-md-7">
           <!-- Start Filter Bar -->
           <div class="filter-bar d-flex flex-wrap align-items-center">
             <div class="sorting">
               <select>
-                <option value="1">Default sorting</option>
-                <option value="1">Default sorting</option>
-                <option value="1">Default sorting</option>
-              </select>
-            </div>
-            <div class="sorting mr-auto">
-              <select>
-                <option value="1">Show 12</option>
-                <option value="1">Show 12</option>
-                <option value="1">Show 12</option>
+                <option value="1">Default </option>
+                <option value="1">Low to High</option>
+                <option value="1">High to Low</option>
               </select>
             </div>
             <div class="pagination">
@@ -236,8 +197,6 @@
           <section class="lattest-product-area pb-40 category-list">
             <div class="row">
               <% products.forEach(function(product) { %>
-              <!-- single product -->
-
               <div class="col-lg-4 col-md-6">
                 <div class="single-product">
                   <a href="/singleprodect/<%= product._id %>">
@@ -250,17 +209,11 @@
                   <div class="product-details">
                     <h6><%= product.name %></h6>
                     <div class="price">
-                      <h6>$<%= product.price %></h6>
+                      <h6>₹<%= product.price %></h6>
                       <!-- <h6 class="l-through">$<%= product.oldPrice %></h6> -->
                     </div>
                     <div class="prd-bottom">
-                      <div class="social-info" onclick="addToCart('<%= product._id %>')">
-                        <span
-                          class="ti-bag"
-                          
-                        ></span>
-                        <p class="hover-text">add to bag</p>
-                      </div>
+                      
                       <div class="social-info"  onclick="addToWishList('<%= product._id %>')">
                         <span class="lnr lnr-heart"></span>
                         <p class="hover-text">Wishlist</p>
@@ -301,8 +254,8 @@
                   <div class="desc">
                     <a href="#" class="title">Black lace Heels</a>
                     <div class="price">
-                      <h6>$189.00</h6>
-                      <h6 class="l-through">$210.00</h6>
+                      <h6>₹189.00</h6>
+                      <h6 class="l-through">₹210.00</h6>
                     </div>
                   </div>
                 </div>
@@ -313,8 +266,8 @@
                   <div class="desc">
                     <a href="#" class="title">Black lace Heels</a>
                     <div class="price">
-                      <h6>$189.00</h6>
-                      <h6 class="l-through">$210.00</h6>
+                      <h6>₹189.00</h6>
+                      <h6 class="l-through">₹210.00</h6>
                     </div>
                   </div>
                 </div>
@@ -325,8 +278,8 @@
                   <div class="desc">
                     <a href="#" class="title">Black lace Heels</a>
                     <div class="price">
-                      <h6>$189.00</h6>
-                      <h6 class="l-through">$210.00</h6>
+                      <h6>₹189.00</h6>
+                      <h6 class="l-through">₹210.00</h6>
                     </div>
                   </div>
                 </div>
@@ -337,8 +290,8 @@
                   <div class="desc">
                     <a href="#" class="title">Black lace Heels</a>
                     <div class="price">
-                      <h6>$189.00</h6>
-                      <h6 class="l-through">$210.00</h6>
+                      <h6>₹189.00</h6>
+                      <h6 class="l-through">₹210.00</h6>
                     </div>
                   </div>
                 </div>
@@ -349,8 +302,8 @@
                   <div class="desc">
                     <a href="#" class="title">Black lace Heels</a>
                     <div class="price">
-                      <h6>$189.00</h6>
-                      <h6 class="l-through">$210.00</h6>
+                      <h6>₹189.00</h6>
+                      <h6 class="l-through">₹210.00</h6>
                     </div>
                   </div>
                 </div>
@@ -361,8 +314,8 @@
                   <div class="desc">
                     <a href="#" class="title">Black lace Heels</a>
                     <div class="price">
-                      <h6>$189.00</h6>
-                      <h6 class="l-through">$210.00</h6>
+                      <h6>₹189.00</h6>
+                      <h6 class="l-through">₹210.00</h6>
                     </div>
                   </div>
                 </div>
@@ -373,8 +326,8 @@
                   <div class="desc">
                     <a href="#" class="title">Black lace Heels</a>
                     <div class="price">
-                      <h6>$189.00</h6>
-                      <h6 class="l-through">$210.00</h6>
+                      <h6>₹189.00</h6>
+                      <h6 class="l-through">₹210.00</h6>
                     </div>
                   </div>
                 </div>
@@ -385,8 +338,8 @@
                   <div class="desc">
                     <a href="#" class="title">Black lace Heels</a>
                     <div class="price">
-                      <h6>$189.00</h6>
-                      <h6 class="l-through">$210.00</h6>
+                      <h6>₹189.00</h6>
+                      <h6 class="l-through">₹210.00</h6>
                     </div>
                   </div>
                 </div>
@@ -397,8 +350,8 @@
                   <div class="desc">
                     <a href="#" class="title">Black lace Heels</a>
                     <div class="price">
-                      <h6>$189.00</h6>
-                      <h6 class="l-through">$210.00</h6>
+                      <h6>₹189.00</h6>
+                      <h6 class="l-through">₹210.00</h6>
                     </div>
                   </div>
                 </div>
@@ -419,13 +372,7 @@
         </div>
       </div>
     </section>
-    <!-- End related-product Area -->
-
-    <!-- start footer Area -->
     <%- include('partials/footer') %>
-    <!-- End footer Area -->
-
-    <!-- Modal Quick Product View -->
     <div
       class="modal fade"
       id="exampleModal"
@@ -467,7 +414,7 @@
                     <h3 class="head">Mill Oil 1000W Heater, White</h3>
                     <div class="price d-flex align-items-center">
                       <span class="lnr lnr-tag"></span>
-                      <span class="ml-10">$149.99</span>
+                      <span class="ml-10">₹149.99</span>
                     </div>
                     <div class="category">Category: <span>Household</span></div>
                     <div class="available">
@@ -566,48 +513,6 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
-	<script>
-		 function addToCart(productId) {
-        console.log('Adding product to cart');
-        
-        axios.get(`/addToCart/${productId}`)
-        .then(function(response) {  
-            if (response.data.success) {
-                showToast(response.data.message);
-               return updateCartQuantity();
-            } else {
-                if(response.data.message){
-                  return showToast(response.data.message);
-                } 
-                else{
-                  window.location.href='/ShowLoginMsg'
-                }
-            }
-        })
-        .catch(function(error) {
-            console.log(error);
-        });
-    }
-
-    
-    function showToast(message) {
-        Toastify({
-            text: message,
-            duration: 2000, // duration in ms
-            gravity: "top", // `top` or `bottom`
-            position: "right", // `left`, `center` or `right`
-            backgroundColor: "#333", // background color
-            stopOnFocus: true // stop on focus
-        }).showToast();
-    }
-
-    
-    function updateCartQuantity() {
-        let currentCartQty = parseInt(document.getElementById('cart-quantity').innerText);
-        document.getElementById('cart-quantity').innerText = currentCartQty + 1;
-    }
-</script>
 <script>
     function addToWishList(productId) {
         axios.post(`/whislistAdd/${productId}`)
@@ -650,47 +555,65 @@
     }
 </script>
 	</script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script>
-     let selectedBrand;
-    function getSelectedBrand() {
-      const brandRadios = document.getElementsByName('brand');
-     
-      for (const radio of brandRadios) {
-        if (radio.checked) {
-          console.log('====================================');
-          console.log(radio.value);
-          console.log('====================================');
-          selectedBrand = radio.value; 
-          break;
-        }
-      }
-      console.log('Selected brand:', selectedBrand); 
-      return selectedBrand;
-    } 
-    document.addEventListener('click', function() {
-      getSelectedBrand(); 
-    });
-    let selectedColor
-    function getSelectedColor() {
-    const colorRadios = document.getElementsByName('color');
-   
-    for (const radio of colorRadios) {
-      if (radio.checked) {
-        selectedColor = radio.value; 
-        break;
-      }
-    }
+    function filterHandler() {
+  const selectedBrand = document.querySelector('input[name="brand"]:checked')?.value;
+  const selectedColor = document.querySelector('input[name="color"]:checked')?.value;
+  if (!selectedBrand && !selectedColor) {
+    alert('Please select at least one filter.');
+    return;
+  }
+  const filterData = {
+    brand: selectedBrand || null,
+    color: selectedColor || null
+  };
 
-    console.log('Selected color:', selectedColor); 
-    return selectedColor;
+
+  axios.post('/filter-products', filterData)
+    .then(response => {
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+}
+
+
+function renderProducts(products) {
+    const productList = document.getElementById('productList');
+    productList.innerHTML = ''; 
+
+    products.forEach(product => {
+      const productHtml = `
+        <div class="col-lg-4 col-md-6">
+          <div class="single-product">
+            <a href="/singleprodect/${product._id}">
+              <img class="img-fluid" src="${product.images[0].replace('public', '')}" alt="" />
+            </a>
+            <div class="product-details">
+              <h6>${product.name}</h6>
+              <div class="price">
+                <h6>₹${product.price}</h6>
+              </div>
+              <div class="prd-bottom">
+                <div class="social-info" onclick="addToWishList('${product._id}')">
+                  <span class="lnr lnr-heart"></span>
+                  <p class="hover-text">Wishlist</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>`;
+      productList.innerHTML += productHtml;
+    });
   }
 
- function filterHandler(){
-  console.log('====================================');
-  console.log(selectedBrand,selectedColor);
-  console.log('====================================');
- }
+
+  fetchProducts();
+
+
 
   </script>
+  
   </body>
 </html>

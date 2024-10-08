@@ -22,6 +22,7 @@ import { changePassword, renderSettings } from "../controller/userConteroller/se
 import { reviewHandler, reviewPagenation } from "../controller/userConteroller/reviewContoller.js";
 import multer from 'multer';
 import path from 'path';
+import { filteredProducts } from "../controller/userConteroller/filterProductsContoller.js";
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'public/reviewImages'); 
@@ -80,5 +81,6 @@ router.post('/reset-password', resetPassword);
 router.get("/settings",renderSettings);
 router.post("/changepassword",changePassword)
 router.post("/product/reviews", upload.single('reviewImage'),reviewHandler)
-router.get("/product/reviews",reviewPagenation)
+router.get("/product/reviews",reviewPagenation);
+router.post("/filter-products",filteredProducts)
 export default router

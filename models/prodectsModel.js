@@ -17,11 +17,6 @@ const productSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-
-    review: {
-      type: [String],
-    },
-
     availableSize: [
       {
         size: {

@@ -107,14 +107,14 @@
                     </div>
                   </td>
                   <td>
-                    <h5>$<%= product.productId.price %></h5>
+                    <h5>₹<%= product.productId.price %></h5>
                   </td>
                   <td>
                     <div class="product_count">
                       <input
                         type="text"
                         name="qty"
-                        id="sst-<%= product.productId._id %>"
+                        id="sst-<%= index %>"
                         maxlength="12"
                         value="<%= product.quantity %>"
                         title="Quantity:"
@@ -123,14 +123,14 @@
                         data-price-per-unit="<%= product.productId.price %>"
                       />
                       <button
-                        onclick="updateQuantity('<%= product.productId._id %>', 'increase')"
+                        onclick="updateQuantity('<%= product.productId._id %>', 'increase','<%=index%>')"
                         class="increase items-count"
                         type="button"
                       >
                         <i class="lnr lnr-chevron-up"></i>
                       </button>
                       <button
-                        onclick="updateQuantity('<%= product.productId._id %>', 'decrease')"
+                        onclick="updateQuantity('<%= product.productId._id %>', 'decrease','<%=index%>')"
                         class="reduced items-count"
                         type="button"
                       >
@@ -139,14 +139,14 @@
                     </div>
                   </td>
                   <td class="total-price">
-                    $<%= product.productId.price * product.quantity %>
+                    ₹<%= product.productId.price * product.quantity %>
                   </td>
 
                   <!-- Size Selection -->
 
                   <td>
                     <% if (product.size) { %>
-                    <p id="display-size-<%= product.productId._id %>">
+                    <p id="display-size-<%= index%>">
                       <%= product.size %>
                     </p>
                     <% } else if (product.productId.availableSize.length > 0) {
@@ -194,7 +194,7 @@
                   <td><h5>Subtotal</h5></td>
                   <td>
                     <h5>
-                      $<%= cartProducts.reduce((sum, product) => sum +
+                      ₹<%= cartProducts.reduce((sum, product) => sum +
                       (product.productId.price * product.quantity), 0) %>
                     </h5>
                   </td>
@@ -209,8 +209,7 @@
                     <div class="checkout_btn_inner d-flex align-items-center">
                       <a class="gray_btn" href="/">Continue Shopping</a>
                       <a class="primary-btn" href="/checkout"
-                        >Proceed to checkout</a
-                      >
+                        >Proceed to checkout</a >
                     </div>
                   </td>
                 </tr>
@@ -220,7 +219,7 @@
         </div>
       </div>
     </section>
-    <!--================End Cart Area =================-->
+
 
     <!-- start footer Area -->
     <%- include('partials/footer') %>
@@ -245,10 +244,12 @@
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
   <script>
-    function updateQuantity(productId, action) {
-      const qtyInput = document.getElementById("sst-" + productId);
+    function updateQuantity(productId, action,index) {
+      
+      
+      const qtyInput = document.getElementById("sst-" + index);
       let currentQty = parseInt(qtyInput.value);
-      const sizeElement = document.getElementById(`display-size-${productId}`);
+      const sizeElement = document.getElementById(`display-size-${index}`);
       const size = sizeElement ? sizeElement.innerText : null;
 
       if (!size) {
@@ -286,7 +287,7 @@
               .closest("tr")
               .querySelector(".total-price");
             totalCell.textContent =
-              "$" + (currentQty * pricePerUnit).toFixed(2);
+              "₹" + (currentQty * pricePerUnit).toFixed(2);
             console.log("Quantity and total price updated successfully");
           } else {
             showToast(response.data.message);

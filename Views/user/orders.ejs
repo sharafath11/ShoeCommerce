@@ -292,7 +292,7 @@
             </div>
           </div>
           <div class="order-total">
-            $<%= order.totalAmount.toFixed(2) %>
+            ₹<%= order.totalAmount.toFixed(2) %>
             <small class="d-block"><%= order.items.length %> item(s)</small>
           </div>
 
@@ -313,7 +313,7 @@
                   <span class="item-name"><%= item.name %></span>
                   <p class="quantity">Quantity: <%= item.quantity %></p>
                 </div>
-                <span>$<%= (item.price * item.quantity).toFixed(2) %></span>
+                <span>₹<%= (item.price * item.quantity).toFixed(2) %></span>
               </div>
               <% }) %>
             </div>

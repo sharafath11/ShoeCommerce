@@ -69,9 +69,6 @@ export const filterCategory = async (req, res) => {
         item.categoryId._id.equals(catId) 
     );
 
-    console.log('====================================');
-    console.log(products);
-    console.log('====================================');
 
     const user = req.session.user;
 

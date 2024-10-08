@@ -5,26 +5,39 @@ export const reviewHandler = async (req, res) => {
     const { name, rating, review, productId } = req.body;
     const imagePath = req.file ? req.file.path : null;
     const user = req.session.user;
-    
+  
     if (!user) {
       return res.json({ ok: false, msg: "Please login" });
     }
   
     try {
-      // Check if the user has purchased the product
+
       const hasPurchased = await OrderModel.findOne({
-        userId: user._id,
-        "products.productId": productId,
-        status: "Completed", // Assuming completed status means order is finished
+        user: user._id,
+        "items.productId": productId,
+        status: "Completed",
       });
   
       if (!hasPurchased) {
-        return res
-          .status(403)
-          .json({ ok: false, msg: "You can only review products you have purchased." });
+        return res.json({
+          ok: false,
+          msg: "You can only review products you have purchased.",
+        });
       }
   
-      // Create and save the new review
+     
+      const existingReview = await ReviewModel.findOne({
+        productId,
+        userId: user._id,
+      });
+  
+      if (existingReview) {
+        return res.json({
+          ok: false,
+          msg: "You can only submit one review per product.",
+        });
+      }
+  
       const newReview = new ReviewModel({
         productId,
         userId: user._id,
@@ -40,15 +53,14 @@ export const reviewHandler = async (req, res) => {
         .json({ ok: true, msg: "Review submitted successfully!" });
     } catch (error) {
       console.error("Error saving review:", error);
-      return res
-        .status(500)
-        .json({
-          ok: false,
-          msg: "An error occurred while submitting the review.",
-        });
+      return res.status(500).json({
+        ok: false,
+        msg: "An error occurred while submitting the review.",
+      });
     }
   };
   
+
 export const reviewPagenation = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = 5;

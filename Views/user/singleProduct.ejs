@@ -108,31 +108,25 @@
         border: 1px dashed #28a745;
       }
       .form-group label {
-        font-weight: bold; /* Make labels bold */
-        color: #495057; /* Darker color for labels */
+        font-weight: bold;
+        color: #495057;
       }
-
-      /* Text area styling */
       #review {
-        resize: none; /* Disable resizing */
+        resize: none;
       }
 
-      /* Button styling */
       .btn-warning {
-        background-color: #ffc107; /* Button background color */
-        border-color: #ffc107; /* Button border color */
-        font-weight: bold; /* Bold text on the button */
+        background-color: #ffc107;
+        border-color: #ffc107;
+        font-weight: bold;
       }
-
-      /* Button hover effect */
       .btn-warning:hover {
-        background-color: #e0a800; /* Darker button color on hover */
-        border-color: #d39e00; /* Darker border color on hover */
+        background-color: #e0a800;
+        border-color: #d39e00;
       }
 
-      /* File input styles */
       .form-control-file {
-        padding: 10px; /* Add some padding */
+        padding: 10px;
       }
       .modal {
         display: none;
@@ -181,7 +175,7 @@
           class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end"
         >
           <div class="col-first">
-            <h1>Shop Category page</h1>
+            <h1>Product Details</h1>
             <nav class="d-flex align-items-center">
               <a href="/">Home<span class="lnr lnr-arrow-right"></span></a>
               <a href="/singleproduct/<%= product._id %>">Product Details</a>
@@ -218,7 +212,7 @@
 
         <div class="col-md-6 p-5">
           <h1 class="product-title"><%= product.name %></h1>
-          <p class="product-price">$ <%= product.price %></p>
+          <p class="product-price">₹ <%= product.price %></p>
           <% if (product.categoryId) { %>
           <p><strong>Category:</strong> <%= product.categoryId.name %></p>
           <% } %>
@@ -251,7 +245,7 @@
 
       <!-- Reviews Section -->
       <div class="review-section mt-5">
-        <h3>Customer Reviews</h3>
+        <h3>Verified Customer Reviews</h3>
 
         <div class="reviews-list" id="reviewsContainer"></div>
 
@@ -329,7 +323,7 @@
                 accept="image/*"
               />
             </div>
-
+            <span class="mb-3">You can only submit one review per product.</span><br>
             <button
               type="submit"
               class="btn border-dark badge-light"
@@ -446,17 +440,22 @@
           const name = document.getElementById("name").value;
           const rating = document.getElementById("rating").value;
           const review = document.getElementById("review").value;
+          const rCheck = /^[A-Za-z\s\p{Emoji}]+$/u;
 
+          if (!rCheck.test(review)) {
+            showToast("Review can only contain letters and emojis.");
+            return;
+          }
           if (!name) {
-            showToast("please enter name ")
+            showToast("please enter name ");
             return;
           }
           if (!rating) {
-            showToast("please select a star ")
+            showToast("please select a star ");
             return;
           }
           if (!review) {
-            showToast("please enter your review ")
+            showToast("please enter your review ");
             return;
           }
 
@@ -486,10 +485,10 @@
             if (response.data.ok) {
               showToast(response.data.msg);
               document.getElementById("reviewForm").reset();
-              return
+              return;
             } else {
               showToast(response.data.msg);
-              return
+              return;
             }
           } catch (error) {
             console.error("Error submitting review:", error);
@@ -499,8 +498,8 @@
     </script>
 
     <script>
-      let currentPage = 1; // Start on page 1
-      const totalPages = 6; // You can update this dynamically based on your data
+      let currentPage = 1;
+      const totalPages = 6;
 
       async function fetchReviews(page) {
         try {
