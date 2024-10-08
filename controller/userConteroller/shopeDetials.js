@@ -66,7 +66,7 @@ export const filterCategory = async (req, res) => {
       (item) =>
         !item.blocked && 
         !item.categoryId.blocked &&
-        item.categoryId._id.equals(catId) //object id ayond equls use cheyyne
+        item.categoryId._id.equals(catId) 
     );
 
     console.log('====================================');

@@ -11,6 +11,10 @@ const reviewSchema = new mongoose.Schema({
         ref: 'User', 
         required: true, 
     },
+    name:{
+        type:String,
+        required:true
+    },
     isBlocked: {
         type: Boolean,
         default: false,

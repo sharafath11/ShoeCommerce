@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Product Page</title>
 
-    <link rel="stylesheet" href="css/linearicons.css" />
+    <link rel="stylesheet" href="/css/linearicons.css" />
     <link rel="stylesheet" href="/css/font-awesome.min.css" />
     <link rel="stylesheet" href="/css/themify-icons.css" />
     <link rel="stylesheet" href="/css/bootstrap.css" />
@@ -108,39 +108,78 @@
         border: 1px dashed #28a745;
       }
       .form-group label {
-    font-weight: bold; /* Make labels bold */
-    color: #495057; /* Darker color for labels */
-}
+        font-weight: bold; /* Make labels bold */
+        color: #495057; /* Darker color for labels */
+      }
 
-/* Text area styling */
-#review {
-    resize: none; /* Disable resizing */
-}
+      /* Text area styling */
+      #review {
+        resize: none; /* Disable resizing */
+      }
 
-/* Button styling */
-.btn-warning {
-    background-color: #ffc107; /* Button background color */
-    border-color: #ffc107; /* Button border color */
-    font-weight: bold; /* Bold text on the button */
-}
+      /* Button styling */
+      .btn-warning {
+        background-color: #ffc107; /* Button background color */
+        border-color: #ffc107; /* Button border color */
+        font-weight: bold; /* Bold text on the button */
+      }
 
-/* Button hover effect */
-.btn-warning:hover {
-    background-color: #e0a800; /* Darker button color on hover */
-    border-color: #d39e00; /* Darker border color on hover */
-}
+      /* Button hover effect */
+      .btn-warning:hover {
+        background-color: #e0a800; /* Darker button color on hover */
+        border-color: #d39e00; /* Darker border color on hover */
+      }
 
-/* File input styles */
-.form-control-file {
-    padding: 10px; /* Add some padding */
-}
+      /* File input styles */
+      .form-control-file {
+        padding: 10px; /* Add some padding */
+      }
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 100;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0, 0, 0);
+        background-color: rgba(0, 0, 0, 0.9);
+      }
+
+      .modal-content {
+        margin-top: 15px;
+        margin: auto;
+        display: block;
+        width: 80%;
+        max-width: 600px;
+      }
+
+      .close {
+        position: absolute;
+        top: 20px;
+        right: 30px;
+        color: #f1f1f1;
+        font-size: 40px;
+        font-weight: bold;
+        transition: 0.3s;
+      }
+
+      .close:hover,
+      .close:focus {
+        color: #bbb;
+        text-decoration: none;
+        cursor: pointer;
+      }
     </style>
   </head>
-  <body >
+  <body>
     <%- include('partials/header') %>
     <section class="banner-area organic-breadcrumb">
       <div class="container">
-        <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
+        <div
+          class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end"
+        >
           <div class="col-first">
             <h1>Shop Category page</h1>
             <nav class="d-flex align-items-center">
@@ -151,6 +190,7 @@
         </div>
       </div>
     </section>
+
     <div class="container mt-4 p-5">
       <div class="row mt-5">
         <div class="col-md-6 mt-5">
@@ -177,31 +217,28 @@
         </div>
 
         <div class="col-md-6 p-5">
-          <!-- Product Details -->
           <h1 class="product-title"><%= product.name %></h1>
           <p class="product-price">$ <%= product.price %></p>
-
-          <!-- Category Display -->
           <% if (product.categoryId) { %>
           <p><strong>Category:</strong> <%= product.categoryId.name %></p>
           <% } %>
 
           <p>
-            <% 
-              const allStockLessThan20 = product.availableSize.every(sizeObj => sizeObj.stock < 20); 
-            %>
+            <% const allStockLessThan20 = product.availableSize.every(sizeObj =>
+            sizeObj.stock < 20); %>
             <strong>Available size</strong>
             <select id="sizeSelect" class="form-select mb-3">
-              <% product.availableSize.forEach(sizeObj => { %> 
-                <% if (sizeObj.stock > 0) { %>
-                  <option value="<%= sizeObj.size %>"><%= sizeObj.size %></option>
-                <% } %> 
-              <% }) %>
+              <% product.availableSize.forEach(sizeObj => { %> <% if
+              (sizeObj.stock > 0) { %>
+              <option value="<%= sizeObj.size %>"><%= sizeObj.size %></option>
+              <% } %> <% }) %>
             </select>
             <% if (allStockLessThan20) { %>
-              <p style="color: red;">Few products are left!</p>
-            <% } %>
           </p>
+
+          <p style="color: red">Few products are left!</p>
+          <% } %>
+
           <p class="product-description"><%= product.description %></p>
           <button
             class="btn btn-dark w-100"
@@ -216,92 +253,95 @@
       <div class="review-section mt-5">
         <h3>Customer Reviews</h3>
 
-        <div class="reviews-list">
-          <% reviews.forEach(function(review) { %>
-            <div class="review-card">
-              <p class="reviewer-name">
-                <%= review.userId.name %> 
-                <span class="rating">
-                
-                  <% for (let i = 0; i < review.rating; i++) { %>
-                    ★
-                  <% } %>
-                </span>
-              </p>
-              
-              <p><%= review.comment %></p>
-              <% if (review.imagePath) { %>
-               
-                  <img src="<%=review.imagePath.replace('public', '') %>" alt="Review Image" style="max-width: 100px;">
-               
-              <% } %>
-              <p class="review-date">
-                <%= new Date(review.createdAt).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                }) %>
-              </p>
-            </div>
-          
-          <% }) %>
+        <div class="reviews-list" id="reviewsContainer"></div>
+
+        <div class="pagination">
+          <a href="#" class="prev-arrow" id="prevPage">
+            <i class="fa fa-long-arrow-left" aria-hidden="true"></i>
+          </a>
+          <span id="paginationLinks"></span>
+          <a href="#" class="next-arrow" id="nextPage">
+            <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+          </a>
         </div>
-        
 
+        <div id="imageModal" class="modal" style="display: none">
+          <span class="close" id="closeModal">&times;</span>
+          <img class="modal-content" id="modalImage" alt="Review Image" />
+          <div id="caption"></div>
+        </div>
 
-        
         <div class="review-container">
           <h2 class="text-center mb-4">Submit Your Review</h2>
           <form id="reviewForm" enctype="multipart/form-data">
-            <input type="text" hidden value="<%= product._id %>" id="p-id">
+            <input type="text" hidden value="<%= product._id %>" id="p-id" />
             <div class="form-group">
-                <label for="name">Name</label>
-                <input type="text" class="form-control" id="name" placeholder="Enter your name" required>
+              <label for="name">Name</label>
+              <input
+                type="text"
+                class="form-control"
+                id="name"
+                placeholder="Enter your name"
+                required
+              />
             </div>
-        
+
             <div class="form-group">
-                <label for="rating">Rating</label>
-                <select class="form-control" id="rating" >
-                    <option value="" disabled selected>Select Rating</option>
-                    <option value="1">1 <i class="fas fa-star"></i></option>
-                    <option value="2">2 <i class="fas fa-star"></i><i class="fas fa-star"></i></option>
-                    <option value="3">3 <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></option>
-                    <option value="4">4 <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></option>
-                    <option value="5">5 <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></option>
-                </select>
+              <label for="rating">Rating</label>
+              <select class="form-control" id="rating">
+                <option value="" disabled selected>Select Rating</option>
+                <option value="1">1 <i class="fas fa-star"></i></option>
+                <option value="2">
+                  2 <i class="fas fa-star"></i><i class="fas fa-star"></i>
+                </option>
+                <option value="3">
+                  3 <i class="fas fa-star"></i><i class="fas fa-star"></i
+                  ><i class="fas fa-star"></i>
+                </option>
+                <option value="4">
+                  4 <i class="fas fa-star"></i><i class="fas fa-star"></i
+                  ><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                </option>
+                <option value="5">
+                  5 <i class="fas fa-star"></i><i class="fas fa-star"></i
+                  ><i class="fas fa-star"></i><i class="fas fa-star"></i
+                  ><i class="fas fa-star"></i>
+                </option>
+              </select>
             </div>
-        
+
             <div class="form-group">
-                <label for="review">Review</label>
-                <textarea class="form-control" id="review" rows="4" placeholder="Write your review here..." ></textarea>
+              <label for="review">Review</label>
+              <textarea
+                class="form-control"
+                id="review"
+                rows="4"
+                placeholder="Write your review here..."
+              ></textarea>
             </div>
-        
+
             <div class="form-group">
-                <label for="image">Add Image (optional)</label>
-                <input type="file" class="form-control-file" id="image" accept="image/*">
+              <label for="image">Add Image (optional)</label>
+              <input
+                type="file"
+                class="form-control-file"
+                id="image"
+                accept="image/*"
+              />
             </div>
-        
-            <button type="submit" class="btn border-dark badge-light" style="background-color: yellowgreen;" id="reviewBtnHandler">Submit Review</button>
-        </form>
-      </div>
-      <div class="pagination">
-        <a href="#" class="prev-arrow"
-          ><i class="fa fa-long-arrow-left" aria-hidden="true"></i
-        ></a>
-        <a href="#" class="active">1</a>
-        <a href="#">2</a>
-        <a href="#">3</a>
-        <a href="#" class="dot-dot"
-          ><i class="fa fa-ellipsis-h" aria-hidden="true"></i
-        ></a>
-        <a href="#">6</a>
-        <a href="#" class="next-arrow"
-          ><i class="fa fa-long-arrow-right" aria-hidden="true"></i
-        ></a>
-      </div>
+
+            <button
+              type="submit"
+              class="btn border-dark badge-light"
+              style="background-color: yellowgreen"
+              id="reviewBtnHandler"
+            >
+              Submit Review
+            </button>
+          </form>
+        </div>
       </div>
     </div>
-    
 
     <%- include('partials/footer') %>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
@@ -344,8 +384,12 @@
         focusArea.style.top = `${e.pageY - 50}px`;
 
         const zoomFactor = 3;
-        zoomedImage.style.backgroundSize = `${mainImage.width * zoomFactor}px ${mainImage.height * zoomFactor}px`;
-        zoomedImage.style.backgroundPosition = `-${x * zoomFactor}px -${y * zoomFactor}px`;
+        zoomedImage.style.backgroundSize = `${mainImage.width * zoomFactor}px ${
+          mainImage.height * zoomFactor
+        }px`;
+        zoomedImage.style.backgroundPosition = `-${x * zoomFactor}px -${
+          y * zoomFactor
+        }px`;
       });
 
       mainImage.addEventListener("mouseleave", function () {
@@ -353,99 +397,216 @@
         focusArea.style.display = "none";
       });
     </script>
-<script>
-  function addToCart(event,productId,selectedSize) {
-      console.log('Adding product to cart');
-     
-      if(!selectedSize){
+
+    <script>
+      function addToCart(event, productId, selectedSize) {
+        console.log("Adding product to cart");
+
+        if (!selectedSize) {
           showToast("Please select size :)");
           return;
-      }
-      axios.post(`/addToCart/${productId}`,{size:selectedSize})
-      .then(function(response) {  
-          if (response.data.success) {
+        }
+
+        axios
+          .post(`/addToCart/${productId}`, { size: selectedSize })
+          .then(function (response) {
+            if (response.data.success) {
               showToast(response.data.message);
               return updateCartQuantity();
-          } else {
-              if(response.data.message){
-                  return showToast(response.data.message);
+            } else {
+              if (response.data.message) {
+                return showToast(response.data.message);
               } else {
-                  window.location.href='/ShowLoginMsg';
+                window.location.href = "/ShowLoginMsg";
               }
-          }
-      })
-      .catch(function(error) {
-          console.log(error);
-      });
-  }
+            }
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      }
 
-  function showToast(message) {
-      Toastify({
+      function showToast(message) {
+        Toastify({
           text: message,
           duration: 2000,
           gravity: "top",
           position: "right",
           backgroundColor: "#333",
-          stopOnFocus: true
-      }).showToast();
-  }
-</script>   
-<script>
-  document.getElementById('reviewForm').addEventListener('submit', async function (event) {
-      event.preventDefault(); 
-      const name=document.getElementById('name').value
-     const rating=document.getElementById('rating').value
-     const review=document.getElementById('review').value
-
-     if(!name){
-      showToast("please enter name :)")
-      return
-     }
-     if(!rating){
-      showToast("please select a star :)")
-      return
-     }
-     if(!review){
-      showToast("please enter you are rivew :)")
-      return
-     }
-      const formData = new FormData(); 
-
-      formData.append('productId', document.getElementById("p-id").value);
-      formData.append('name',name );
-      formData.append('rating',rating);
-      formData.append('review', review);
-      
-      const imageFile = document.getElementById('image').files[0];
-      if (imageFile && !imageFile.type.startsWith('image/')) {
-          showToast('Please select a valid image file.');
-          return; 
+          stopOnFocus: true,
+        }).showToast();
       }
+    </script>
 
-      if (imageFile) {
-          formData.append('reviewImage', imageFile);
-      }
+    <script>
+      document
+        .getElementById("reviewForm")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault();
+          const name = document.getElementById("name").value;
+          const rating = document.getElementById("rating").value;
+          const review = document.getElementById("review").value;
 
-      try {
-          const response = await axios.post('/product/reviews', formData, {
-              headers: {
-                  'Content-Type': 'multipart/form-data', 
-              },
-          });
-
-          if (response.data.ok) {
-              showToast('Review submitted successfully!');
-              document.getElementById('reviewForm').reset();
-          } else {
-              showToast(`Error: ${response.data.message || 'Failed to submit review'}`);
+          if (!name) {
+            showToast("please enter name ")
+            return;
           }
-      } catch (error) {
-          console.error('Error submitting review:', error);
-          showToast('Error submitting review. Please try again later.');
+          if (!rating) {
+            showToast("please select a star ")
+            return;
+          }
+          if (!review) {
+            showToast("please enter your review ")
+            return;
+          }
+
+          const formData = new FormData();
+          formData.append("productId", document.getElementById("p-id").value);
+          formData.append("name", name);
+          formData.append("rating", rating);
+          formData.append("review", review);
+
+          const imageFile = document.getElementById("image").files[0];
+          if (imageFile && !imageFile.type.startsWith("image/")) {
+            showToast("Please select a valid image file.");
+            return;
+          }
+
+          if (imageFile) {
+            formData.append("reviewImage", imageFile);
+          }
+
+          try {
+            const response = await axios.post("/product/reviews", formData, {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            });
+
+            if (response.data.ok) {
+              showToast(response.data.msg);
+              document.getElementById("reviewForm").reset();
+              return
+            } else {
+              showToast(response.data.msg);
+              return
+            }
+          } catch (error) {
+            console.error("Error submitting review:", error);
+            showToast("Error submitting review. Please try again later.");
+          }
+        });
+    </script>
+
+    <script>
+      let currentPage = 1; // Start on page 1
+      const totalPages = 6; // You can update this dynamically based on your data
+
+      async function fetchReviews(page) {
+        try {
+          const productId = document.getElementById("p-id").value;
+          const response = await axios.get(
+            `/product/reviews/?page=${page}&pid=${productId}`
+          );
+          if (response.data.ok) {
+            const reviews = response.data.reviews;
+            const reviewsContainer =
+              document.getElementById("reviewsContainer");
+            reviewsContainer.innerHTML = "";
+            reviews.forEach((review) => {
+              const reviewCard = `
+        <div class="review-card">
+            <p class="reviewer-name">
+                ${review.name}<br> 
+                <span class="rating">${"★".repeat(review.rating)}</span>
+            </p>
+            <p>${review.comment}</p>
+            ${
+              review.imagePath
+                ? `<img class="review-image" src="${review.imagePath.replace(
+                    "public",
+                    ""
+                  )}" alt="Review Image" style="max-width: 100px; height:100px">`
+                : ""
+            }
+            <p class="review-date">${new Date(
+              review.createdAt
+            ).toLocaleDateString()}</p>
+        </div>
+    `;
+              reviewsContainer.innerHTML += reviewCard;
+            });
+
+            const modal = document.getElementById("imageModal");
+            const modalImage = document.getElementById("modalImage");
+            const captionText = document.getElementById("caption");
+            const closeModal = document.getElementById("closeModal");
+
+            document.querySelectorAll(".review-image").forEach((image) => {
+              image.addEventListener("click", function () {
+                modal.style.display = "block";
+                modalImage.src = this.src;
+                captionText.innerHTML = this.alt;
+              });
+            });
+
+            closeModal.onclick = function () {
+              modal.style.display = "none";
+            };
+
+            window.onclick = function (event) {
+              if (event.target == modal) {
+                modal.style.display = "none";
+              }
+            };
+
+            updatePagination(response.data.totalPages);
+          }
+        } catch (error) {
+          console.error("Error fetching reviews:", error);
+        }
       }
-  });
-</script>
 
+      function updatePagination(totalPages) {
+        const paginationLinks = document.getElementById("paginationLinks");
+        paginationLinks.innerHTML = "";
 
+        for (let i = 1; i <= totalPages; i++) {
+          const link = document.createElement("a");
+          link.href = "#";
+          link.className = i === currentPage ? "active" : "";
+          link.textContent = i;
+          link.onclick = (e) => {
+            e.preventDefault();
+            currentPage = i;
+            fetchReviews(currentPage);
+          };
+          paginationLinks.appendChild(link);
+        }
+
+        document.getElementById("prevPage").style.display =
+          currentPage > 1 ? "inline" : "none";
+        document.getElementById("nextPage").style.display =
+          currentPage < totalPages ? "inline" : "none";
+      }
+
+      fetchReviews(currentPage);
+
+      document.getElementById("prevPage").onclick = (e) => {
+        e.preventDefault();
+        if (currentPage > 1) {
+          currentPage--;
+          fetchReviews(currentPage);
+        }
+      };
+
+      document.getElementById("nextPage").onclick = (e) => {
+        e.preventDefault();
+        if (currentPage < totalPages) {
+          currentPage++;
+          fetchReviews(currentPage);
+        }
+      };
+    </script>
   </body>
 </html>

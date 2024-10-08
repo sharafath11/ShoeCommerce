@@ -19,7 +19,7 @@ import { addAddress, getOrderReanderPage, profileRender, removeAddress, removeOr
 import { showLogin } from "../middleware/showLogin.js";
 import { forgetPassword, forgetPasswordRender, renderResetPasswordPage, resetPassword } from "../controller/userConteroller/forgotPassword.js";
 import { changePassword, renderSettings } from "../controller/userConteroller/settings.js";
-import { reviewHandler } from "../controller/userConteroller/reviewContoller.js";
+import { reviewHandler, reviewPagenation } from "../controller/userConteroller/reviewContoller.js";
 import multer from 'multer';
 import path from 'path';
 const storage = multer.diskStorage({
@@ -80,4 +80,5 @@ router.post('/reset-password', resetPassword);
 router.get("/settings",renderSettings);
 router.post("/changepassword",changePassword)
 router.post("/product/reviews", upload.single('reviewImage'),reviewHandler)
+router.get("/product/reviews",reviewPagenation)
 export default router
