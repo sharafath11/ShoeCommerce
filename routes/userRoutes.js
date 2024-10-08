@@ -14,14 +14,25 @@ import {  protectedHand } from "../middleware/protectedRoutes.js";
 import { logoutFn } from "../controller/userConteroller/logoutController.js";
 import { removeWhislist, renderWishlistPage, whislistFn } from "../controller/userConteroller/whislistController.js";
 import noCache from "../middleware/cachClear.js";
-import { shopDetialsRender } from "../controller/userConteroller/shopeDetials.js";
+import { filterCategory, shopDetialsRender } from "../controller/userConteroller/shopeDetials.js";
 import { addAddress, getOrderReanderPage, profileRender, removeAddress, removeOrders, renderAddresPage, updateAddress, updateProfile } from "../controller/userConteroller/profileController.js";
 import { showLogin } from "../middleware/showLogin.js";
 import { forgetPassword, forgetPasswordRender, renderResetPasswordPage, resetPassword } from "../controller/userConteroller/forgotPassword.js";
 import { changePassword, renderSettings } from "../controller/userConteroller/settings.js";
+import { reviewHandler } from "../controller/userConteroller/reviewContoller.js";
+import multer from 'multer';
+import path from 'path';
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'public/reviewImages'); 
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname));
+    }
+});
 
+const upload = multer({ storage: storage });
 const router=express.Router();
-
 router.get("/",homeRender)
 router.get("/register",registerGetFn);
 router.post("/register",userRegister)
@@ -45,7 +56,7 @@ router.get("/singleprodect/:id",getSingleProdect)
 router.post("/whislistAdd/:id",protectedHand,whislistFn)
 router.get('/wishlist', protectedHand,renderWishlistPage)
 router.get("/remove-from-wishlist/:id",removeWhislist)
-router.get("/addToCart/:id",protectedHand,addToCart)
+router.post("/addToCart/:id",protectedHand,addToCart)
 router.get("/cart",protectedHand,cartRenderPage)
 router.delete("/cart/remove/:id",removeCart)
 // router.post('/cart/decrease-quantity',decreasCartQty)
@@ -53,6 +64,7 @@ router.delete("/cart/remove/:id",removeCart)
 router.post('/cart/update-quantity',qtyHandler );
 router.post("/cart/updateSize/:productId",updateSize)
 router.get("/shopDetials",shopDetialsRender);
+router.get("/shopDetials/category/:id",filterCategory);
 router.get("/profile",profileRender)
 router.post("/update-profile/:id",updateProfile);
 router.get("/address",renderAddresPage)
@@ -67,4 +79,5 @@ router.get('/reset-password/:token', renderResetPasswordPage);
 router.post('/reset-password', resetPassword);
 router.get("/settings",renderSettings);
 router.post("/changepassword",changePassword)
+router.post("/product/reviews", upload.single('reviewImage'),reviewHandler)
 export default router

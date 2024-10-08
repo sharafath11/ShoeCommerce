@@ -75,7 +75,6 @@ export const renderWishlistPage = async (req, res) => {
     if (!wishlist || !wishlist.products) {
       return res.render("user/wishlist", { wishlist: [], cartQty });
     }
-
     res.render("user/wishlist", {
       wishlist: wishlist.products,
       WishlistQty,

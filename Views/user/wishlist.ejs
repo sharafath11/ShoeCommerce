@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Wishlist</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-    
     <link rel="stylesheet" href="css/linearicons.css" />
     <link rel="stylesheet" href="css/font-awesome.min.css" />
     <link rel="stylesheet" href="css/themify-icons.css" />
@@ -19,122 +20,260 @@
     <link rel="stylesheet" href="css/ion.rangeSlider.skinFlat.css" />
     <link rel="stylesheet" href="css/magnific-popup.css" />
     <link rel="stylesheet" href="css/main.css" />
-</head>
-<style>
-    .mt-5 {
-        margin-top: 8rem !important;
-    }
-</style>
-<body>
- 
-<%- include('partials/header') %> 
+    <style>
+      .wishlist-card {
+        border-radius: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        border: 1px solid #eee;
+      }
 
-<div class="container mt-5">
-    <h1>Your Wishlist</h1>
-    <% if (wishlist.length > 0) { %>
-        <ul class="list-group">
-            <% wishlist.forEach(product => { %>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <div class="product-info d-flex align-items-center">
-                        <img src="<%= product.images[0].replace('public', '') %>" alt="<%= product.name %>" class="img-thumbnail" style="width: 100px; height: auto; margin-right: 20px;">
-                        <div>
-                            <h5><%= product.name %></h5>
-                            <p><%= product.description %></p>
-                            <p>Price: $<%= product.price %></p>
-                        </div>
-                    </div>
-                    <div class="actions">
-                        <a href="/singleprodect/<%= product._id %>" class="btn btn-primary">View</a>
-                        <a    onclick="addToCart(event,'<%= product._id %>')" class="btn btn-warning">Add to Cart</a>
-                        <a href="/remove-from-wishlist/<%= product._id %>" class="btn btn-danger">Remove</a>
-                    </div>
-                </li>
-            <% }); %>
-        </ul>
-    <% } else { %>
+      .wishlist-card:hover {
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      }
+
+      .wishlist-card img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+      }
+
+      .wishlist-card .btn-cart {
+        background-color: #000;
+        color: #fff;
+        border: none;
+      }
+
+      .wishlist-card .btn-cart:hover {
+        background-color: #444;
+      }
+
+      .wishlist-card .btn-view {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+      }
+
+      .wishlist-card .btn-view:hover {
+        background-color: #e2e6ea;
+      }
+
+      .remove-btn svg {
+        fill: #d9534f;
+      }
+
+      .remove-btn svg:hover {
+        fill: #c9302c;
+      }
+    </style>
+  </head>
+  <body>
+    <%- include('partials/header', { WishlistQty: WishlistQty,cartQty:cartQty }) %>
+    <section class="banner-area organic-breadcrumb ">
+        <div class="container">
+          <div
+            class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end "
+          >
+            <div class="col-first">
+              <h1>Shop Category page</h1>
+              <nav class="d-flex align-items-center">
+                <a href="/"
+                  >Home<span class="lnr lnr-arrow-right"></span
+                ></a>
+                <a href="/wishlist">Wishlist</a>
+               
+              </nav>
+            </div>
+          </div>
+        </div>
+      </section>
+    <div class="container mt-5 pt-5">
+      <h1 class="mt-5">Your Wishlist</h1>
+      <div class="row">
+        <% if (wishlist.length > 0) { %> <% wishlist.forEach(product => { %>
+        <div class="col-md-4 mb-4">
+          <div class="card wishlist-card">
+            <a href="/singleprodect/<%= product._id %>">
+              <img
+                src="<%= product.images[0].replace('public', '') %>"
+                alt="<%= product.name %>"
+                class="card-img-top"
+                style="height: 200px; object-fit: cover"
+              />
+            </a>
+            <div class="card-body">
+              <h5 class="card-title"><%= product.name %></h5>
+              <p class="card-text">Price: ₹<%= product.price %></p>
+              
+              <div
+                class="d-flex justify-content-between align-items-center mb-3"
+              >
+            
+                <% if (product.availableSize.length > 0) { %>
+                    <select class="form-control w-50" id="size-<%= product._id %>">
+                        <option value="">Select size</option>
+                        <% product.availableSize.forEach(sizeObj => { %>
+                            <% if (sizeObj.stock > 0) { %> 
+                                <option value="<%= sizeObj.size %>"><%= sizeObj.size %></option>
+                            <% } %>
+                        <% }); %>
+                    </select>
+                <% } else { %>
+                    <p>No size available</p>
+                <% } %>
+         
+            
+                <a
+                  href="/remove-from-wishlist/<%= product._id %>"
+                  class="text-danger"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-trash2 h-4 w-4"
+                  >
+                    <path d="M3 6h18"></path>
+                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                    <line x1="10" x2="10" y1="11" y2="17"></line>
+                    <line x1="14" x2="14" y1="11" y2="17"></line>
+                  </svg>
+                </a>
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <button
+                  onclick="addToCart(event, '<%= product._id %>')"
+                  class="btn btn-warning d-flex align-items-center"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-shopping-cart me-2 h-4 w-4"
+                  >
+                    <circle cx="8" cy="21" r="1"></circle>
+                    <circle cx="19" cy="21" r="1"></circle>
+                    <path
+                      d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"
+                    ></path>
+                  </svg>
+                  Add to Cart
+                </button>
+                <a
+                  href="/singleprodect/<%= product._id %>"
+                  class="btn border-2 border-dark d-flex align-items-center"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-eye me-2 h-4 w-4"
+                  >
+                    <path
+                      d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"
+                    ></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                  View
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <% }); %> <% } else { %>
         <p>Your wishlist is empty.</p>
-    <% } %>
-</div>
+        <% } %>
+      </div>
+    </div>
 
-<%- include('partials/footer') %>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <%- include('partials/footer') %>
+    <!-- End footer Area -->
 
-<script src="js/vendor/jquery-2.2.4.min.js"></script>
-<script
-  src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"
-  integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
-  crossorigin="anonymous"
-></script>
-<script src="js/vendor/bootstrap.min.js"></script>
-<script src="js/jquery.ajaxchimp.min.js"></script>
-<script src="js/jquery.nice-select.min.js"></script>
-<script src="js/jquery.sticky.js"></script>
-<script src="js/nouislider.min.js"></script>
-<script src="js/countdown.js"></script>
-<script src="js/jquery.magnific-popup.min.js"></script>
-<script src="js/owl.carousel.min.js"></script>
-
-<!-- Google Maps -->
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjCGmQ0Uq4exrzdcL6rvxywDDOvfAu6eE"></script>
-<script src="js/gmaps.min.js"></script>
-<script src="js/main.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
-<% if (typeof message !== undefined && message) { %>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
+    <script src="js/vendor/jquery-2.2.4.min.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"
+      integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+      crossorigin="anonymous"
+    ></script>
+    <script src="js/vendor/bootstrap.min.js"></script>
+    <script src="js/jquery.ajaxchimp.min.js"></script>
+    <script src="js/jquery.nice-select.min.js"></script>
+    <script src="js/jquery.sticky.js"></script>
+    <script src="js/nouislider.min.js"></script>
+    <script src="js/countdown.js"></script>
+    <script src="js/jquery.magnific-popup.min.js"></script>
+    <script src="js/owl.carousel.min.js"></script>
+    <!--gmaps Js-->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjCGmQ0Uq4exrzdcL6rvxywDDOvfAu6eE"></script>
+    <script src="js/gmaps.min.js"></script>
+    <script src="js/main.js"></script>
+   
+   
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        function addToCart(event,productId) {
+            console.log('Adding product to cart');
+            const sizeSelect = document.getElementById(`size-${productId}`);
+            const selectedSize = sizeSelect.value;
+            if(!selectedSize){
+                showToast("Please select size :)");
+                return;
+            }
+            axios.post(`/addToCart/${productId}`,{size:selectedSize})
+            .then(function(response) {  
+                if (response.data.success) {
+                    showToast(response.data.message);
+                    return updateCartQuantity();
+                } else {
+                    if(response.data.message){
+                        return showToast(response.data.message);
+                    } else {
+                        window.location.href='/ShowLoginMsg';
+                    }
+                }
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
+        }
+    
         function showToast(message) {
             Toastify({
                 text: message,
-                duration: 2000, 
+                duration: 2000,
                 gravity: "top",
-                position: "right", 
-                backgroundColor: "#333", 
-                stopOnFocus: true 
+                position: "right",
+                backgroundColor: "#333",
+                stopOnFocus: true
             }).showToast();
         }
-        showToast('<%= message %>');
-    });
-</script>
-<% } %>
-
-<script>
-    function addToCart(event,productId) {
-        console.log('Adding product to cart');
-        axios.get(`/addToCart/${productId}`)
-        .then(function(response) {  
-            if (response.data.success) {
-                showToast(response.data.message);
-                return updateCartQuantity();
-            } else {
-                if(response.data.message){
-                    return showToast(response.data.message);
-                } else {
-                    window.location.href='/ShowLoginMsg';
-                }
-            }
-        })
-        .catch(function(error) {
-            showToast('Please login :)');
-            console.log(error);
-        });
-    }
-
-    function showToast(message) {
-        Toastify({
-            text: message,
-            duration: 2000,
-            gravity: "top",
-            position: "right",
-            backgroundColor: "#333",
-            stopOnFocus: true
-        }).showToast();
-    }
-
-    function updateCartQuantity() {
-        let currentCartQty = parseInt(document.getElementById('cart-quantity').innerText);
-        document.getElementById('cart-quantity').innerText = currentCartQty + 1;
-    }
-</script>
-
-</body>
+    
+        function updateCartQuantity() {
+            let currentCartQty = parseInt(document.getElementById('cart-quantity').innerText);
+            document.getElementById('cart-quantity').innerText = currentCartQty + 1;
+        }
+    </script>   
+  </body>
 </html>

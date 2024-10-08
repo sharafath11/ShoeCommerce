@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import userModel from "../../models/userModel.js";
 import AddressModel from "../../models/addressModel.js";
 import Wishlist from "../../models/whislistModel.js";

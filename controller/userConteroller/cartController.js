@@ -2,7 +2,6 @@ import ProductModel from "../../models/prodectsModel.js";
 import CartModel from "../../models/cartModel.js";
 
 export const cartRenderPage = async (req, res) => {
- 
   try {
     const user = req.session.user;
     const WishlistQty = req.session.WishlistQty;
@@ -13,21 +12,19 @@ export const cartRenderPage = async (req, res) => {
       return res.redirect("/login");
     }
 
-   
     const cart = await CartModel.findOne({ userId: user._id }).populate({
       path: "products.productId",
-      select: "name price images availableSize", 
+      select: "name price images availableSize",
     });
 
     const cartQty = req.session.cartQty;
 
-   
     res.render("user/cart", {
       cartQty,
       WishlistQty,
       user,
       message: toastMessage,
-      cartProducts: cart ? cart.products : [], 
+      cartProducts: cart ? cart.products : [],
     });
   } catch (error) {
     console.error("Error fetching cart:", error);
@@ -60,82 +57,86 @@ export const removeCart = async (req, res) => {
   }
 };
 export const qtyHandler = async (req, res) => {
-  const { productId, quantity, size } = req.body; 
+  const { productId, quantity, size } = req.body;
   const user = req.session.user;
-console.log('====================================');
-console.log(size);
-console.log('====================================');
   try {
+    const product = await ProductModel.findById(productId);
+    if (!product) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Product not found" });
+    }
 
-      const product = await ProductModel.findById(productId);
-      if (!product) {
-          return res.status(404).json({ success: false, message: 'Product not found' });
-      }
-     
-      const sizeDetails = product.availableSize.find(s => s.size === parseInt(size));
-      if (!sizeDetails) {
-          return res.status(400).json({ success: false, message: 'Size not available' });
-      }
-      if (quantity > sizeDetails.stock) {
-          return res.status(400).json({ success: false, message: 'Requested quantity exceeds available stock.' });
-      }
-      await CartModel.updateOne(
-          { userId: user._id, "products.productId": productId, "products.size": size },
-          { $set: { "products.$.quantity": quantity } }
-      );
+    const sizeDetails = product.availableSize.find(
+      (s) => s.size === parseInt(size)
+    );
+    if (!sizeDetails) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Size not available" });
+    }
+    if (quantity > sizeDetails.stock) {
+      return res.status(400).json({
+        success: false,
+        message: "Requested quantity exceeds available stock.",
+      });
+    }
+    await CartModel.updateOne(
+      {
+        userId: user._id,
+        "products.productId": productId,
+        "products.size": size,
+      },
+      { $set: { "products.$.quantity": quantity } }
+    );
 
-      res.json({ success: true });
+    res.json({ success: true });
   } catch (error) {
-      console.error(error);
-      res.status(500).json({ success: false });
+    console.error(error);
+    res.status(500).json({ success: false });
   }
 };
 export const addToCart = async (req, res) => {
   try {
+    const { size } = req.body;
     const productId = req.params.id;
     const userId = req.session.user ? req.session.user._id : null;
-
     if (!userId) {
       return res
         .status(400)
         .json({ message: "User not logged in or session expired" });
     }
-
     const product = await ProductModel.findById(productId);
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
-
     let cart = await CartModel.findOne({ userId });
 
     if (!cart) {
       cart = new CartModel({
         userId,
-        products: [{ productId }],
+        products: [{ productId, size }],
       });
     } else {
       const productInCart = cart.products.find(
-        (item) => item?.productId?.toString() === productId
+        (item) => item.productId.toString() === productId && item.size === size
       );
 
       if (productInCart) {
-        return res
-          .status(200)
-          .json({ message: "Product already in cart:)", success: false });
+        return res.status(200).json({
+          message: "Product with the same size already in cart",
+          success: false,
+        });
       } else {
-        cart.products.push({ productId });
+        cart.products.push({ productId, size });
       }
     }
-
     await cart.save();
-
     const cartItem = await CartModel.findOne({ userId }).populate(
       "products.productId"
     );
     req.session.cartQty = cartItem.products.length;
-
     req.session.toast = "Cart added successfully :)";
-
     return res
       .status(200)
       .json({ message: "Cart added successfully :)", success: true });
@@ -144,6 +145,7 @@ export const addToCart = async (req, res) => {
     return res.status(500).json({ message: "Server error", error });
   }
 };
+
 export const decreasCartQty = async (req, res) => {
   console.log("diccc");
 

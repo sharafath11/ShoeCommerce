@@ -316,10 +316,26 @@
           const password = document.getElementById("password").value;
           const confirmPassword =
             document.getElementById("confirmPassword").value;
-          if (password.length < 8) {
-            showToast("Password must be at least 8 characters long");
-            return;
-          }
+            if (password.length < 8) {
+    showToast("Password must be at least 8 characters long");
+    return false;
+  }
+  if (!/[A-Z]/.test(password)) {
+    showToast("Password must contain at least one uppercase letter");
+    return false;
+  }
+  if (!/[a-z]/.test(password)) {
+    showToast("Password must contain at least one lowercase letter");
+    return false;
+  }
+  if (!/[0-9]/.test(password)) {
+    showToast("Password must contain at least one number");
+    return false;
+  }
+  if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+    showToast("Password must contain at least one special character");
+    return false;
+  }
           if(otp===""){
             showToast("Please enter the otp");
             return;

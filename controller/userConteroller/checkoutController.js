@@ -6,29 +6,27 @@ import ProductModel from "../../models/prodectsModel.js";
 
 export const getCheckout = async (req, res) => {
   try {
-    const user = req.session.user;
-    const WishlistQty = req.session.WishlistQty;
-    const cartQty = req.session.cartQty;
+    const { user, WishlistQty, cartQty } = req.session;
+    const [cartDetails, addresses] = await Promise.all([
+      CartModel.findOne({ userId: user._id }).lean(),
+      AddressModel.find({ userId: user._id }).sort({ createdAt: -1 }).lean()
+    ]);
 
-    
-    const cartDetails = await CartModel.findOne({ userId: user._id });
-    const addresses = await AddressModel.find({ userId: user._id }).sort({ createdAt: -1 });
-    if (!cartDetails) {
-      return res.render("user/checkout", { user, WishlistQty, cartQty, cartItems: [],addresses });
+    if (!cartDetails || cartDetails.products.length === 0) {
+      return res.render("user/checkout", { user, WishlistQty, cartQty, cartItems: [], addresses });
     }
-   
 
-    const cartItemsWithDetails = await Promise.all(
-      cartDetails.products.map(async (cartItem) => {
-        const productDetails = await ProductModel.findById(cartItem.productId);
-        return {
-          product: productDetails,
-          quantity: cartItem.quantity,
-          size:cartItem.size
-        };
-      })
-    );
-  
+    const productIds = cartDetails.products.map((cartItem) => cartItem.productId);
+    const products = await ProductModel.find({ _id: { $in: productIds } }).lean();
+    const productMap = new Map(products.map(product => [product._id.toString(), product]));
+    const cartItemsWithDetails = cartDetails.products.map((cartItem) => {
+      return {
+        product: productMap.get(cartItem.productId.toString()),
+        quantity: cartItem.quantity,
+        size: cartItem.size
+      };
+    });
+
     res.render("user/checkout", {
       user,
       WishlistQty,
@@ -37,10 +35,11 @@ export const getCheckout = async (req, res) => {
       addresses
     });
   } catch (error) {
-    console.error("Error fetching checkout details:", error);
-    res.status(500).send("Error fetching checkout details");
+    console.error("Error fetching checkout details:", error.message);
+    res.status(500).send("An error occurred while fetching checkout details. Please try again.");
   }
 };
+
 export const checkoutFn = async (req, res) => {
   try {
     const { cartItems, selectedAddresses } = req.body; 

@@ -30,6 +30,9 @@ export const changePassword = async (req, res) => {
         if (!user) {
             return res.status(200).json({ok:false, msg: 'User not found' });
         }
+        if (!user.password) {
+            return res.status(200).json({ok:false, msg: 'This user login with google ' });
+        }
 
         const isMatch = await bcrypt.compare(currentPassword, user.password);
         if (!isMatch) {

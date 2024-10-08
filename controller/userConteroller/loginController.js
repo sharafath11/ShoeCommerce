@@ -31,7 +31,7 @@ export const loginPost = async (req, res) => {
         msg: "This user is blocked!",
       });
     }
-
+  
     const isMatch =  await bcrypt.compare(password, user.password);
     if (!isMatch || user.block) { 
       return res.status(400).json({
