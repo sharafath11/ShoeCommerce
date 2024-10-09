@@ -38,7 +38,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
   </head>
 
-  <body id="category">
+  <body id="category" >
     <!-- Start Header Area -->
     <%- include('partials/header') %>
     <!-- End Header Area -->
@@ -170,11 +170,14 @@
           <!-- Start Filter Bar -->
           <div class="filter-bar d-flex flex-wrap align-items-center">
             <div class="sorting">
-              <select>
-                <option value="1">Default </option>
-                <option value="1">Low to High</option>
-                <option value="1">High to Low</option>
-              </select>
+              <select id="mySelect" onchange="handlePriceFilter()">
+                <option value="1">Default</option>
+                <option value="2">Low to High</option>
+                <option value="3">High to Low</option>
+            </select>
+            
+           
+            
             </div>
             <div class="pagination">
               <a href="#" class="prev-arrow"
@@ -193,9 +196,17 @@
             </div>
           </div>
           <!-- End Filter Bar -->
-          <!-- Start Best Seller -->
+          
           <section class="lattest-product-area pb-40 category-list">
-            <div class="row">
+            <div class="row" id="productList">
+              <!-- Products will be dynamically injected here -->
+            </div>
+          </section>
+          
+
+          <!-- Start Best Seller -->
+            
+            <div class="row" id="hidden">
               <% products.forEach(function(product) { %>
               <div class="col-lg-4 col-md-6">
                 <div class="single-product">
@@ -570,25 +581,23 @@
   };
 
 
+
   axios.post('/filter-products', filterData)
-    .then(response => {
-    })
-    .catch(error => {
-      console.error('Error:', error);
-    });
-}
-
-
-function renderProducts(products) {
-    const productList = document.getElementById('productList');
-    productList.innerHTML = ''; 
-
+  .then(response => {
+    const products = response.data
+    let productHTML = '';    
+   
+    if(products.length===0){
+      return showToast("This filter product are not our products please filter anothor");
+      
+    }
+    document.getElementById("hidden").style.display = "none";
     products.forEach(product => {
-      const productHtml = `
+      productHTML += `
         <div class="col-lg-4 col-md-6">
           <div class="single-product">
             <a href="/singleprodect/${product._id}">
-              <img class="img-fluid" src="${product.images[0].replace('public', '')}" alt="" />
+              <img class="img-fluid" src="${product.images[0].replace('public', '')}" alt=""/>
             </a>
             <div class="product-details">
               <h6>${product.name}</h6>
@@ -603,17 +612,23 @@ function renderProducts(products) {
               </div>
             </div>
           </div>
-        </div>`;
-      productList.innerHTML += productHtml;
+        </div>
+      `;
     });
-  }
 
-
-  fetchProducts();
-
-
-
+    
+    document.getElementById('productList').innerHTML = productHTML;
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
+     function handlePriceFilter(){
+      const selectElement = document.getElementById("mySelect");
+      const selectedValue = selectElement.value;
+     }
+    }
   </script>
   
   </body>
 </html>
+    
