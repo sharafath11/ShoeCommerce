@@ -1,25 +1,23 @@
 <!DOCTYPE html>
 <html lang="zxx" class="no-js">
   <head>
-    <!-- Mobile Specific Meta -->
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-    <!-- Favicon-->
-    <link rel="shortcut icon" href="img/fav.png" />
-    <!-- Author Meta -->
-    <meta name="author" content="CodePixar" />
-    <!-- Meta Description -->
-    <meta name="description" content="" />
-    <!-- Meta Keyword -->
-    <meta name="keywords" content="" />
-    <!-- meta character set -->
-    <meta charset="UTF-8" />
-    <!-- Site Title -->
-    <title>Karma Shop</title>
 
-    <!-- CSS Files -->
+    <link rel="shortcut icon" href="logo.png" />
+
+    <meta name="author" content="CodePixar" />
+
+    <meta name="description" content="" />
+
+    <meta name="keywords" content="" />
+
+    <meta charset="UTF-8" />
+
+    <title>ST Shop</title>
+
     <link rel="stylesheet" href="css/linearicons.css" />
     <link rel="stylesheet" href="css/font-awesome.min.css" />
     <link rel="stylesheet" href="css/themify-icons.css" />
@@ -146,9 +144,7 @@
 
                   <td>
                     <% if (product.size) { %>
-                    <p id="display-size-<%= index%>">
-                      <%= product.size %>
-                    </p>
+                    <p id="display-size-<%= index%>"><%= product.size %></p>
                     <% } else if (product.productId.availableSize.length > 0) {
                     %>
                     <select
@@ -209,7 +205,8 @@
                     <div class="checkout_btn_inner d-flex align-items-center">
                       <a class="gray_btn" href="/">Continue Shopping</a>
                       <a class="primary-btn" href="/checkout"
-                        >Proceed to checkout</a >
+                        >Proceed to checkout</a
+                      >
                     </div>
                   </td>
                 </tr>
@@ -219,7 +216,6 @@
         </div>
       </div>
     </section>
-
 
     <!-- start footer Area -->
     <%- include('partials/footer') %>
@@ -244,9 +240,7 @@
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
   <script>
-    function updateQuantity(productId, action,index) {
-      
-      
+    function updateQuantity(productId, action, index) {
       const qtyInput = document.getElementById("sst-" + index);
       let currentQty = parseInt(qtyInput.value);
       const sizeElement = document.getElementById(`display-size-${index}`);

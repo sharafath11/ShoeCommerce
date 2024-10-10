@@ -1,9 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>User Profile</title>
+    <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, shrink-to-fit=no"
+  />
+
+  <link rel="shortcut icon" href="logo.png" />
+
+  <meta name="author" content="CodePixar" />
+
+  <meta name="description" content="" />
+
+  <meta name="keywords" content="" />
+
+  <meta charset="UTF-8" />
+
+  <title>ST Shop</title>
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
@@ -242,7 +255,7 @@
         <div class="order-summary shadow mb-4">
           <div class="order-header d-flex justify-content-between">
             <div>
-              <h5>Order ID <%= order._id %></h5>
+              <h5>Order ID <%= order.orderId %></h5>
               <p><%= new Date(order.orderDate).toLocaleDateString() %></p>
             </div>
             <div>
@@ -261,7 +274,7 @@
             </td>
             
               <p>Shipped to: <%= order.address.type %></p>
-              <% if (order.status !== 'Completed' && !order.isCanceld) { %>
+              <!-- <% if (order.status !== 'Completed' && !order.isCanceld) { %>
                 <button
                     type="button"
                     class="btn btn-outline-danger btn-sm"
@@ -286,7 +299,63 @@
                         <line x1="14" x2="14" y1="11" y2="17"></line>
                     </svg>
                 </button>
-            <% } %>
+            <% } %> -->
+            <% if (order.status === 'Completed') { %>
+              
+              <a href="/order/bill/<%= order._id %>" class="btn btn-outline-light btn-sm bg-info">
+                <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-file-text h-4 w-4"
+            >
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" x2="8" y1="13" y2="13"></line>
+                <line x1="16" x2="8" y1="17" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+                View Bill
+            </a>
+            
+              
+                 
+                 
+              </button>
+          <% } else if (!order.isCanceld) { %>
+              
+              <button
+                  type="button"
+                  class="btn btn-outline-danger btn-sm"
+                  onclick="removeOrder(event, '<%= order._id %>')"
+              >
+                  <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="lucide lucide-trash2 h-4 w-4"
+                  >
+                      <path d="M3 6h18"></path>
+                      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                      <line x1="10" x2="10" y1="11" y2="17"></line>
+                      <line x1="14" x2="14" y1="11" y2="17"></line>
+                  </svg>
+              </button>
+          <% } %>
+          
             
               
             </div>
@@ -311,6 +380,7 @@
               <div class="order-item d-flex justify-content-between">
                 <div>
                   <span class="item-name"><%= item.name %></span>
+                  <p>Size :  <%= item.size %></p>
                   <p class="quantity">Quantity: <%= item.quantity %></p>
                 </div>
                 <span>₹<%= (item.price * item.quantity).toFixed(2) %></span>
@@ -318,9 +388,7 @@
               <% }) %>
             </div>
             <div>
-              <strong>
-                Totel Amount :<span><%= orders[0].totalAmount %></span></strong
-              >
+              
             </div>
           </div>
         </div>

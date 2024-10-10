@@ -1,23 +1,22 @@
 <!DOCTYPE html>
 <html lang="zxx" class="no-js">
   <head>
-    <!-- Mobile Specific Meta -->
     <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
-    <!-- Favicon-->
-    <link rel="shortcut icon" href="img/fav.png" />
-    <!-- Author Meta -->
-    <meta name="author" content="CodePixar" />
-    <!-- Meta Description -->
-    <meta name="description" content="" />
-    <!-- Meta Keyword -->
-    <meta name="keywords" content="" />
-    <!-- meta character set -->
-    <meta charset="UTF-8" />
-    <!-- Site Title -->
-    <title>Karma Shop</title>
+    name="viewport"
+    content="width=device-width, initial-scale=1, shrink-to-fit=no"
+  />
+
+  <!-- <link rel="shortcut icon" href="logo.png" /> -->
+
+  <meta name="author" content="CodePixar" />
+
+  <meta name="description" content="" />
+
+  <meta name="keywords" content="" />
+
+  <meta charset="UTF-8" />
+
+  <title>ST Shop</title>
 
     <!--
             CSS
@@ -39,11 +38,115 @@
   </head>
 
   <body id="category" >
-    <!-- Start Header Area -->
-    <%- include('partials/header') %>
-    <!-- End Header Area -->
+    <style>
+        .cart-container {
+    position: relative;
+    display: inline-block;
+    text-align: center;
+}
 
-    <!-- Start Banner Area -->
+.qty {
+    position: absolute;
+    top: -11px;
+    left: 128%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    color: red;
+}
+    </style>
+    <header class="header_area sticky-header">
+      <div class="main_menu">
+          <nav class="navbar navbar-expand-lg navbar-light main_box">
+              <div class="container">
+                  <!-- Brand and toggle get grouped for better mobile display -->
+                  <a class="navbar-brand logo_h" href="/"><img src="../logo.png" alt="" style="width: 123px; height: 75px;" ></a>
+                  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                   aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                  </button>
+                  <!-- Collect the nav links, forms, and other content for toggling -->
+                  <div class="collapse navbar-collapse offset" id="navbarSupportedContent">
+                      <ul class="nav navbar-nav menu_nav ml-auto">
+                          <li class="nav-item active"><a class="nav-link" href="/">HOME</a></li>
+                          <li class="nav-item"><a class="nav-link" href="/shopDetials">SHOP </a></li>
+                          <li class="nav-item"><a class="nav-link" href="/checkout">CHECK OUT</a></li>
+                          <li class="nav-item"><a class="nav-link" href="/contact">CONTACT</a></li>
+                          
+                      </ul>
+                      <ul class="nav navbar-nav navbar-right">
+                      </li>
+                      <% if (WishlistQty > 0 ) { %>
+                          <li class="nav-item">
+                              <a href="/wishlist" class="cart">
+                                  <div class="cart-container">
+                                      <span class="qty" id="w-qty" value="<%= WishlistQty %>" ><%= WishlistQty %></span>
+                                      <span class="ti-heart"></span>
+                                  </div>
+                              </a>
+                          </li>
+                      <% } %>
+                      
+                      <li class="nav-item">
+                          <a href="/cart" class="cart">
+                              <div class="cart-container">
+                                  <% if (cartQty > 0) { %>
+                                      <span class="qty" id="cart-quantity" value="<%= cartQty %>" ><%= cartQty %></span>
+                                  <% } %>
+                                  <span class="ti-bag"></span>
+                              </div>
+                          </a>
+                      </li>
+                          <li class="nav-item">
+                              <button class="search">
+                                  <span class="lnr lnr-magnifier" id="search"></span>
+                              </button>
+                          </li>
+                      </ul>
+                      <ul class="navbar-nav">
+                          <li class="nav-item dropdown">
+                              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  <% if (user) { %> 
+                                      <%= user.username %> 
+                                  <% } else { %>
+                                      LOGIN 
+                                  <% } %>
+                              </a>
+                              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                  <% if (user) { %> 
+                                     
+                                      <a class="dropdown-item" href="/profile">Profile</a>
+                                      <div class="dropdown-divider"></div>
+                                      <a class="dropdown-item" href="/logout">Logout</a> 
+                                  <% } else { %>
+                                     
+                                      <a class="dropdown-item" href="/login">Login</a>
+                                  <% } %>
+                              </div>
+                          </li>
+                      </ul>
+                      
+                  </div>
+              </div>
+          </nav>
+      </div>
+      <div class="search_input" id="search_input_box">
+          <div class="container">
+            <form class="d-flex justify-content-between" id="searchForm" onsubmit="searchProducts(event)">
+              <input type="text" class="form-control" id="search_input" placeholder="Search Here">
+              <button type="submit" class="btn " style="    background-color: #252c60;
+              color: white;
+           
+              width: 205px;
+              margin-right: 23px;
+           
+              height: 39px;">Search</button>
+              <span class="lnr lnr-cross" id="close_search" title="Close Search"></span>
+            </form>
+          </div>
+      </div>
+  </header>
     <section class="banner-area organic-breadcrumb ">
       <div class="container">
         <div
@@ -168,7 +271,7 @@
         </div>
         <div class="col-xl-9 col-lg-8 col-md-7">
           <!-- Start Filter Bar -->
-          <div class="filter-bar d-flex flex-wrap align-items-center">
+          <div class="filter-bar d-flex flex-wrap align-items-center  " style="height: 63px;">
             <div class="sorting">
               <select id="mySelect" onchange="handlePriceFilter()">
                 <option value="1">Default</option>
@@ -179,71 +282,65 @@
            
             
             </div>
-            <div class="pagination">
-              <a href="#" class="prev-arrow"
-                ><i class="fa fa-long-arrow-left" aria-hidden="true"></i
-              ></a>
-              <a href="#" class="active">1</a>
-              <a href="#">2</a>
-              <a href="#">3</a>
-              <a href="#" class="dot-dot"
-                ><i class="fa fa-ellipsis-h" aria-hidden="true"></i
-              ></a>
-              <a href="#">6</a>
-              <a href="#" class="next-arrow"
-                ><i class="fa fa-long-arrow-right" aria-hidden="true"></i
-              ></a>
-            </div>
+            
           </div>
+        
           <!-- End Filter Bar -->
-          
+          <div id="productList" class="row"></div>
+          <div class="pagination"></div>
+       </div>
           <section class="lattest-product-area pb-40 category-list">
             <div class="row" id="productList">
-              <!-- Products will be dynamically injected here -->
+              <!-- Products ivude varume -->
             </div>
           </section>
           
 
           <!-- Start Best Seller -->
             
-            <div class="row" id="hidden">
+            <div class="row" id="hidden" >
+              <input type="text" hidden value='<%= JSON.stringify(products) %>' id="products">
+
               <% products.forEach(function(product) { %>
-              <div class="col-lg-4 col-md-6">
-                <div class="single-product">
-                  <a href="/singleprodect/<%= product._id %>">
-                    <img
-                      class="img-fluid"
-                      src="<%= product.images[0].replace('public', '') %>"
-                      alt=""
-                    />
-                  </a>
-                  <div class="product-details">
-                    <h6><%= product.name %></h6>
-                    <div class="price">
-                      <h6>₹<%= product.price %></h6>
-                      <!-- <h6 class="l-through">$<%= product.oldPrice %></h6> -->
-                    </div>
-                    <div class="prd-bottom">
-                      
-                      <div class="social-info"  onclick="addToWishList('<%= product._id %>')">
-                        <span class="lnr lnr-heart"></span>
-                        <p class="hover-text">Wishlist</p>
+                <!-- ghjhgjtyjrtjrtjsrtdsfhdfgf -->
+                <div class="col-lg-4 col-md-6">
+                  <div class="single-product">
+                    <a href="/singleproduct/<%= product._id %>">
+                      <img
+                        class="img-fluid"
+                        src="<%= product.images[0].replace('public', '') %>"
+                        alt="<%= product.name %>"
+                      />
+                    </a>
+                    <div class="product-details">
+                      <h6><%= product.name %></h6>
+                      <div class="price">
+                        <h6>₹<%= product.price %></h6>
+                      </div>
+
+              
+                      <div class="prd-bottom">
+                        <div class="social-info" onclick="addToWishList('<%= product._id %>')">
+                          <span class="lnr lnr-heart"></span>
+                          <p class="hover-text">Wishlist</p>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <!-- single product -->
+                <!-- single product -->
               <% }); %>
+              
+              
             </div>
           </section>
-
+        </div>
         </div>
       </div>
     </div>
 
-    <!-- Start related-product Area -->
-    <section class="related-product-area section_gap">
+
+    <section class="related-product-area section_gap m-5 mt-5 pt-5">
       <div class="container">
         <div class="row justify-content-center">
           <div class="col-lg-6 text-center">
@@ -524,111 +621,214 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+
+
 <script>
-    function addToWishList(productId) {
-        axios.post(`/whislistAdd/${productId}`)
-        .then(function(response) {  
-            if (response.data.success) {
-                showToast(response.data.message);
-               return addWishlistQty();
-            } else {
-                if(response.data.message){
-                  return showToast(response.data.message);
-                } 
-                else{
-                  window.location.href='/ShowLoginMsg'
-                }
-            }
-        })
-        .catch(function(error) {
-            showToast('Please login :)');
-            console.log(error);
-           
-        });
-    }
+  let datas = JSON.parse(document.getElementById("products").value);
+  const productsPerPage = 9;
 
-   
-    function addWishlistQty() {
-        let currentWtQty = parseInt(document.getElementById('w-qty').innerText);
-        document.getElementById('w-qty').innerText = currentWtQty + 1;
-    }
-
-   
-    function showToast(message) {
-        Toastify({
-            text: message,
-            duration: 3000,
-            gravity: "top",
-            position: "right",
-            backgroundColor: "#333",
-            stopOnFocus: true
-        }).showToast();
-    }
-</script>
-	</script>
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <script>
-    function filterHandler() {
-  const selectedBrand = document.querySelector('input[name="brand"]:checked')?.value;
-  const selectedColor = document.querySelector('input[name="color"]:checked')?.value;
-  if (!selectedBrand && !selectedColor) {
-    alert('Please select at least one filter.');
-    return;
+  function addToWishList(productId) {
+      axios.post(`/whislistAdd/${productId}`)
+          .then(function(response) {  
+              if (response.data.success) {
+                  showToast(response.data.message);
+                  return addWishlistQty();
+              } else {
+                  if (response.data.message) {
+                      return showToast(response.data.message);
+                  } else {
+                      window.location.href = '/ShowLoginMsg';
+                  }
+              }
+          })
+          .catch(function(error) {
+              showToast('Please login :)');
+              console.log(error);
+          });
   }
-  const filterData = {
-    brand: selectedBrand || null,
-    color: selectedColor || null
-  };
 
+  function addWishlistQty() {
+      let currentWtQty = parseInt(document.getElementById('w-qty').innerText);
+      document.getElementById('w-qty').innerText = currentWtQty + 1;
+  }
 
+  function showToast(message) {
+      Toastify({
+          text: message,
+          duration: 3000,
+          gravity: "top",
+          position: "right",
+          backgroundColor: "#333",
+          stopOnFocus: true
+      }).showToast();
+  }
 
-  axios.post('/filter-products', filterData)
-  .then(response => {
-    const products = response.data
-    let productHTML = '';    
-   
-    if(products.length===0){
-      return showToast("This filter product are not our products please filter anothor");
-      
-    }
-    document.getElementById("hidden").style.display = "none";
-    products.forEach(product => {
-      productHTML += `
-        <div class="col-lg-4 col-md-6">
-          <div class="single-product">
-            <a href="/singleprodect/${product._id}">
-              <img class="img-fluid" src="${product.images[0].replace('public', '')}" alt=""/>
-            </a>
-            <div class="product-details">
-              <h6>${product.name}</h6>
-              <div class="price">
-                <h6>₹${product.price}</h6>
-              </div>
-              <div class="prd-bottom">
-                <div class="social-info" onclick="addToWishList('${product._id}')">
-                  <span class="lnr lnr-heart"></span>
-                  <p class="hover-text">Wishlist</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-    });
+  function filterHandler() {
+      const selectedBrand = document.querySelector('input[name="brand"]:checked')?.value;
+      const selectedColor = document.querySelector('input[name="color"]:checked')?.value;
 
-    
-    document.getElementById('productList').innerHTML = productHTML;
-  })
-  .catch(error => {
-    console.error('Error:', error);
-  });
-     function handlePriceFilter(){
+      if (!selectedBrand && !selectedColor) {
+          alert('Please select at least one filter.');
+          return;
+      }
+
+      const filterData = {
+          brand: selectedBrand || null,
+          color: selectedColor || null
+      };
+
+      axios.post('/filter-products', filterData)
+          .then(response => {
+              const products = response.data;
+              if (products.length === 0) {
+                  return showToast("This filter product are not our products please filter another.");
+              }
+
+              datas = products;
+              const totalPages = Math.ceil(datas.length / productsPerPage);
+              renderProducts(datas.slice(0, productsPerPage), 1, totalPages); // Render first page
+          })
+          .catch(error => {
+              console.error('Error:', error);
+          });
+  }
+
+  function handlePriceFilter() {
       const selectElement = document.getElementById("mySelect");
       const selectedValue = selectElement.value;
-     }
+
+      if (selectedValue) {
+          let sortedData;
+
+          switch (selectedValue) {
+              case "2": 
+                  sortedData = datas.sort((a, b) => a.price - b.price);
+                  break;
+
+              case "3": 
+                  sortedData = datas.sort((a, b) => b.price - a.price);
+                  break;
+
+              default: 
+                  sortedData = datas;
+                  break;
+          }
+
+          const totalPages = Math.ceil(sortedData.length / productsPerPage);
+          renderProducts(sortedData.slice(0, productsPerPage), 1, totalPages); 
+      }
+  }
+
+  function renderProducts(products, currentPage = 1, totalPages = 1) {
+      let productHTML = '';    
+      document.getElementById("hidden").style.display = "none";
+
+      products.forEach(product => {
+    let sizesHTML = '';
+
+    if (product.availableSize && product.availableSize.length > 0) {
+        sizesHTML = '<div class="available-sizes d-flex justify-content-around" ><p>Available Sizes:</p>';
+        product.availableSize.forEach(sizeObj => {
+            if (sizeObj.stock > 0) { 
+                sizesHTML += `[<span class="size">${sizeObj.size}</span>] `;
+            }
+        });
+        sizesHTML += '</div>';
     }
-  </script>
-  
+
+    productHTML += `
+        <div class="col-lg-4 col-md-6 mt-5">
+            <div class="single-product">
+                <a href="/singleprodect/${product._id}">
+                    <img class="img-fluid" src="${product.images[0].replace('public', '')}" alt=""/>
+                </a>
+                <div class="product-details">
+                    <h6>${product.name}</h6>
+                    <div class="price">
+                        <h6>₹${product.price}</h6>
+                    </div>
+                    
+                    <!-- Display available sizes -->
+                    ${sizesHTML}
+
+                    <div class="prd-bottom">
+                        <div class="social-info" onclick="addToWishList('${product._id}')">
+                            <span class="lnr lnr-heart"></span>
+                            <p class="hover-text">Wishlist</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+});
+
+
+      document.getElementById('productList').innerHTML = productHTML;
+      renderPagination(currentPage, totalPages);
+  }
+
+  function renderPagination(currentPage, totalPages) {
+      const paginationContainer = document.querySelector('.pagination');
+      paginationContainer.innerHTML = ''; 
+      const prevButton = document.createElement('a');
+      prevButton.href = '#';
+      prevButton.className = 'prev-arrow';
+      prevButton.innerHTML = '<i class="fa fa-long-arrow-left" aria-hidden="true"></i>';
+      prevButton.onclick = () => changePage(currentPage - 1);
+      if (currentPage === 1) prevButton.style.display = 'none'; 
+      paginationContainer.appendChild(prevButton);
+
+      for (let i = 1; i <= totalPages; i++) {
+          const pageLink = document.createElement('a');
+          pageLink.href = '#';
+          pageLink.textContent = i;
+          pageLink.className = i === currentPage ? 'active' : '';
+          pageLink.onclick = () => changePage(i);
+          paginationContainer.appendChild(pageLink);
+      }
+
+      const nextButton = document.createElement('a');
+      nextButton.href = '#';
+      nextButton.className = 'next-arrow';
+      nextButton.innerHTML = '<i class="fa fa-long-arrow-right" aria-hidden="true"></i>';
+      nextButton.onclick = () => changePage(currentPage + 1);
+      if (currentPage === totalPages) nextButton.style.display = 'none'; 
+  }
+
+  function changePage(page) {
+      if (page < 1 || page > Math.ceil(datas.length / productsPerPage)) return;
+
+      const productsToRender = datas.slice((page - 1) * productsPerPage, page * productsPerPage);
+      renderProducts(productsToRender, page, Math.ceil(datas.length / productsPerPage));
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+      renderProducts(datas.slice(0, productsPerPage), 1, Math.ceil(datas.length / productsPerPage)); 
+  });
+  async function searchProducts(event) {
+    event.preventDefault(); 
+    const query = document.getElementById('search_input').value;
+    console.log('====================================');
+    console.log(query);
+    console.log('====================================');
+    if (query.length > 2) { 
+      try {
+        const response = await axios.get(`/search?query=${query}`);
+        const products = response.data.products;
+
+        renderProducts(products)
+      } catch (error) {
+        console.error('Error fetching search results:', error);
+      }
+    } else {
+      document.getElementById('searchResults').innerHTML = ''; 
+    }
+  }
+</script>
+
   </body>
 </html>
     

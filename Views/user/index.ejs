@@ -7,7 +7,7 @@
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
     
-    <link rel="shortcut icon" href="img/fav.png" />
+    <link rel="shortcut icon" href="logo.png" />
    
     <meta name="author" content="CodePixar" />
     
@@ -277,7 +277,7 @@
         </div>
       </div>
       <div class="row">
-        <!-- Iterate over products array from backend -->
+   
         <% products.forEach(product => { %>
           <div class="col-lg-3 col-md-6">
             <div class="single-product">
@@ -289,10 +289,18 @@
                 <h6><%= product.description %></h6>
                 <div class="price">
                   <h6>₹<%= product.price %></h6>
-                  <% if (product.originalPrice) { %>
+                  <!-- <% if (product.originalPrice) { %>
                     <h6 class="l-through">₹<%= product.originalPrice %></h6>
-                  <% } %>
+                  <% } %> -->
                 </div>
+                <% if (product.availableSize && product.availableSize.length > 0) { %>
+                  <div class="available-sizes d-flex justify-content-around">
+                    <p>Available Sizes:</p>
+                    <% product.availableSize.forEach(size => { %>
+                      [<span class="size"><%= size.size %></span>]
+                    <% }) %>
+                  </div>
+                <% } %>
                 <div class="prd-bottom">
                   <!-- <span class="social-info" data-id="<%= product._id %>" onclick="addToCart('<%= product._id %>')">
                     <span class="ti-bag"></span>

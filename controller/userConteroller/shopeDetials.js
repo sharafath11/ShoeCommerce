@@ -13,7 +13,10 @@ export const shopDetialsRender = async (req, res) => {
     const products = productsN.filter(
       (item, index) => !item.blocked && !item.categoryId.blocked
     );
-
+    products.forEach((product) => {
+      console.log(product.availableSize );
+       
+    });
     const user = req.session.user;
  
     if (!user || !user._id) {
@@ -71,6 +74,7 @@ export const filterCategory = async (req, res) => {
 
 
     const user = req.session.user;
+    
 
     if (!user || !user._id) {
       return res.render("user/shopeDetials", {

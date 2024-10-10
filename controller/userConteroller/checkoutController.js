@@ -73,7 +73,11 @@ export const checkoutFn = async (req, res) => {
       sizeVariant.stock -= item.quantity;
       await product.save();
     }
-
+    function generateOrderId() {
+      return 'ORD-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+    }
+    
+    const orderId = generateOrderId();
     const newOrder = new OrderModel({
       user: userId,
       items: orderItems,
@@ -85,7 +89,8 @@ export const checkoutFn = async (req, res) => {
         postalCode: selectedAddress.zip, 
         country: selectedAddress.country, 
       }, 
-      totalAmount: totalAmount,
+      totalAmount: totalAmount+50,
+      orderId:orderId
     });
 
     await newOrder.save();

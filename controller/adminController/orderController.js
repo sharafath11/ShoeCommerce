@@ -1,8 +1,7 @@
 import OrderModel from "../../models/orderModel.js";
 
 export const getOrders = async (req, res) => {
-  const fullOrders = await OrderModel.find().sort({ createdAt: -1 });
-  const orders=fullOrders.filter((item)=>!item.isCanceld)
+  const orders = await OrderModel.find({ isCanceld: false }).sort({ orderDate: -1 });
   res.render("admin/orders", { orders });
 };
 export const updateOrder = async (req, res) => {

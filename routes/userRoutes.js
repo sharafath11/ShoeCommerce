@@ -23,6 +23,8 @@ import { reviewHandler, reviewPagenation } from "../controller/userConteroller/r
 import multer from 'multer';
 import path from 'path';
 import { filteredProducts } from "../controller/userConteroller/filterProductsContoller.js";
+import { searchHand } from "../controller/userConteroller/searchController.js";
+import { billContoller } from "../controller/userConteroller/billController.js";
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'public/reviewImages'); 
@@ -67,13 +69,14 @@ router.post("/cart/updateSize/:productId",updateSize)
 router.get("/shopDetials",shopDetialsRender);
 router.get("/shopDetials/category/:id",filterCategory);
 router.get("/profile",profileRender)
-router.post("/update-profile/:id",updateProfile);
+router.post("/update-profile/:id",protectedHand,updateProfile);
 router.get("/address",renderAddresPage)
 router.post("/addAddress",addAddress);
 router.delete("/removeAddress/:id",removeAddress);
 router.post("/updateAddress",updateAddress);
 router.get("/orders",getOrderReanderPage)
 router.delete("/removeOrder/:id",removeOrders)
+router.get("/order/bill/:orderId",billContoller)
 router.get("/forgot-password",forgetPasswordRender )
 router.post("/forgot-password",forgetPassword )
 router.get('/reset-password/:token', renderResetPasswordPage);
@@ -83,4 +86,5 @@ router.post("/changepassword",changePassword)
 router.post("/product/reviews", upload.single('reviewImage'),reviewHandler)
 router.get("/product/reviews",reviewPagenation);
 router.post("/filter-products",filteredProducts)
+router.get("/search",searchHand)
 export default router

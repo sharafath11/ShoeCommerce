@@ -76,6 +76,9 @@ const OrderSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  orderId:{
+    type:String
+  }
 });
 
 const OrderModel = mongoose.model("Order", OrderSchema);

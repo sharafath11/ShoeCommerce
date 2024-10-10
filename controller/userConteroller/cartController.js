@@ -222,7 +222,7 @@ export const cartQtyIncreasing = async (req, res) => {
 export const updateSize = async (req, res) => {
   try {
     const { productId } = req.params;
-    const { size } = req.body; // Get the new size from the request body
+    const { size } = req.body; 
     const userId = req.session.user ? req.session.user._id : null;
 
     if (!userId) {
@@ -230,8 +230,6 @@ export const updateSize = async (req, res) => {
         .status(400)
         .json({ success: false, message: "User not logged in" });
     }
-
-    // Find the cart of the logged-in user
     const cart = await CartModel.findOne({ userId });
 
     if (!cart) {
@@ -239,8 +237,6 @@ export const updateSize = async (req, res) => {
         .status(404)
         .json({ success: false, message: "Cart not found" });
     }
-
-    // Find the product in the cart
     const productInCart = cart.products.find(
       (item) => item.productId.toString() === productId
     );
@@ -250,11 +246,7 @@ export const updateSize = async (req, res) => {
         .status(404)
         .json({ success: false, message: "Product not found in cart" });
     }
-
-    // Update the size of the product
     productInCart.size = size;
-
-    // Save the updated cart
     await cart.save();
 
     return res
