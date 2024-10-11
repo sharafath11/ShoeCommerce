@@ -118,7 +118,7 @@
                                     <th>Product Name</th>
                                     <th>Brand Name</th>
                                     <th> Sizes and stock</th>
-                                    <th>Description</th>
+                                    <th>Reviews</th>
                                     <th>Price</th>
                                     
                                     <th>Category</th>
@@ -138,7 +138,7 @@
                                           <%= item.size %> (Stock: <%= item.stock %>)<br>
                                         <% }); %>
                                       </td>
-                                    <td><%= product.description %></td>
+                                    <td><a href="/admin/reviews/<%= product._id %>">Reviews</a></td>
                                     <td>$<%= product.price %></td>
                                    
                                     <td><%= product?.categoryId?.name %></td>

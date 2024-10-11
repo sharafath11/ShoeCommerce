@@ -2,21 +2,19 @@
 <html lang="en">
   <head>
     <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1, shrink-to-fit=no"
-  />
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
 
+    <meta name="author" content="CodePixar" />
 
+    <meta name="description" content="" />
 
-  <meta name="author" content="CodePixar" />
+    <meta name="keywords" content="" />
 
-  <meta name="description" content="" />
+    <meta charset="UTF-8" />
 
-  <meta name="keywords" content="" />
-
-  <meta charset="UTF-8" />
-
-  <title>ST Shop</title>
+    <title>ST Shop</title>
 
     <link rel="stylesheet" href="/css/linearicons.css" />
     <link rel="stylesheet" href="/css/font-awesome.min.css" />
@@ -73,6 +71,10 @@
 
       .rating {
         color: gold;
+      }
+      .ratingT {
+        color: gold;
+        font-size: 1.5rem;
       }
 
       .thumbnails {
@@ -245,7 +247,10 @@
 
           <p style="color: red">Few products are left!</p>
           <% } %>
-
+          <span class="ratingT">
+            <%= "★".repeat(Math.round(averageRating)) %> <%= "☆".repeat(5 -
+            Math.round(averageRating)) %>
+          </span>
           <p class="product-description"><%= product.description %></p>
           <button
             class="btn btn-dark w-100"
@@ -336,7 +341,8 @@
                 accept="image/*"
               />
             </div>
-            <span class="mb-3">You can only submit one review per product.</span><br>
+            <span class="mb-3">You can only submit one review per product.</span
+            ><br />
             <button
               type="submit"
               class="btn border-dark badge-light"
@@ -527,7 +533,7 @@
             reviewsContainer.innerHTML = "";
             reviews.forEach((review) => {
               const reviewCard = `
-        <div class="review-card">
+           <div class="review-card">
             <p class="reviewer-name">
                 ${review.name}<br> 
                 <span class="rating">${"★".repeat(review.rating)}</span>

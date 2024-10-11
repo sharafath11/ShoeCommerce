@@ -76,6 +76,11 @@
     .table tbody tr:hover {
       background-color: #f1f1f1; /* Hover effect for table rows */
     }
+    .header{
+      display: flex;
+    align-items: center;
+    justify-content: space-between;
+    }
   </style>
 </head>
 
@@ -84,12 +89,15 @@
     <div class="modal-content p-5">
       <div class="modal-header">
         <h5 class="modal-title">Order Bill</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body order-details">
-        <p><strong>Order Number: </strong><span class="badge badge-order-number"><%= order.orderId %></span></p>
+        <div class="header">
+          <p><strong>Order Number: </strong><span class="badge badge-order-number"><%= order.orderId %></span></p>
         <p><strong>Date:</strong> 2024-10-10</p>
-
+        <img src="/logo.png" alt="" style="    width: 125px;
+        height: 62px;">
+        </div>
+        
         <table class="table table-hover mt-3" id="order-table">
           <thead class="text-muted">
             <tr>
@@ -108,6 +116,7 @@
                 <td>₹<%= (item.quantity * item.price).toFixed(2) %></td>
               </tr>
             <% }); %>
+            <tr><td>Delevery charge</td><td></td><td></td><td>₹50</td></tr>
           </tbody>
           <tfoot>
             <tr>
@@ -123,7 +132,8 @@
       </div>
 
       <div class="modal-footer d-flex align-content-center justify-content-around">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <a href="/orders" class="btn btn-secondary">Close</a>
+
         <button type="button" class="btn btn-download" id="download-btn">Download Bill</button>
       </div>
     </div>
@@ -135,18 +145,12 @@
   <script>
     document.getElementById('download-btn').addEventListener('click', function () {
       const { jsPDF } = window.jspdf;
-      
-      // Get the order details from the modal body
       const orderDetails = document.querySelector('.modal-body');
-
-      // Use html2canvas to create an image of the HTML element
       html2canvas(orderDetails).then((canvas) => {
           const imgData = canvas.toDataURL('image/png');
           const doc = new jsPDF();
-          
-          // Add the image to the PDF
           doc.addImage(imgData, 'PNG', 10, 10);
-          doc.save('order_bill.pdf');
+          doc.save('ST SHOP .pdf');
       });
     });
   </script>

@@ -19,7 +19,6 @@ app.use(session({
   store: MongoStore.create({ mongoUrl: 'mongodb://localhost:27017/bro1' }),
   cookie: {
       secure: false, 
-      maxAge: 2 * 60 * 60 * 1000 
   }
 }));
 
@@ -35,6 +34,7 @@ app.set("view engine", "ejs");
 app.set("views", "./Views");
 app.use(bodyParser.json());
 app.use(express.static('public'))
+
 app.use(express.static('public')); 
 app.use(express.static("views/user"));
 app.use(express.static("views/admin"));

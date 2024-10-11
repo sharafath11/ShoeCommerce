@@ -377,14 +377,14 @@
           <div class="collapse" id="orderItemsCollapse-<%= order._id %>">
             <div class="order-items">
               <% order.items.forEach(function(item) { %>
-              <div class="order-item d-flex justify-content-between">
+              <a href="/singleprodect/<%=item.productId %>" style="font-style: none; text-decoration: none;"><div class="order-item d-flex justify-content-between">
                 <div>
                   <span class="item-name"><%= item.name %></span>
                   <p>Size :  <%= item.size %></p>
                   <p class="quantity">Quantity: <%= item.quantity %></p>
                 </div>
                 <span>₹<%= (item.price * item.quantity).toFixed(2) %></span>
-              </div>
+              </div></a>
               <% }) %>
             </div>
             <div>

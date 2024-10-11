@@ -9,6 +9,7 @@ import { addProducts,editProducts,productListUnlist,renderAddProdects,renderEdit
 import { addCategory, categorieBlock, editCategory, getAddCategory, getCategory, getEditCategory } from "../controller/adminController/categoryController.js";
 import multer from "multer";
 import path from 'path'
+import { reviewBlockController, reviewRender } from "../controller/adminController/reviewsController.js";
 
 const router=express.Router();
 const storage = multer.diskStorage({
@@ -45,5 +46,8 @@ router.get("/products/edit/:id",verifyToken,renderEditPage)
 router.post("/products/edit-products",verifyToken,upload.array('croppedImages', 3),editProducts)
 router.get("/users",verifyToken,getUsers)
 router.post('/users/toggle-block/:id',verifyToken,isBlockFn);
+router.get('/reviews/:id',verifyToken, reviewRender);
+router.patch('/reviews/:id',verifyToken,reviewBlockController)
+
 
 export default router

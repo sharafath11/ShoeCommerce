@@ -56,26 +56,26 @@ export const shopDetialsRender = async (req, res) => {
 
 
 export const filterCategory = async (req, res) => {
-  const catId = new mongoose.Types.ObjectId(req.params.id);
-
-
+  const catId = req.params.id; 
   try {
-    const categories = await categoryModel.find();
+   
+    if (!mongoose.Types.ObjectId.isValid(catId)) {
+      return res.status(400).send("Invalid category ID");
+    }
 
+    const categories = await categoryModel.find();
     const productsN = await ProductModel.find().populate("categoryId").exec();
 
-
-    const products = productsN.filter(
-      (item) =>
+    const products = productsN.filter((item) => {
+      return (
         !item.blocked && 
-        !item.categoryId.blocked &&
+        item.categoryId && 
+        !item.categoryId.blocked && 
         item.categoryId._id.equals(catId) 
-    );
-
+      );
+    });
 
     const user = req.session.user;
-    
-
     if (!user || !user._id) {
       return res.render("user/shopeDetials", {
         user: user,
@@ -106,4 +106,5 @@ export const filterCategory = async (req, res) => {
     return res.status(500).send("Internal server error");
   }
 };
+
 

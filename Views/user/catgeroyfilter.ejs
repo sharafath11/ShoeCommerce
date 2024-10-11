@@ -827,29 +827,27 @@
             timeout = setTimeout(() => func.apply(context, args), delay);
         };
     }
-  const debouncedSearch = debounce(async function(event) {
-    const query = document.getElementById('search_input').value.trim(); 
 
-    if (query.length > 2) {
-        try {
-            const response = await axios.get(`/search?query=${query}`);
-            const datas = response.data.products;
+    const debouncedSearch = debounce(async function(event) {
+        const query = document.getElementById('search_input').value;
 
+        console.log('====================================');
+        console.log(query);
+        console.log('====================================');
+
+        if (query.length > 2) {
+            try {
+                const response = await axios.get(`/search?query=${query}`);
+                datas = response.data.products;
+
+                renderProducts(datas);
+            } catch (error) {
+                console.error('Error fetching search results:', error);
+            }
+        } else {
             renderProducts(datas);
-        } catch (error) {
-            console.error('Error fetching search results:', error);
         }
-    } else if (query.length === 0) {
-      
-        try {
-          
-            renderProducts(datas);
-        } catch (error) {
-            console.error('Error fetching initial products:', error);
-        }
-    }
-}, 500); 
-
+    }, 300);
 
     
 </script>

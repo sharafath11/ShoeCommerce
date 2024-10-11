@@ -5,7 +5,7 @@ export const searchHand=async(req,res)=>{
 
   try {
     const products = await ProductModel.find({
-      name: { $regex: searchQuery, $options: 'i' }  // Case insensitive 
+      name: { $regex: searchQuery, $options: 'i' }  
     });
     res.json({ products });
   } catch (error) {

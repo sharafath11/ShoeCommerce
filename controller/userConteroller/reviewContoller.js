@@ -67,7 +67,8 @@ export const reviewPagenation = async (req, res) => {
   const skip = (page - 1) * limit;
 
   try {
-    const reviews = await ReviewModel.find({ productId: req.query.pid })
+    const reviews = await ReviewModel.find({ productId: req.query.pid,isBlocked: false })
+    
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
