@@ -178,6 +178,7 @@
                     ₹<%= product.productId.price * product.quantity %>
                   </td>
                   <td>
+                    <%= console.log(product) %>
                     <p id="display-size-<%= index %>">
                       <%= product.isSizeAvailable === false ? "Out of Stock" :
                       product.size %>

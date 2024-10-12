@@ -1,6 +1,5 @@
 import ProductModel from "../../models/prodectsModel.js";
 import CartModel from "../../models/cartModel.js";
-
 export const cartRenderPage = async (req, res) => {
   try {
     const user = req.session.user;
@@ -12,35 +11,56 @@ export const cartRenderPage = async (req, res) => {
       return res.redirect("/login");
     }
 
+    // Fetch the cart for the user and populate product details
     const cart = await CartModel.findOne({ userId: user._id }).populate({
       path: "products.productId",
       select: "name price images availableSize",
     });
-   
-    cart.products.map((item) => {
-      item.isSizeAvailable = true;
-      item.productId.availableSize.map((size) => {
-        if (size.stock < item.quantity) {
-          item.isSizeAvailable = false; 
-        }
-        else{
-          item.isSizeAvailable = true;
-        }
-      });
-    });
-    
-    const cartQty = req.session.cartQty;
 
+    // Check if the cart exists
+    if (!cart) {
+      return res.render("user/cart", {
+        cartQty: 0,
+        WishlistQty,
+        user,
+        message: toastMessage,
+        cartProducts: [],
+      });
+    }
+
+    // Iterate over products to check size availability and update stock
+    await Promise.all(
+      cart.products.map(async (item) => {
+        const product = item.productId; // The populated product document
+
+        if (product) {
+          const sizeDetails = product.availableSize.find(
+            (size) => size.size === Number(item.size)
+          );
+          if (sizeDetails) {
+            item.isSizeAvailable = sizeDetails.stock >= item.quantity;
+          } else {
+            item.isSizeAvailable = false;
+          }
+        } else {
+          item.isSizeAvailable = false;
+        }
+      })
+    );
+
+   
+    await cart.save();
+    const cartQty = req.session.cartQty || 0;
     res.render("user/cart", {
       cartQty,
       WishlistQty,
       user,
       message: toastMessage,
-      cartProducts: cart ? cart.products : [],
+      cartProducts: cart.products,
     });
   } catch (error) {
     console.error("Error fetching cart:", error);
-    res.status(500).json({ message: "Server error", error });
+    res.json({ message: "Server error", error });
   }
 };
 
@@ -234,7 +254,7 @@ export const cartQtyIncreasing = async (req, res) => {
 export const updateSize = async (req, res) => {
   try {
     const { productId } = req.params;
-    const { size } = req.body; 
+    const { size } = req.body;
     const userId = req.session.user ? req.session.user._id : null;
 
     if (!userId) {
