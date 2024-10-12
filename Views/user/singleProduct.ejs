@@ -229,7 +229,7 @@
           <h1 class="product-title"><%= product.name %></h1>
           <p class="product-price">₹ <%= product.price %></p>
           <% if (product.categoryId) { %>
-          <p><strong>Category:</strong> <%= product.categoryId.name %></p>
+          <p><strong>Category:</strong> <%= product.categoryId.name %></p> 
           <% } %>
 
           <p>
@@ -251,6 +251,7 @@
             <%= "★".repeat(Math.round(averageRating)) %> <%= "☆".repeat(5 -
             Math.round(averageRating)) %>
           </span>
+          <br>  
           <p class="product-description"><%= product.description %></p>
           <button
             class="btn btn-dark w-100"

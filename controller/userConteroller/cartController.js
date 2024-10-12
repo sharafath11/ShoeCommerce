@@ -16,7 +16,19 @@ export const cartRenderPage = async (req, res) => {
       path: "products.productId",
       select: "name price images availableSize",
     });
-
+   
+    cart.products.map((item) => {
+      item.isSizeAvailable = true;
+      item.productId.availableSize.map((size) => {
+        if (size.stock < item.quantity) {
+          item.isSizeAvailable = false; 
+        }
+        else{
+          item.isSizeAvailable = true;
+        }
+      });
+    });
+    
     const cartQty = req.session.cartQty;
 
     res.render("user/cart", {

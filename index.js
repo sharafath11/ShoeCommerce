@@ -34,7 +34,6 @@ app.set("view engine", "ejs");
 app.set("views", "./Views");
 app.use(bodyParser.json());
 app.use(express.static('public'))
-
 app.use(express.static('public')); 
 app.use(express.static("views/user"));
 app.use(express.static("views/admin"));

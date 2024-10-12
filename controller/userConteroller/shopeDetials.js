@@ -6,52 +6,47 @@ import Wishlist from "../../models/whislistModel.js";
 
 export const shopDetialsRender = async (req, res) => {
   try {
-    const categories = await categoryModel.find();
+    //multiple asyncronn function 
+    const [categories, products] = await Promise.all([
+      categoryModel.find(),
+      ProductModel.find().populate("categoryId").exec(),
+    ]);
 
-    const productsN = await ProductModel.find().populate("categoryId").exec();
-
-    const products = productsN.filter(
-      (item, index) => !item.blocked && !item.categoryId.blocked
+    const filteredProducts = products.filter(
+      (item) => !item.blocked && !item.categoryId?.blocked
     );
-    products.forEach((product) => {
-      console.log(product.availableSize );
-       
-    });
+
     const user = req.session.user;
- 
     if (!user || !user._id) {
       return res.render("user/shopeDetials", {
-        user: user,
-        products: products || [],
+        user,
+        products: filteredProducts,
         WishlistQty: 0,
         categories,
-        cartQty: req.session.cartQty,
+        cartQty: req.session.cartQty || 0, 
       });
     }
-    const wishlist = await Wishlist.findOne({ user: user._id });
-
-    const wishlistProducts =
-      wishlist && wishlist.products ? wishlist.products : [];
-
-    const uniqueProducts = [...new Set(wishlistProducts)];
-    const WishlistQty = uniqueProducts.length;
-
-    const cartItem = await CartModel.findOne({ userId: user._id }).populate(
-      "products.productId"
-    );
-    const cartQty = cartItem?.products?.length;
-
+    const [wishlist, cartItem] = await Promise.all([
+      Wishlist.findOne({ user: user._id }),
+      CartModel.findOne({ userId: user._id }).populate("products.productId"),
+    ]);
+    const wishlistProducts = wishlist?.products || [];
+    const uniqueWishlistProducts = Array.from(new Set(wishlistProducts));
+    const WishlistQty = uniqueWishlistProducts.length;
+    const cartQty = cartItem?.products?.length || 0;
     return res.render("user/shopeDetials", {
       user,
       WishlistQty,
       cartQty,
       categories,
-      products,
+      products: filteredProducts,
     });
   } catch (error) {
-    console.log("Error fetching shop details:", error);
+    console.error("Error fetching shop details:", error);
+    res.status(500).render("user/error", { message: "Internal server error" });
   }
 };
+
 //filter routes ann mwonee
 
 
@@ -106,5 +101,3 @@ export const filterCategory = async (req, res) => {
     return res.status(500).send("Internal server error");
   }
 };
-
-

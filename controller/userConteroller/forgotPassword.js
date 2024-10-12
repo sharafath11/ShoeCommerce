@@ -1,6 +1,7 @@
 import nodemailer from 'nodemailer';
 import userModel from '../../models/userModel.js';
 import crypto from 'crypto';
+import bcrypt from 'bcrypt'
 
 export const forgetPasswordRender=(req,res)=>{
     const user = req.session.user;
@@ -71,8 +72,9 @@ export const resetPassword = async (req, res) => {
     if (!user) {
         return res.status(400).json({ ok: false, msg: "Token is invalid or has expired" });
     }
+    const salt = await bcrypt.genSalt(10); 
+    user.password = await bcrypt.hash(newPassword, salt);
 
-    user.password = newPassword; 
     user.resetToken = undefined;
     user.resetTokenExpiration = undefined;
     await user.save();

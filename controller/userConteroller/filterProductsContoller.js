@@ -1,7 +1,6 @@
-import CartModel from "../../models/cartModel.js";
-import { categoryModel } from "../../models/category.js";
+
 import ProductModel from "../../models/prodectsModel.js";
-import Wishlist from "../../models/whislistModel.js";
+
 
 export const filteredProducts = async (req, res) => {
   try {
