@@ -14,7 +14,6 @@ import {  protectedHand } from "../middleware/protectedRoutes.js";
 import { logoutFn } from "../controller/userConteroller/logoutController.js";
 import { removeWhislist, renderWishlistPage, whislistFn } from "../controller/userConteroller/whislistController.js";
 import noCache from "../middleware/cachClear.js";
-import {  shopDetialsRender } from "../controller/userConteroller/shopeDetials.js";
 import { addAddress, getOrderReanderPage, profileRender, removeAddress, removeOrders, renderAddresPage, updateAddress, updateProfile } from "../controller/userConteroller/profileController.js";
 import { showLogin } from "../middleware/showLogin.js";
 import { forgetPassword, forgetPasswordRender, renderResetPasswordPage, resetPassword } from "../controller/userConteroller/forgotPassword.js";
@@ -63,7 +62,7 @@ router.post("/addToCart/:id",protectedHand,addToCart)
 router.get("/cart",protectedHand,cartRenderPage)
 router.delete("/cart/remove/:id",removeCart)
 router.post('/cart/update-quantity',qtyHandler );
-router.get("/shopDetials",shopDetialsRender);
+// router.get("/shopDetials",shopDetialsRender);
 router.get("/profile",profileRender)
 router.post("/update-profile/:id",protectedHand,updateProfile);
 router.get("/address",renderAddresPage)
@@ -81,6 +80,6 @@ router.get("/settings",renderSettings);
 router.post("/changepassword",changePassword)
 router.post("/product/reviews", upload.single('reviewImage'),reviewHandler)
 router.get("/product/reviews",reviewPagenation);
-router.get("/filter-products",filteredProducts)
+router.get("/shop",filteredProducts)
 router.get("/search",searchHand)
 export default router
