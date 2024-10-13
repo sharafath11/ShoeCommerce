@@ -9,12 +9,12 @@ import { authFailure, authProtected, authSuccess, catchError, googleAuthCallback
 import { getSingleProdect } from "../controller/userConteroller/getSingleProdect.js";
 import { checkoutFn, getCheckout } from "../controller/userConteroller/checkoutController.js";
 import { getContact } from "../controller/userConteroller/contactController.js";
-import {  addToCart, cartQtyIncreasing, cartRenderPage, decreasCartQty, qtyHandler, removeCart, updateSize} from "../controller/userConteroller/cartController.js";
+import {  addToCart,  cartRenderPage, qtyHandler, removeCart,} from "../controller/userConteroller/cartController.js";
 import {  protectedHand } from "../middleware/protectedRoutes.js";
 import { logoutFn } from "../controller/userConteroller/logoutController.js";
 import { removeWhislist, renderWishlistPage, whislistFn } from "../controller/userConteroller/whislistController.js";
 import noCache from "../middleware/cachClear.js";
-import { filterCategory, shopDetialsRender } from "../controller/userConteroller/shopeDetials.js";
+import {  shopDetialsRender } from "../controller/userConteroller/shopeDetials.js";
 import { addAddress, getOrderReanderPage, profileRender, removeAddress, removeOrders, renderAddresPage, updateAddress, updateProfile } from "../controller/userConteroller/profileController.js";
 import { showLogin } from "../middleware/showLogin.js";
 import { forgetPassword, forgetPasswordRender, renderResetPasswordPage, resetPassword } from "../controller/userConteroller/forgotPassword.js";
@@ -62,12 +62,8 @@ router.get("/remove-from-wishlist/:id",removeWhislist)
 router.post("/addToCart/:id",protectedHand,addToCart)
 router.get("/cart",protectedHand,cartRenderPage)
 router.delete("/cart/remove/:id",removeCart)
-// router.post('/cart/decrease-quantity',decreasCartQty)
-// router.post("/cart/increase-quantity",cartQtyIncreasing)
 router.post('/cart/update-quantity',qtyHandler );
-router.post("/cart/updateSize/:productId",updateSize)
 router.get("/shopDetials",shopDetialsRender);
-router.get("/shopDetials/category/:id",filterCategory);
 router.get("/profile",profileRender)
 router.post("/update-profile/:id",protectedHand,updateProfile);
 router.get("/address",renderAddresPage)
@@ -85,6 +81,6 @@ router.get("/settings",renderSettings);
 router.post("/changepassword",changePassword)
 router.post("/product/reviews", upload.single('reviewImage'),reviewHandler)
 router.get("/product/reviews",reviewPagenation);
-router.post("/filter-products",filteredProducts)
+router.get("/filter-products",filteredProducts)
 router.get("/search",searchHand)
 export default router

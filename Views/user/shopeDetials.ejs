@@ -58,7 +58,7 @@
       <div class="main_menu">
           <nav class="navbar navbar-expand-lg navbar-light main_box">
               <div class="container">
-                  <!-- Brand and toggle get grouped for better mobile display -->
+                  
                   <a class="navbar-brand logo_h" href="/"><img src="../logo.png" alt="" style="width: 123px; height: 75px;" ></a>
                   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -198,7 +198,7 @@
                 <li class="main-nav-list">
                   <a
                    
-                    href="/shopDetials/category/<%= category._id %>"
+                    href="/filter-products?category=<%= category._id %>"
                     aria-expanded="false"
                     aria-controls="<%= category.name.replace(/\s+/g, '') %>"
                   >
@@ -284,14 +284,15 @@
           <!-- Start Filter Bar -->
           <div class="filter-bar d-flex flex-wrap align-items-center  " style="height: 63px;">
             <div class="sorting">
-              <select id="mySelect" onchange="handlePriceFilter()">
+              <select id="mySelect">
                 <option value="1">Default</option>
                 <option value="2">Low to High</option>
                 <option value="3">High to Low</option>
+                
             </select>
             
            
-            
+            <button onclick="filterHandler()">Apply Filters</button>
             </div>
             
           </div>
@@ -677,60 +678,33 @@
   }
 
   function filterHandler() {
-      const selectedBrand = document.querySelector('input[name="brand"]:checked')?.value;
-      const selectedColor = document.querySelector('input[name="color"]:checked')?.value;
 
-      if (!selectedBrand && !selectedColor) {
-          alert('Please select at least one filter.');
-          return;
-      }
+const urlParams = new URLSearchParams(window.location.search);
+    const selectedBrand = document.querySelector('input[name="brand"]:checked')?.value;
+    const selectedColor = document.querySelector('input[name="color"]:checked')?.value;
+    const selectedPrice = document.getElementById('mySelect').value; 
+    const brand = urlParams.get('brand') || '';
+    const color = urlParams.get('color') || '';
+    const price = urlParams.get('price') || '1';
+    const category=urlParams.get('category') ||""
+    const filterData = {
+        brand: selectedBrand || brand,
+        color: selectedColor || color,
+        price: selectedPrice || price,
+        category:category
+    };
+    if (!filterData.brand && !filterData.color && filterData.price === '1') { 
+        window.location.href = '/filter-products';
+    } else {
+        const queryString = new URLSearchParams(filterData).toString();
+        window.location.href = `/filter-products?${queryString}`;
+    }
+}
 
-      const filterData = {
-          brand: selectedBrand || null,
-          color: selectedColor || null
-      };
 
-      axios.post('/filter-products', filterData)
-          .then(response => {
-              const products = response.data;
-              if (products.length === 0) {
-                  return showToast("This filter product are not our products please filter another.");
-              }
 
-              datas = products;
-              const totalPages = Math.ceil(datas.length / productsPerPage);
-              renderProducts(datas.slice(0, productsPerPage), 1, totalPages); // Render first page
-          })
-          .catch(error => {
-              console.error('Error:', error);
-          });
-  }
 
-  function handlePriceFilter() {
-      const selectElement = document.getElementById("mySelect");
-      const selectedValue = selectElement.value;
 
-      if (selectedValue) {
-          let sortedData;
-
-          switch (selectedValue) {
-              case "2": 
-                  sortedData = datas.sort((a, b) => a.price - b.price);
-                  break;
-
-              case "3": 
-                  sortedData = datas.sort((a, b) => b.price - a.price);
-                  break;
-
-              default: 
-                  sortedData = datas;
-                  break;
-          }
-
-          const totalPages = Math.ceil(sortedData.length / productsPerPage);
-          renderProducts(sortedData.slice(0, productsPerPage), 1, totalPages); 
-      }
-  }
 
   function renderProducts(products, currentPage = 1, totalPages = 1) {
       let productHTML = '';    
@@ -856,4 +830,3 @@
 
   </body>
 </html>
-    

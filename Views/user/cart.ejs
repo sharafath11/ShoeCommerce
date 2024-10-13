@@ -188,6 +188,7 @@
                     <button
                       class="btn btn-danger remove-cart-btn"
                       data-id="<%= product.productId._id %>"
+                      data-size="<%= product.size %>"
                     >
                       Remove
                     </button>
@@ -359,54 +360,57 @@
     </script>
 
     <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const removeCartButtons = document.querySelectorAll(".remove-cart-btn");
+      
+   document.addEventListener("DOMContentLoaded", function () {
+  const removeCartButtons = document.querySelectorAll(".remove-cart-btn");
 
-        removeCartButtons.forEach(function (button) {
-          button.addEventListener("click", function (event) {
-            event.preventDefault();
+  removeCartButtons.forEach(function (button) {
+    button.addEventListener("click", function (event) {
+      event.preventDefault();
 
-            const productId = button.getAttribute("data-id");
+      const productId = button.getAttribute("data-id");
+      const size = button.getAttribute("data-size");
 
-            confirmAction(
-              "Are you sure?",
-              "Do you want to remove this item from your cart?",
-              "Yes, remove it"
-            ).then((result) => {
-              if (result.isConfirmed) {
-                axios
-                  .delete("/cart/remove/" + productId)
-                  .then(function (response) {
-                    const data = response.data;
-                    if (data.success) {
-                      const tableRow = button.closest("tr");
-                      if (tableRow) {
-                        tableRow.remove();
-                      }
-                      showToast(data.message);
-                    }
-                  })
-                  .catch(function (error) {
-                    console.error("Error removing item from cart:", error);
-                    alert("Failed to remove item from cart.");
-                  });
+      confirmAction(
+        "Are you sure?",
+        "Do you want to remove this item from your cart?",
+        "Yes, remove it"
+      ).then((result) => {
+        if (result.isConfirmed) {
+          axios
+            .delete("/cart/remove/" + productId + "?size=" + size)
+            .then(function (response) {
+              const data = response.data;
+              if (data.success) {
+                const tableRow = button.closest("tr");
+                if (tableRow) {
+                  tableRow.remove();
+                }
+                showToast(data.message);
+                updateCartTotal()
               }
+            })
+            .catch(function (error) {
+              console.error("Error removing item from cart:", error);
+              alert("Failed to remove item from cart.");
             });
-          });
-        });
+        }
       });
+    });
+  });
+});
+function confirmAction(title, text, confirmButtonText) {
+  return Swal.fire({
+    title: title,
+    text: text,
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: confirmButtonText,
+  });
+}
 
-      function confirmAction(title, text, confirmButtonText) {
-        return Swal.fire({
-          title: title,
-          text: text,
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#3085d6",
-          cancelButtonColor: "#d33",
-          confirmButtonText: confirmButtonText,
-        });
-      }
     </script>
 
     <script>
