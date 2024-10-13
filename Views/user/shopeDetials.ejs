@@ -53,6 +53,23 @@
     font-size: 12px;
     color: red;
 }
+.custom-button {
+    background-color: #343a40;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.3s;
+}
+.custom-button:hover {
+    background-color: #495057;
+    transform: translateY(-2px);
+}
+.custom-button:active {
+    transform: translateY(0);
+}
+
     </style>
     <header class="header_area sticky-header">
       <div class="main_menu">
@@ -263,8 +280,8 @@
             <!-- Filter Button -->
             <div class="mt-5">
               <center>
-                <button class="btn btn-primary bg-dark" onclick="filterHandler()">Start to filter</button>
-              </center>
+                <button class="custom-button" onclick="filterHandler()">Start to filter</button>
+            </center>
             </div>
           </div>
         </div>
@@ -278,8 +295,19 @@
                 <option value="2">Low to High</option>
                 <option value="3">High to Low</option>
               </select>
-              <button onclick="filterHandler()">Apply Filters</button>
+              
+              <!-- <button onclick="filterHandler()">Apply Price filtering</button> -->
             </div>
+            <div class="sorting">
+              <select id="spelling">
+                  <option value="">Default</option>
+                  <option value="AZ">A to Z</option>
+                  <option value="ZA">Z to A</option>
+              </select>
+              <button class="custom-button" style="margin-left : 20px;" onclick="filterHandler()">Apply Filters</button>
+          </div>
+          
+            
           </div>
           <section style="    margin-top: 20px;
           display: flex;
@@ -311,6 +339,7 @@
           </section>
          
           <div class="pagination">
+            <input type="text" hidden value="<%= totalPages %>" id="tala">
             <a href="#" id="prev-arrow" class="prev-arrow" style="display: none;">
                 <i class="fa fa-long-arrow-left" aria-hidden="true"></i>
             </a>
@@ -654,12 +683,25 @@
   }
 
 
-  function filterHandler(currentPage = 1) {
+let currentPage = 1;
+
+document.addEventListener("DOMContentLoaded", function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const totalPages = document.getElementById("tala").value; // Ensure this is a number
+    currentPage = parseInt(urlParams.get('page')) || 1; // Read currentPage from URL or default to 1
+    createPagination(totalPages, currentPage);
+});
+
+function filterHandler(page = 1) {
     const urlParams = new URLSearchParams(window.location.search);
     const selectedBrand = document.querySelector('input[name="brand"]:checked')?.value;
     const selectedColor = document.querySelector('input[name="color"]:checked')?.value;
-    const selectedPrice = document.getElementById('mySelect').value; 
+    const selectedPrice = document.getElementById('mySelect').value;
     const searchInput = document.getElementById('search_input').value.trim();
+    const selectedSort = document.getElementById('spelling').value; // Get the selected sort option
+
+    // Update the current page
+    currentPage = page;
 
     const filterData = {
         brand: selectedBrand || urlParams.get('brand') || '',
@@ -667,11 +709,12 @@
         price: selectedPrice || urlParams.get('price') || '1',
         category: urlParams.get('category') || '',
         search: searchInput || '',
-        page: currentPage 
+        page: currentPage, // Use the updated currentPage
+        sort: selectedSort // Include the selected sorting option
     };
 
     const queryString = new URLSearchParams(filterData).toString();
-    window.location.href = `/shop?${queryString}`;
+    window.location.href = `/shop?${queryString}`; // Navigate to new page with updated filters
 }
 
 function createPagination(totalPages, currentPage) {
@@ -691,7 +734,7 @@ function createPagination(totalPages, currentPage) {
         pageLink.textContent = i;
         pageLink.href = '#';
         pageLink.addEventListener('click', (e) => {
-            e.preventDefault(); // Prevent default anchor behavior
+            e.preventDefault();
             filterHandler(i); // Call filterHandler with the current page number
         });
         paginationContainer.appendChild(pageLink);
@@ -700,7 +743,7 @@ function createPagination(totalPages, currentPage) {
     // Create next arrow
     const nextArrow = document.getElementById('next-arrow');
     nextArrow.style.display = currentPage < totalPages ? 'inline-block' : 'none';
-    
+
     // Add event listener for next arrow
     nextArrow.addEventListener('click', (e) => {
         e.preventDefault();
@@ -719,7 +762,6 @@ function createPagination(totalPages, currentPage) {
 }
 
 
-  
 </script>
 
   </body>
