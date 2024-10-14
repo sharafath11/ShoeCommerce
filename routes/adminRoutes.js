@@ -10,6 +10,7 @@ import { addCategory, categorieBlock, editCategory, getAddCategory, getCategory,
 import multer from "multer";
 import path from 'path'
 import { reviewBlockController, reviewRender } from "../controller/adminController/reviewsController.js";
+import { addCoupen, coupenRender, coupenUpdate } from "../controller/adminController/coupen.js";
 
 const router=express.Router();
 const storage = multer.diskStorage({
@@ -47,7 +48,11 @@ router.post("/products/edit-products",verifyToken,upload.array('croppedImages', 
 router.get("/users",verifyToken,getUsers)
 router.post('/users/toggle-block/:id',verifyToken,isBlockFn);
 router.get('/reviews/:id',verifyToken, reviewRender);
+
 router.patch('/reviews/:id',verifyToken,reviewBlockController)
+router.get("/coupen",coupenRender)
+router.post("/coupons/addCoupen",addCoupen)
+router.put("/coupons/update",coupenUpdate)
 
 
 export default router

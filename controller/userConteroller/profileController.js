@@ -3,6 +3,7 @@ import AddressModel from "../../models/addressModel.js";
 import Wishlist from "../../models/whislistModel.js";
 import CartModel from "../../models/cartModel.js";
 import OrderModel from "../../models/orderModel.js";
+import ProductModel from "../../models/prodectsModel.js";
 
 export const profileRender = async (req, res) => {
   try {
@@ -160,22 +161,35 @@ export const getOrderReanderPage=async(req,res)=>{
   const orders = await OrderModel.find({ user: user._id }).sort({ orderDate: -1 });
   res.render("user/orders",{WishlistQty,cartQty,user,orders});
 }
-export const removeOrders=async(req,res)=>{
-  const  orderId=req.params.id
+export const removeOrders = async (req, res) => {
+  const orderId = req.params.id;
+
   try {
-    const result = await OrderModel.findByIdAndUpdate(orderId,{isCanceld:true});
+    const order = await OrderModel.findById(orderId);
+    if (!order) return res.status(404).json({ ok: false, msg: "Order not found." });
+    if (order.isCanceld) return res.status(400).json({ ok: false, msg: "Order is already canceled." });
+    const productUpdates = order.items.map(async item => {
+      const product = await ProductModel.findById(item.productId);
+      if (product) {
+        const sizeUpdate = product.availableSize.find(sizeObj => sizeObj.size === item.size);
+        if (sizeUpdate) {
+          sizeUpdate.stock += item.quantity; 
+        }
+        await product.save();
+      }
+    });
 
-    if (!result) {
-      return res.status(404).json({ ok: false, msg: "orders not found." });
-    }
+    await Promise.all(productUpdates);
 
-    res.json({ ok: true, msg: "order canceld successfully." });
+    await OrderModel.findByIdAndUpdate(orderId, { isCanceld: true });
+
+    res.json({ ok: true, msg: "Order canceled successfully, and products returned to stock." });
   } catch (error) {
-    console.error("Error order cancleing:", error);
+    console.error("Error canceling order:", error);
     return res.render("user/error");
-   
   }
-}
+};
+
 export const deletePerItemInOrder = async (req, res) => {
   const { orderId, productId } = req.params;
   const { size } = req.body;
@@ -190,22 +204,38 @@ export const deletePerItemInOrder = async (req, res) => {
     const item = order.items[itemIndex];
     if (item.isCanceld) return res.status(400).json({ message: 'Item is already canceled.' });
 
+    // Update the product stock
+    const product = await ProductModel.findById(productId);
+    if (product) {
+      const sizeUpdate = product.availableSize.find(sizeObj => sizeObj.size === parseInt(size));
+      if (sizeUpdate) {
+        sizeUpdate.stock += item.quantity;  // Return the canceled item quantity back to stock
+      }
+      await product.save();
+    }
+
+    // Update order details
     order.totalAmount -= item.price * item.quantity;
     item.isCanceld = true;
 
     if (order.items.every(i => i.isCanceld)) {
       order.isCanceld = true;
-      order.totalAmount= 0.0
+      order.totalAmount = 0.0;
     }
 
     await order.save();
   
-    return res.status(200).json({ message: 'Item canceled successfully', totalAmount: order.totalAmount, allCanceled: order.items.every(i => i.isCanceld) });
+    return res.status(200).json({ 
+      message: 'Item canceled successfully and product stock updated', 
+      totalAmount: order.totalAmount, 
+      allCanceled: order.items.every(i => i.isCanceld) 
+    });
   } catch (error) {
     console.error('Error canceling order item:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
 
 
 

@@ -7,6 +7,7 @@ import passport from "passport";
 import mongoose from "mongoose";
 import session from 'express-session'
 import MongoStore from 'connect-mongo';
+import { disableExpiredCoupons } from "./middleware/expireCoupen.js";
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -39,6 +40,7 @@ app.use(express.static("views/user"));
 app.use(express.static("views/admin"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+disableExpiredCoupons();
 app.use("/", userRoutes);
 app.use("/admin", adminRoutes);
 app.listen(PORT, () => {

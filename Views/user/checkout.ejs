@@ -101,13 +101,19 @@
     <section class="checkout_area section_gap">
       <div class="container">
         <div class="cupon_area">
-          <div class="check_title">
-            <h2>
-              Have a coupon? <a href="#">Click here to enter your code</a>
-            </h2>
+          <div class="coupon-container">
+            <input
+              type="text"
+              id="couponCode"
+              placeholder="Enter coupon code"
+              class="form-control"
+            />
+            <button class="tp_btn btn" onclick="applyCouponCode()">
+              Apply Coupon
+            </button>
+            <div id="couponMessage" class="mt-2"></div>
+            <!-- For displaying messages -->
           </div>
-          <input type="text" placeholder="Enter coupon code" />
-          <a class="tp_btn" href="#">Apply Coupon</a>
         </div>
         <div class="billing_details">
           <div class="row">
@@ -344,16 +350,20 @@
                     <a href="#">Product <span>Total</span></a>
                   </li>
                   <% cartItems.forEach((item, index) => { %>
-                      
-                    <input id="productId-<%=index%>" type="hidden" value="<%= item.product. _id%>">
+
+                  <input
+                    id="productId-<%=index%>"
+                    type="hidden"
+                    value="<%= item.product. _id%>"
+                  />
                   <li id="product-item-<%= index %>">
-                   
                     <a href="/singleprodect/<%= item.product. _id%>">
-                   
                       <strong id="product-name-<%= index %>"
-                        ><%= item.product.name %> </strong
+                        ><%= item.product.name %>
+                      </strong>
+                      <strong class="ml-3" id="product-size-<%= index %>"
+                        ><%= item.size %></strong
                       >
-                      <strong  class="ml-3" id="product-size-<%= index %>"><%= item.size %></strong>
                       <span class="middle"
                         >x
                         <span id="product-quantity-<%= index %>"
@@ -372,7 +382,7 @@
                   <li>
                     <a href="#"
                       >Subtotal
-                      <span>
+                      <span id="totalAmount">
                         ₹<%= cartItems.reduce((total, item) => total +
                         (item.product.price * item.quantity), 0) %>
                       </span></a
@@ -393,8 +403,6 @@
                 </ul>
                 <div class="payment_item">
                   <div class="radion_btn">
-                  
-
                     <button
                       class="primary-btn"
                       onclick="checkoutHandler(event,'<%=cartItems %>')"
@@ -464,7 +472,7 @@
       const selectedCheckboxes = document.querySelectorAll(
         'input[name="selectedAddresses"]:checked'
       );
-     
+
       const addAddress = [];
       const selectedAddresses = Array.from(selectedCheckboxes).map(
         (checkbox) => {
@@ -487,20 +495,20 @@
       );
 
       const orderItems = gatherOrderData();
-     if(orderItems.length===0){
-      showToast("Please add some products in Cart");
-      return;
-     }
+      if (orderItems.length === 0) {
+        showToast("Please add some products in Cart");
+        return;
+      }
       const datas = {
         selectedAddresses: addAddress,
         cartItems: orderItems,
       };
-      const ok=false
-      if(selectedAddresses.length==0){
-        showToast('Please select a addres');
-       ok=true
+      const ok = false;
+      if (selectedAddresses.length == 0) {
+        showToast("Please select a addres");
+        ok = true;
       }
-      if(ok)return
+      if (ok) return;
       confirmAction(
         "Are you sure?",
         "Order the Products?",
@@ -512,9 +520,9 @@
             .then((response) => {
               if (response.data.ok) {
                 showToast(response.data.msg);
-                        setTimeout(() => {
-                            window.location.href=response.data.red;
-                        }, 1000);
+                setTimeout(() => {
+                  window.location.href = response.data.red;
+                }, 1000);
               } else {
                 showToast(response.data.msg);
               }
@@ -556,13 +564,13 @@
       const items = document.querySelectorAll('.list li[id^="product-item-"]');
 
       items.forEach((item, index) => {
-        const productId=document.getElementById(`productId-${index}`).value
-        const size=document.getElementById(`product-size-${index}`).innerText;
-        console.log('====================================');
+        const productId = document.getElementById(`productId-${index}`).value;
+        const size = document.getElementById(`product-size-${index}`).innerText;
+        console.log("====================================");
         console.log(size);
-        if(!size){
-          showToast("Please selecet you want size in cart")
-          return
+        if (!size) {
+          showToast("Please selecet you want size in cart");
+          return;
         }
         const productName = document.getElementById(
           `product-name-${index}`
@@ -573,11 +581,11 @@
         const price = document
           .getElementById(`product-price-${index}`)
           .innerText.replace("$", "");
-      
+
         orderData.push({
-            productId,
+          productId,
           name: productName,
-          size:parseInt(size),
+          size: parseInt(size),
           quantity: parseInt(quantity, 10),
           price: parseFloat(price),
           total: parseFloat(price) * parseInt(quantity, 10),
@@ -588,75 +596,106 @@
     }
 
     function addAddress(event, userId) {
-    event.preventDefault(); 
-    const type = document.getElementById('type').value;
-    const streetAddress = document.getElementById('streetAddress').value;
-   const city = document.getElementById('city').value;
-   const state = document.getElementById('state').value;
-   const postalCode = document.getElementById('postalCode').value;
-   const country = document.getElementById('country').value;
-   const name = document.getElementById('name').value;
-  const formData = {
-    name:name,
-    type: type,
-    streetAddress: streetAddress,
-    city: city,
-    state: state,
-    postalCode: postalCode,
-    country: country,
-    userId: userId 
-}
+      event.preventDefault();
+      const type = document.getElementById("type").value;
+      const streetAddress = document.getElementById("streetAddress").value;
+      const city = document.getElementById("city").value;
+      const state = document.getElementById("state").value;
+      const postalCode = document.getElementById("postalCode").value;
+      const country = document.getElementById("country").value;
+      const name = document.getElementById("name").value;
+      const formData = {
+        name: name,
+        type: type,
+        streetAddress: streetAddress,
+        city: city,
+        state: state,
+        postalCode: postalCode,
+        country: country,
+        userId: userId,
+      };
 
-if (!isValidPincode(postalCode)) { 
+      if (!isValidPincode(postalCode)) {
         showToast("Invalid postal code");
         return;
-    } 
-    if (type.length < 3) {
+      }
+      if (type.length < 3) {
         showToast("Type must be at least 3 characters long.");
         return;
-    }
-    if (streetAddress.length < 5) {
+      }
+      if (streetAddress.length < 5) {
         showToast("Street address must be at least 5 characters long.");
         return;
-    }
-    if (!/^[a-zA-Z\s]*$/.test(city)) {
+      }
+      if (!/^[a-zA-Z\s]*$/.test(city)) {
         showToast("City name should contain only letters.");
         return;
-    }
-    if (!/^[a-zA-Z\s]*$/.test(state)) {
+      }
+      if (!/^[a-zA-Z\s]*$/.test(state)) {
         showToast("State name should contain only letters.");
         return;
-    }
-    if (!/^[a-zA-Z\s]*$/.test(country)) {
+      }
+      if (!/^[a-zA-Z\s]*$/.test(country)) {
         showToast("Country name should contain only letters.");
         return;
-    }
-    confirmAction('Are you sure?', 'Add the address?', 'Yes, Add it!')
-        .then((result) => {
-            console.log(result);
-            
-            if(result.isConfirmed){
-                axios.post('/addAddress', formData)
-                .then(response => {
-                   if(response.data.ok){
-                    showToast(response.data.msg)
-                    setTimeout(() => {
-                        window.location.reload()
-                    })
-                    
-                   }
-                   else{
-                    showToast(response.data.msg)
-                   }
-                })
-                .catch(error => {
-                    showToast('There was an error adding the address:', error);
-                });
+      }
+      confirmAction("Are you sure?", "Add the address?", "Yes, Add it!").then(
+        (result) => {
+          console.log(result);
+
+          if (result.isConfirmed) {
+            axios
+              .post("/addAddress", formData)
+              .then((response) => {
+                if (response.data.ok) {
+                  showToast(response.data.msg);
+                  setTimeout(() => {
+                    window.location.reload();
+                  });
+                } else {
+                  showToast(response.data.msg);
+                }
+              })
+              .catch((error) => {
+                showToast("There was an error adding the address:", error);
+              });
 
             return false;
-            }
-        });
-}
-  </script>
+          }
+        }
+      );
+    }
 
+    /// coupennnnnnnnnnnnnnnnnnnnnnn
+
+    async function applyCouponCode() {
+      const couponCode = document.getElementById("couponCode").value.trim();
+      const messageDiv = document.getElementById("couponMessage");
+      const orderTotal = document.getElementById("totalAmount").value;
+
+      if (!couponCode) {
+        messageDiv.innerText = "Please enter a coupon code.";
+        return;
+      }
+
+      try {
+        const response = await axios.post("/api/coupons/apply", {
+          code: couponCode,
+          orderTotal: orderTotal, 
+        });
+
+        const result = response.data;
+
+        messageDiv.innerText = `Coupon applied! Discount: ${result.discountValue} ${result.discountType}. New Total: ${result.newTotal}`;
+        // Update your total price or any other UI elements as needed
+      } catch (error) {
+        if (error.response) {
+          messageDiv.innerText =
+            error.response.data.message || "Failed to apply coupon.";
+        } else {
+          messageDiv.innerText = "An error occurred. Please try again later.";
+        }
+      }
+    }
+  </script>
 </html>

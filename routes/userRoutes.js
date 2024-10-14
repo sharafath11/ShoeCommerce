@@ -23,6 +23,7 @@ import multer from 'multer';
 import path from 'path';
 import { filteredProducts } from "../controller/userConteroller/filterProductsContoller.js";
 import { billContoller } from "../controller/userConteroller/billController.js";
+import { applyCoupen } from "../controller/userConteroller/coupenController.js";
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'public/reviewImages'); 
@@ -81,4 +82,5 @@ router.post("/changepassword",changePassword)
 router.post("/product/reviews", upload.single('reviewImage'),reviewHandler)
 router.get("/product/reviews",reviewPagenation);
 router.get("/shop",filteredProducts)
+router.post("/coupons/apply",applyCoupen)
 export default router
