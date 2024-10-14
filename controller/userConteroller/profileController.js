@@ -72,14 +72,16 @@ export const renderAddresPage = async (req, res) => {
     res.render("user/address", { user, cartQty, WishlistQty, addresses });
   } catch (error) {
     console.log("Server error:", error);
-    res.redirect("/");
+    return res.render("user/error");
+   
   }
 };
 export const addAddress = async (req, res) => {
-  const { userId, type, streetAddress, city, state, postalCode, country } =
+  const {name, userId, type, streetAddress, city, state, postalCode, country } =
     req.body;
   const address = new AddressModel({
     userId,
+    name,
     type,
     streetAddress,
     city,
@@ -93,7 +95,8 @@ export const addAddress = async (req, res) => {
     res.status(201).json({ ok: true, msg: "Address added successfully" });
   } catch (error) {
     console.error("Error saving address:", error);
-    res.status(500).json({ ok: false, msg: `Error adding address${error}` });
+    return res.render("user/error");
+   
   }
 };
 export const removeAddress = async (req, res) => {
@@ -120,11 +123,11 @@ export const removeAddress = async (req, res) => {
 
 export const updateAddress = async (req, res) => {
   try {
-    const { addressId, type, streetAddress, city, state, postalCode, country } =req.body;
+    const {name, addressId, type, streetAddress, city, state, postalCode, country } =req.body;
 
     const updatedAddress = await AddressModel.findByIdAndUpdate(
       addressId,
-      { type, streetAddress, city, state, postalCode, country },
+      { name,type, streetAddress, city, state, postalCode, country },
       { new: true }
     );
 
@@ -135,9 +138,8 @@ export const updateAddress = async (req, res) => {
     res.status(200).json({ ok: true, msg: "Address updated successfully" });
   } catch (error) {
     console.error(error);
-    res
-      .status(500)
-      .json({ ok: false, msg: "Server error", error: error.message });
+    return res.render("user/error");
+   
   }
 };
 export const getOrderReanderPage=async(req,res)=>{
@@ -170,11 +172,42 @@ export const removeOrders=async(req,res)=>{
     res.json({ ok: true, msg: "order canceld successfully." });
   } catch (error) {
     console.error("Error order cancleing:", error);
-    res
-      .status(500)
-      .json({
-        ok: false,
-        msg: "An error occurred while order canceling.",
-      });
+    return res.render("user/error");
+   
   }
 }
+export const deletePerItemInOrder = async (req, res) => {
+  const { orderId, productId } = req.params;
+  const { size } = req.body;
+
+  try {
+    const order = await OrderModel.findById(orderId);
+    if (!order) return res.status(404).json({ message: 'Order not found' });
+
+    const itemIndex = order.items.findIndex(i => i.productId.toString() === productId && i.size === parseInt(size));
+    if (itemIndex === -1) return res.status(404).json({ message: 'Item not found in the order.' });
+
+    const item = order.items[itemIndex];
+    if (item.isCanceld) return res.status(400).json({ message: 'Item is already canceled.' });
+
+    order.totalAmount -= item.price * item.quantity;
+    item.isCanceld = true;
+
+    if (order.items.every(i => i.isCanceld)) {
+      order.isCanceld = true;
+      order.totalAmount= 0.0
+    }
+
+    await order.save();
+  
+    return res.status(200).json({ message: 'Item canceled successfully', totalAmount: order.totalAmount, allCanceled: order.items.every(i => i.isCanceld) });
+  } catch (error) {
+    console.error('Error canceling order item:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+
+
+
+

@@ -133,6 +133,20 @@
                   </div>
                   <div class="row mb-3">
                     <div class="col-md-4">
+                      <label for="streetAddress<%= index %>" class="form-label"
+                        >Street Address</label
+                      >
+                      <input
+                        type="text"
+                        name="name"
+                        class="form-control"
+                        id="name<%= index %>"
+                        placeholder="123 Main St"
+                        value="<%= address.name %>"
+                        required
+                      />
+                    </div>
+                    <div class="col-md-4">
                       <label for="type<%= index %>" class="form-label"
                         >Type</label
                       >
@@ -146,7 +160,7 @@
                         required
                       />
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-md-4">
                       <label for="streetAddress<%= index %>" class="form-label"
                         >Street Address</label
                       >
@@ -231,6 +245,17 @@
               >
                 <div class="row mb-3">
                   <div class="col-md-4">
+                    <label for="type" class="form-label">Name</label>
+                    <input
+                      type="text"
+                      name="name"
+                      class="form-control"
+                      id="name"
+                      placeholder="Name"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-4">
                     <label for="type" class="form-label">Type</label>
                     <input
                       type="text"
@@ -241,7 +266,7 @@
                       required
                     />
                   </div>
-                  <div class="col-md-8">
+                  <div class="col-md-4">
                     <label for="streetAddress" class="form-label"
                       >Street Address</label
                     >
@@ -570,7 +595,9 @@
    const state = document.getElementById('state').value;
    const postalCode = document.getElementById('postalCode').value;
    const country = document.getElementById('country').value;
-const formData = {
+   const name = document.getElementById('name').value;
+  const formData = {
+    name:name,
     type: type,
     streetAddress: streetAddress,
     city: city,

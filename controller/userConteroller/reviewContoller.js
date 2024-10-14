@@ -84,8 +84,6 @@ export const reviewPagenation = async (req, res) => {
     });
   } catch (error) {
     console.error("Error retrieving reviews:", error);
-    return res
-      .status(500)
-      .json({ ok: false, msg: "An error occurred while retrieving reviews." });
+    return res.render("user/error");
   }
 };

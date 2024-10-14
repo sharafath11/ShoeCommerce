@@ -55,9 +55,7 @@ export const loginPost = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({
-      success: false,
-      msg: "Server error. Please try again later.",
-    });
+    return res.render("user/error");
+   
   }
 };

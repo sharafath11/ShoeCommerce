@@ -109,15 +109,23 @@
           </thead>
           <tbody>
             <% order.items.forEach(item => { %>
-              <tr>
-                <td><%= item.name %></td>
-                <td><%= item.quantity %></td>
-                <td>₹<%= item.price.toFixed(2) %></td>
-                <td>₹<%= (item.quantity * item.price).toFixed(2) %></td>
-              </tr>
+                <% if (!item.isCanceld) { %> <!-- Check if the item is not canceled -->
+                    <tr>
+                        <td><%= item.name %></td>
+                        <td><%= item.quantity %></td>
+                        <td>₹<%= item.price.toFixed(2) %></td>
+                        <td>₹<%= (item.quantity * item.price).toFixed(2) %></td>
+                    </tr>
+                <% } %>
             <% }); %>
-            <tr><td>Delevery charge</td><td></td><td></td><td>₹50</td></tr>
-          </tbody>
+            <tr>
+                <td>Delivery Charge</td>
+                <td></td>
+                <td></td>
+                <td>₹50</td>
+            </tr>
+        </tbody>
+        
           <tfoot>
             <tr>
               <td colspan="3" class="text-end">Tax</td>

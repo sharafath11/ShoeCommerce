@@ -290,22 +290,16 @@
           <!-- Start Filter Bar -->
           <div class="filter-bar d-flex flex-wrap align-items-center" style="height: 63px;">
             <div class="sorting">
-              <select id="mySelect">
+              <select id="mySelect" onchange="filterHandler()">
                 <option value="1">Default</option>
                 <option value="2">Low to High</option>
                 <option value="3">High to Low</option>
+                <option value="AZ">A to Z</option>
+                 <option value="ZA">Z to A</option>
               </select>
               
-              <!-- <button onclick="filterHandler()">Apply Price filtering</button> -->
+             
             </div>
-            <div class="sorting">
-              <select id="spelling">
-                  <option value="">Default</option>
-                  <option value="AZ">A to Z</option>
-                  <option value="ZA">Z to A</option>
-              </select>
-              <button class="custom-button" style="margin-left : 20px;" onclick="filterHandler()">Apply Filters</button>
-          </div>
           
             
           </div>
@@ -314,28 +308,34 @@
           flex-wrap: wrap;">
             <% products.forEach(function(product) { %>
               <div class="col-lg-4 col-md-6">
-                <div class="single-product">
-                  <a href="/singleproduct/<%= product._id %>">
-                    <img class="img-fluid"
-                         src="<%= product.images[0].replace('public', '') %>"
-                         alt="<%= product.name %>" />
-                  </a>
-                  <div class="product-details">
-                    <h6><%= product.name %></h6>
-                    <div class="price">
-                      <h6>₹<%= product.price %></h6>
-                    </div>
-        
-                    <div class="prd-bottom">
-                      <div class="social-info" onclick="addToWishList('<%= product._id %>')">
-                        <span class="lnr lnr-heart"></span>
-                        <p class="hover-text">Wishlist</p>
+                  <div class="single-product">
+                      <a href="/singleprodect/<%= product._id %>">
+                          <img class="img-fluid"
+                               src="<%= product.images[0].replace('public', '') %>"
+                               alt="<%= product.name %>" />
+                      </a>
+                      <div class="product-details">
+                          <h6><%= product.name %></h6>
+                          <div class="price">
+                              <h6>₹<%= product.price %></h6>
+                          </div>
+          
+                          <div class="prd-bottom">
+                              <div class="social-info" onclick="addToWishList('<%= product._id %>')">
+                                  <span class="lnr lnr-heart"></span>
+                                  <p class="hover-text">Wishlist</p>
+                              </div>
+          
+                              <% const availableSizes = product.availableSize.filter(sizeObj => sizeObj.stock > 0); %>
+                              <% if (availableSizes.length === 0) { %>
+                                  <p class="text-danger">Out of Stock</p>
+                              <% } %>
+                          </div>
                       </div>
-                    </div>
                   </div>
-                </div>
               </div>
-            <% }); %>
+          <% }); %>
+          
           </section>
          
           <div class="pagination">
@@ -693,29 +693,27 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function filterHandler(page = 1) {
-    const urlParams = new URLSearchParams(window.location.search);
-    const selectedBrand = document.querySelector('input[name="brand"]:checked')?.value;
-    const selectedColor = document.querySelector('input[name="color"]:checked')?.value;
-    const selectedPrice = document.getElementById('mySelect').value;
-    const searchInput = document.getElementById('search_input').value.trim();
-    const selectedSort = document.getElementById('spelling').value; // Get the selected sort option
+  const urlParams = new URLSearchParams(window.location.search);
+  const selectedBrand = document.querySelector('input[name="brand"]:checked')?.value;
+  const selectedColor = document.querySelector('input[name="color"]:checked')?.value;
+  const selectedSorting = document.getElementById('mySelect').value; // unified as 'sort'
+  const searchInput = document.getElementById('search_input').value.trim();
 
-    // Update the current page
-    currentPage = page;
+  currentPage = page;
 
-    const filterData = {
-        brand: selectedBrand || urlParams.get('brand') || '',
-        color: selectedColor || urlParams.get('color') || '',
-        price: selectedPrice || urlParams.get('price') || '1',
-        category: urlParams.get('category') || '',
-        search: searchInput || '',
-        page: currentPage, // Use the updated currentPage
-        sort: selectedSort // Include the selected sorting option
-    };
+  const filterData = {
+    brand: selectedBrand || urlParams.get('brand') || '',
+    color: selectedColor || urlParams.get('color') || '',
+    sort: selectedSorting || urlParams.get('sort') || '1', 
+    category: urlParams.get('category') || '',
+    search: searchInput ||  urlParams.get('search') || '',
+    page: currentPage,
+  };
 
-    const queryString = new URLSearchParams(filterData).toString();
-    window.location.href = `/shop?${queryString}`; // Navigate to new page with updated filters
+  const queryString = new URLSearchParams(filterData).toString();
+  window.location.href = `/shop?${queryString}`; 
 }
+
 
 function createPagination(totalPages, currentPage) {
     console.log("Total Pages:", totalPages);

@@ -163,6 +163,20 @@
                   <div class="row mb-3">
                     <div class="col-md-4">
                       <label for="type<%= index %>" class="form-label"
+                        >name</label
+                      >
+                      <input
+                        type="text"
+                        name="type"
+                        class="form-control"
+                        id="name<%= index %>"
+                        placeholder="name"
+                        value="<%= address.name %>"
+                        required
+                      />
+                    </div>
+                    <div class="col-md-4">
+                      <label for="type<%= index %>" class="form-label"
                         >Type</label
                       >
                       <input
@@ -175,7 +189,7 @@
                         required
                       />
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-md-4">
                       <label for="streetAddress<%= index %>" class="form-label"
                         >Street Address</label
                       >
@@ -268,6 +282,17 @@
         >
           <div class="row mb-3">
             <div class="col-md-4">
+              <label for="type" class="form-label">Name</label>
+              <input
+                type="text"
+                name="name"
+                class="form-control"
+                id="name"
+                placeholder="Name"
+                required
+              />
+            </div>
+            <div class="col-md-4">
               <label for="type" class="form-label">Type</label>
               <input
                 type="text"
@@ -278,7 +303,7 @@
                 required
               />
             </div>
-            <div class="col-md-8">
+            <div class="col-md-4">
               <label for="streetAddress" class="form-label"
                 >Street Address</label
               >
@@ -377,7 +402,9 @@
         const state = document.getElementById("state").value;
         const postalCode = document.getElementById("postalCode").value;
         const country = document.getElementById("country").value;
+        const name = document.getElementById("name").value;
         const formData = {
+          name:name,
           type: type,
           streetAddress: streetAddress,
           city: city,
@@ -478,16 +505,7 @@
         const state = document.getElementById(`state${index}`).value; // Make sure this field exists
         const country = document.getElementById(`country${index}`).value; // Make sure this field exists
 
-        // Log values for debugging purposes
-        console.log({
-          addressId,
-          type,
-          streetAddress,
-          city,
-          postalCode,
-          state,
-          country,
-        });
+       
         const formData = {
           type: type,
           streetAddress: streetAddress,

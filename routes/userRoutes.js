@@ -14,7 +14,7 @@ import {  protectedHand } from "../middleware/protectedRoutes.js";
 import { logoutFn } from "../controller/userConteroller/logoutController.js";
 import { removeWhislist, renderWishlistPage, whislistFn } from "../controller/userConteroller/whislistController.js";
 import noCache from "../middleware/cachClear.js";
-import { addAddress, getOrderReanderPage, profileRender, removeAddress, removeOrders, renderAddresPage, updateAddress, updateProfile } from "../controller/userConteroller/profileController.js";
+import { addAddress, deletePerItemInOrder, getOrderReanderPage, profileRender, removeAddress, removeOrders, renderAddresPage, updateAddress, updateProfile } from "../controller/userConteroller/profileController.js";
 import { showLogin } from "../middleware/showLogin.js";
 import { forgetPassword, forgetPasswordRender, renderResetPasswordPage, resetPassword } from "../controller/userConteroller/forgotPassword.js";
 import { changePassword, renderSettings } from "../controller/userConteroller/settings.js";
@@ -22,7 +22,6 @@ import { reviewHandler, reviewPagenation } from "../controller/userConteroller/r
 import multer from 'multer';
 import path from 'path';
 import { filteredProducts } from "../controller/userConteroller/filterProductsContoller.js";
-import { searchHand } from "../controller/userConteroller/searchController.js";
 import { billContoller } from "../controller/userConteroller/billController.js";
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -48,7 +47,7 @@ router.get("/ShowLoginMsg",showLogin)
 router.get('/auth/protected', protectedHand,noCache, authProtected);
 router.get("/login",noCache,loginGetFn)
 router.post("/login",noCache,loginPost)
-router.get("/logout",logoutFn)
+router.post("/logout",logoutFn)
 // router.get("/category",getCategory)
 router.get("/checkout",protectedHand,noCache,getCheckout)
 router.post("/checkout/cod",protectedHand,noCache,checkoutFn)
@@ -71,6 +70,7 @@ router.delete("/removeAddress/:id",removeAddress);
 router.post("/updateAddress",updateAddress);
 router.get("/orders",getOrderReanderPage)
 router.delete("/removeOrder/:id",removeOrders)
+router.put("/delete-order-item/:orderId/:productId",deletePerItemInOrder)
 router.get("/order/bill/:orderId",billContoller)
 router.get("/forgot-password",forgetPasswordRender )
 router.post("/forgot-password",forgetPassword )
@@ -81,5 +81,4 @@ router.post("/changepassword",changePassword)
 router.post("/product/reviews", upload.single('reviewImage'),reviewHandler)
 router.get("/product/reviews",reviewPagenation);
 router.get("/shop",filteredProducts)
-router.get("/search",searchHand)
 export default router

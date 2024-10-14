@@ -93,6 +93,7 @@
             <div>
               <h5>Order ID <%= order._id %></h5>
               <p><%= new Date(order.orderDate).toLocaleDateString() %></p>
+             
             </div>
             <div>
               <td>
@@ -141,7 +142,7 @@
             </div>
           </div>
           <div class="order-total">
-            $<%= order.totalAmount.toFixed(2) %>
+            ₹<%= order.totalAmount.toFixed(2) %>
             <small class="d-block"><%= order.items.length %> item(s)</small>
           </div>
 
@@ -156,22 +157,26 @@
 
           <div class="collapse" id="orderItemsCollapse-<%= order._id %>">
             <div class="order-items">
-              <% order.items.forEach(function(item) { %>
-              <div class="order-item d-flex justify-content-between">
-                <div>
-                  <span class="item-name"><%= item.name %></span>
-                  <p class="quantity">Quantity: <%= item.quantity %></p>
-                </div>
-                <span>$<%= (item.price * item.quantity).toFixed(2) %></span>
-              </div>
-              <% }) %>
+                <% order.items.forEach(function(item) { %>
+                    <div class="order-item d-flex justify-content-between">
+                        <div>
+                            <span class="item-name"><%= item.name %></span>
+                            <p class="quantity">Quantity: <%= item.quantity %></p>
+                            <% if (item.isCanceld) { %>
+                                <span class="text-danger">Canceled</span> 
+                            <% } %>
+                        </div>
+                        <span>₹<%= (item.price * item.quantity).toFixed(2) %></span>
+                    </div>
+                <% }) %>
             </div>
             <div>
-              <strong>
-                Totel Amount :<span><%= orders[0].totalAmount %></span></strong
-              >
+                <strong>
+                    Total Amount: <span>₹<%= orders[0].totalAmount.toFixed(2) %></span>
+                </strong>
             </div>
-          </div>
+        </div>
+        
         </div>
         <% }) %> <% } else { %>
         <p>No orders available.</p>

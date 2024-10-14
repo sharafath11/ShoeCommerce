@@ -108,110 +108,106 @@
         <div class="col-md-4 mb-4">
           <div class="card wishlist-card">
             <a href="/singleprodect/<%= product._id %>">
-              <img
-                src="<%= product.images[0].replace('public', '') %>"
-                alt="<%= product.name %>"
-                class="card-img-top"
-                style="height: 200px; object-fit: cover"
-              />
+                <img
+                    src="<%= product.images[0].replace('public', '') %>"
+                    alt="<%= product.name %>"
+                    class="card-img-top"
+                    style="height: 200px; object-fit: cover"
+                />
             </a>
             <div class="card-body">
-              <h5 class="card-title"><%= product.name %></h5>
-              <p class="card-text">Price: ₹<%= product.price %></p>
-              
-              <div
-                class="d-flex justify-content-between align-items-center mb-3"
-              >
-            
-                <% if (product.availableSize.length > 0) { %>
-                    <select class="form-control w-50" id="size-<%= product._id %>">
-                        <option value="">Select size</option>
-                        <% product.availableSize.forEach(sizeObj => { %>
-                            <% if (sizeObj.stock > 0) { %> 
+                <h5 class="card-title"><%= product.name %></h5>
+                <p class="card-text">Price: ₹<%= product.price %></p>
+        
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <% const availableSizes = product.availableSize.filter(sizeObj => sizeObj.stock > 0); %>
+                    <% if (availableSizes.length > 0) { %>
+                        <select class="form-control w-30" id="size-<%= product._id %>">
+                            <option value="">Select size</option>
+                            <% availableSizes.forEach(sizeObj => { %>
                                 <option value="<%= sizeObj.size %>"><%= sizeObj.size %></option>
-                            <% } %>
-                        <% }); %>
-                    </select>
-                <% } else { %>
-                    <p>No size available</p>
-                <% } %>
-         
-            
-                <a
-                  href="/remove-from-wishlist/<%= product._id %>"
-                  class="text-danger"
+                            <% }); %>
+                        </select>
+                    <% } else { %>
+                        <p style="color: red;">Out of Stock</p>
+                    <% } %>
+                    <button
+                    onclick="addToCart(event, '<%= product._id %>', document.getElementById('size-<%= product._id %>').value)"
+                    class="btn btn-warning d-flex align-items-center"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="lucide lucide-trash2 h-4 w-4"
-                  >
-                    <path d="M3 6h18"></path>
-                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                    <line x1="10" x2="10" y1="11" y2="17"></line>
-                    <line x1="14" x2="14" y1="11" y2="17"></line>
-                  </svg>
-                </a>
-              </div>
-              <div class="d-flex justify-content-between align-items-center">
-                <button
-                  onclick="addToCart(event, '<%= product._id %>')"
-                  class="btn btn-warning d-flex align-items-center"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="lucide lucide-shopping-cart me-2 h-4 w-4"
-                  >
-                    <circle cx="8" cy="21" r="1"></circle>
-                    <circle cx="19" cy="21" r="1"></circle>
-                    <path
-                      d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"
-                    ></path>
-                  </svg>
-                  Add to Cart
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="lucide lucide-shopping-cart me-2 h-4 w-4"
+                    >
+                        <circle cx="8" cy="21" r="1"></circle>
+                        <circle cx="19" cy="21" r="1"></circle>
+                        <path
+                            d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"
+                        ></path>
+                    </svg>
+                    Add to Cart
                 </button>
-                <a
-                  href="/singleprodect/<%= product._id %>"
-                  class="btn border-2 border-dark d-flex align-items-center"
+                    <a href="/remove-from-wishlist/<%= product._id %>" class="text-danger">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="lucide lucide-trash2 h-4 w-4"
+                        >
+                            <path d="M3 6h18"></path>
+                            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                            <line x1="10" x2="10" y1="11" y2="17"></line>
+                            <line x1="14" x2="14" y1="11" y2="17"></line>
+                        </svg>
+                    </a>
+                </div>
+        
+                <% if (availableSizes.length > 0) { %>
+                    <div class="d-flex justify-content-between align-items-center">
+                        
+                        <!-- <a
+                    href="/singleprodect/<%= product._id %>"
+                    class="btn border-2 border-dark d-flex align-items-center"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="lucide lucide-eye me-2 h-4 w-4"
-                  >
-                    <path
-                      d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"
-                    ></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                  </svg>
-                  View
-                </a>
-              </div>
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="lucide lucide-eye me-2 h-4 w-4"
+                    >
+                        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                    View
+                </a> -->
+                    </div>
+                <% } %>
+        
+                
             </div>
-          </div>
+        </div>
+        
         </div>
         <% }); %> <% } else { %>
         <p>Your wishlist is empty.</p>

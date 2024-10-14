@@ -109,6 +109,7 @@ export const removeWhislist = async (req, res) => {
     res.redirect("/wishlist");
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server error", error });
+    return res.render("user/error");
+   
   }
 };

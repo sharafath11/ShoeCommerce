@@ -95,9 +95,16 @@
                 <!-- Orders Management Panel -->
                 <div class="card shadow-sm mb-4">
                     <div class="card-body">
-                        <div class="d-flex justify-content-between mb-3">
-                            <input class="form-control w-25" type="text" placeholder="Search orders..." />
-                        </div>
+                        <div class="d-flex mb-3 space-2">
+                            <input 
+                              class="form-control w-25" 
+                              type="text" 
+                              id="searchOrdersInput" 
+                              placeholder="Search orders..." 
+                             
+                            />
+                            <button class="btn bg-light border-0" onclick="searchOrders()">Search </button>
+                          </div>
 
                         <table class="table">
                             <thead>
@@ -112,39 +119,42 @@
                             </thead>
                             <tbody>
                                 <% orders.forEach((order, index) => { %>
-                                    <tr>
-                                        <td><%= index + 1 %></td>
-                                        <td><%= order._id %></td>
-                                        <td><%= order.orderDate.toISOString().split('T')[0] %></td>
-                                        <td>
-                                            <span id="orderStatusBadge_<%= order.id %>">
-                                                <% if (order.status === 'Completed') { %>
-                                                    <span class="badge bg-success">Completed</span>
-                                                <% } else if (order.status === 'Pending') { %>
-                                                    <span class="badge bg-warning">Pending</span>
-                                                <% } else if (order.status === 'Shipped') { %>
-                                                    <span class="badge bg-info">Shipped</span>
-                                                <% } %>
-                                            </span>
-                                        </td>
-                                        
-                                        <td>$<%= order.totalAmount %></td>
-                                        <td class="dpa">
-                                            <a href="/admin/order/singleOrder/<%= order.id %>" class="btn btn-sm btn-primary">View</a>
-                                            <div class="custom-dropdown">
-                                                <form id="orderForm_<%= order.id %>">
-                                                    <select id="orderStatus_<%= order.id %>" name="status" class="form-select form-select-sm">
-                                                        <option  value="Pending" <%= order.status === 'Pending' ? 'selected' : '' %>>Pending</option>
-                                                        <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
-                                                        <option value="Completed" <%= order.status === 'Completed' ? 'selected' : '' %>>Completed</option>
-                                                    </select>
-                                                </form>
-                                            </div>
-                                            <button onclick="confirmUpdate(event,'<%= order.id %>')">Update The order</button>
-                                        </td>
-                                    </tr>
+                                  <tr>
+                                    <td><%= index + 1 %></td>
+                                    <td><%= order.orderId %></td>
+                                    <td><%= order.orderDate.toISOString().split('T')[0] %></td>
+                                    <td>
+                                      <span id="orderStatusBadge_<%= order.id %>">
+                                        <% if (order.status === 'Completed') { %>
+                                          <span class="badge bg-success">Completed</span>
+                                        <% } else if (order.status === 'Pending') { %>
+                                          <span class="badge bg-warning">Pending</span>
+                                        <% } else if (order.status === 'Shipped') { %>
+                                          <span class="badge bg-info">Shipped</span>
+                                        <% } %>
+                                      </span>
+                                    </td>
+                                    <td>₹<%= order.totalAmount %></td>
+                                    <td class="dpa">
+                                      <a href="/admin/order/singleOrder/<%= order.id %>" class="btn btn-sm btn-primary">View</a>
+                                      <div class="custom-dropdown">
+                                        <form id="orderForm_<%= order.id %>">
+                                          <select id="orderStatus_<%= order.id %>" name="status" class="form-select form-select-sm" 
+                                            <%= order.status === 'Completed' ? 'disabled' : '' %> >
+                                            <option value="Pending" <%= order.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+                                            <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+                                            <option value="Completed" <%= order.status === 'Completed' ? 'selected' : '' %>>Completed</option>
+                                          </select>
+                                        </form>
+                                      </div>
+                                      <% if (order.status !== 'Completed') { %>
+                                        <button onclick="confirmUpdate(event, '<%= order.id %>')">Update The order</button>
+                                      <% } %>
+                                    </td>
+                                  </tr>
                                 <% }); %>
-                            </tbody>
+                              </tbody>
+                              
                         </table>
                     </div>
                 </div>
@@ -223,10 +233,18 @@
                 style: {
                     background: type === "success" ? "green" : "red"
                 },
-                stopOnFocus: true // Prevents dismissing of toast on hover
+                stopOnFocus: true 
             }).showToast();
         }
     </script>
+    <script>
+        
+        function searchOrders() {
+          const query = document.getElementById('searchOrdersInput').value;
+          window.location.href = `/admin/orders?search=${query}`;
+        }
+      </script>
+      
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>

@@ -113,9 +113,15 @@
       </li>
 
       <li class="nav-item">
-        <a class="nav-link text-danger" href="/admin/logout" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+        <form id="logout-form" action="/admin/logout" method="POST" style="display: none;">
+         
+        </form>
+        
+        <a class="nav-link text-danger" href="#" 
+           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
           <i class="bi bi-box-arrow-right"></i> Logout
         </a>
+        
         <form id="logout-form" action="/admin/logout" method="POST" style="display: none;"></form>
       </li>
     </ul>

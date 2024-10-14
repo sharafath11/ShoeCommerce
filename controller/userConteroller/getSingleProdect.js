@@ -38,6 +38,7 @@ export const getSingleProdect = async (req, res) => {
 
   } catch (error) {
     console.error('Error fetching product details:', error);
+    return res.render("user/error");
    
   }
 };

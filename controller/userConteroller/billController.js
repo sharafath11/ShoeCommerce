@@ -12,7 +12,7 @@ export const billContoller=async(req,res)=>{
     
         res.render('user/bill', { order });
       } catch (error) {
-        console.error('Error fetching order:', error);
-        res.status(500).send("Error fetching order");
+        console.error("Error fetching shop details:", error);
+        return res.render("user/error");
       }
 }

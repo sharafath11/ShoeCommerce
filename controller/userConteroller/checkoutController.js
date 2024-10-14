@@ -36,7 +36,8 @@ export const getCheckout = async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching checkout details:", error.message);
-    res.status(500).send("An error occurred while fetching checkout details. Please try again.");
+   
+    return res.render("user/error");
   }
 };
 
@@ -60,19 +61,30 @@ export const checkoutFn = async (req, res) => {
 
     for (const item of orderItems) {
       const product = await ProductModel.findById(item.productId); 
-
+    
       if (!product) {
-        return res.status(404).json({ ok: false, msg: "Product not found", red: "/cart" });
+        return json({ ok: false, msg: "Product not found", red: "/cart" });
       }
-      const sizeVariant = product.availableSize.find(size => size.size === item.size);
+      const sizeVariantIndex = product.availableSize.findIndex(size => size.size === item.size);
+    
+      if (sizeVariantIndex === -1) {
+        return json({ ok: false, msg: `Size ${item.size} not found`, red: "/cart" });
+      }
+    
+      const sizeVariant = product.availableSize[sizeVariantIndex];
 
-      if (!sizeVariant || sizeVariant.stock < item.quantity) {
-        return res.status(400).json({ ok: false, msg: `Insufficient stock for size ${item.size}`, red: "/cart" });
+      if (sizeVariant.stock < item.quantity) {
+        return json({ ok: false, msg: `Insufficient stock for size ${item.size}`, red: "/cart" });
       }
 
       sizeVariant.stock -= item.quantity;
+    
+      
+    
+      
       await product.save();
     }
+    
     function generateOrderId() {
       return 'ORD-' + Math.random().toString(36).substr(2, 9).toUpperCase();
     }
@@ -98,8 +110,8 @@ export const checkoutFn = async (req, res) => {
     return res.status(201).json({ ok: true, msg: "Order placed successfully!", red: "/orders" });
     
 } catch (error) {
-    console.error("Error saving order:", error);
-    return res.status(500).json({ ok: false, msg: "Internal Server Error", error: error.message });
+  console.error("Error fetching cart details:", error);
+  return res.render("user/error");
 }
 
 };

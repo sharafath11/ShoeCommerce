@@ -2,10 +2,9 @@ import { categoryModel } from "../../models/category.js";
 import ProductModel from "../../models/prodectsModel.js";
 import userModel from "../../models/userModel.js";
 import Wishlist from "../../models/whislistModel.js";
-
 export const filteredProducts = async (req, res) => {
   try {
-    const { brand, color, price, category, search, page = 1, sort } = req.query;
+    const { brand, color, sort, category, search, page = 1 } = req.query;
     const productsPerPage = 6;
 
     const query = { blocked: false };
@@ -29,31 +28,35 @@ export const filteredProducts = async (req, res) => {
       .limit(productsPerPage)
       .lean();
 
-   ;
-
-    if (price) {
-      const priceOrder = price === "3" ? -1 : 1;
-      products.sort((a, b) => (a.price - b.price) * priceOrder);
+    
+    if (sort === "2") { 
+      // Low to High
+      products.sort((a, b) => a.price - b.price);
+    } else if (sort === "3") { 
+      // High to Low
+      products.sort((a, b) => b.price - a.price);
+    } else if (sort === "AZ") { 
+      // A to Z
+      products.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (sort === "ZA") { 
+      // Z to A
+      products.sort((a, b) => b.name.localeCompare(a.name));
     }
 
-    if (sort) {
-      const sortOrder = sort === "AZ" ? 1 : -1;
-      products.sort((a, b) => a.name.localeCompare(b.name) * sortOrder);
+    const user = req.session.user;
+    if (!user) {
+      let categories = await categoryModel.find();
+      return res.render("user/shopeDetials", {
+        user: req.session.user,
+        products,
+        WishlistQty: 0,
+        categories,
+        cartQty: 0,
+        currentPage: parseInt(page),
+        totalPages: Math.ceil(totalProducts / productsPerPage),
+      });
     }
-  
-    const user= req.session.user
-  if(!user){
-    let categories=await categoryModel.find()
-    return res.render("user/shopeDetials", {
-      user: req.session.user,
-      products,
-      WishlistQty: 0,
-      categories,
-      cartQty:  0,
-      currentPage: parseInt(page),
-      totalPages: Math.ceil(totalProducts / productsPerPage),
-    });
-  }
+
     const [categories, wishlist] = await Promise.all([
       categoryModel.find(),
       Wishlist.findOne({ user: req.session.user._id })
@@ -76,7 +79,6 @@ export const filteredProducts = async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching shop details:", error);
-   return res.render("user/error");
+    return res.render("user/error");
   }
-}
-
+};

@@ -74,7 +74,8 @@ export const googleAuthCallback = async (req, res) => {
     }
   } catch (error) {
     console.error("Error during Google auth callback:", error);
-    res.status(500).json({ message: "Server error" });
+    return res.render("user/error");
+   
   }
 };
 
@@ -94,19 +95,6 @@ export const catchError=(req,res,next)=>{
 
   if(req.query.error){
     return res.redirect("/")
-  //   return res.send(`
-  //     <html>
-  //         <head>
-  //             <title>Alert</title>
-  //         </head>
-  //         <body>
-  //             <script>
-  //                 alert("Somthing wrong");
-  //                 window.location.href = "/login"; 
-  //             </script>
-  //         </body>
-  //     </html>
-  // `);
   }
   else{
     next()

@@ -14,8 +14,8 @@ export const renderSettings=async(req,res)=>{
     
         res.render("user/settings", { user, cartQty, WishlistQty });
       } catch (error) {
-        console.log("Server error:", error);
-        res.redirect("/");
+        return res.render("user/error");
+   
       }
 }
 
@@ -47,6 +47,7 @@ export const changePassword = async (req, res) => {
         res.status(200).json({ok:true, msg: 'Password changed successfully' });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ ok:false ,msg: 'Server error' });
+        return res.render("user/error");
+   
     }
 };

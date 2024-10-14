@@ -228,38 +228,65 @@
         <div class="col-md-6 p-5">
           <h1 class="product-title"><%= product.name %></h1>
           <p class="product-price">₹ <%= product.price %></p>
+          
           <% if (product.categoryId) { %>
-          <p><strong>Category:</strong> <%= product.categoryId.name %></p> 
+            <p><strong>Category:</strong> <%= product.categoryId.name %></p> 
           <% } %>
-
+        
           <p>
-            <% const allStockLessThan20 = product.availableSize.every(sizeObj =>
-            sizeObj.stock < 20); %>
-            <strong>Available size</strong>
-            <select id="sizeSelect" class="form-select mb-3">
-              <% product.availableSize.forEach(sizeObj => { %> <% if
-              (sizeObj.stock > 0) { %>
-              <option value="<%= sizeObj.size %>"><%= sizeObj.size %></option>
-              <% } %> <% }) %>
-            </select>
-            <% if (allStockLessThan20) { %>
+            <% 
+              const allOutOfStock = product.availableSize.every(sizeObj => sizeObj.stock === 0); 
+              const allStockLessThan20 = product.availableSize.every(sizeObj => sizeObj.stock < 20);
+            %>
+            <strong>Available Sizes:</strong>
+            
+            <% if (allOutOfStock) { %>
+              <span class="text-danger">Out of Stock</span>
+            <% } else { %>
+              <select id="sizeSelect" class="form-select mb-3">
+                <% product.availableSize.forEach(sizeObj => { %> 
+                  <% if (sizeObj.stock > 0) { %>
+                    <option value="<%= sizeObj.size %>"><%= sizeObj.size %> </option>
+                  <% } %> 
+                <% }) %>
+              </select>
+        
+              <% if (allStockLessThan20) { %>
+                <p style="color: red">Few products are left!</p>
+              <% } %>
+            <% } %>
           </p>
-
-          <p style="color: red">Few products are left!</p>
-          <% } %>
+        
           <span class="ratingT">
-            <%= "★".repeat(Math.round(averageRating)) %> <%= "☆".repeat(5 -
-            Math.round(averageRating)) %>
+            <%= "★".repeat(Math.round(averageRating)) %> <%= "☆".repeat(5 - Math.round(averageRating)) %>
           </span>
           <br>  
           <p class="product-description"><%= product.description %></p>
-          <button
-            class="btn btn-dark w-100"
-            onclick="addToCart(event,'<%= product._id %>', document.getElementById('sizeSelect').value)"
-          >
-            Add to Cart
-          </button>
+          
+          <% if (allOutOfStock) { %>
+            <button
+              class="btn btn-warning w-100"
+              onclick="addToWishList('<%= product._id %>')"
+            >
+              Add to Wishlist
+            </button>
+          <% } else { %>
+            <button
+              class="btn btn-warning w-100"
+              onclick="addToWishList('<%= product._id %>')"
+            >
+              Add to Wishlist
+            </button>
+            <button
+              class="btn btn-dark w-100 mt-2"
+              onclick="addToCart(event,'<%= product._id %>', document.getElementById('sizeSelect').value)"
+            >
+              Add to Cart
+            </button>
+          <% } %>
         </div>
+        
+        
       </div>
 
       <!-- Reviews Section -->
@@ -439,6 +466,10 @@
             console.log(error);
           });
       }
+      function updateCartQuantity() {
+        let currentCartQty = parseInt(document.getElementById('cart-quantity').innerText);
+        document.getElementById('cart-quantity').innerText = currentCartQty + 1;
+    }
 
       function showToast(message) {
         Toastify({
@@ -627,5 +658,46 @@
         }
       };
     </script>
+    <script>
+      function addToWishList(productId) {
+          axios.post(`/whislistAdd/${productId}`)
+          .then(function(response) {  
+              if (response.data.success) {
+                  showToast(response.data.message);
+                 return addWishlistQty();
+              } else {
+                  if(response.data.message){
+                    return showToast(response.data.message);
+                  } 
+                  else{
+                    window.location.href='/ShowLoginMsg'
+                  }
+              }
+          })
+          .catch(function(error) {
+             
+              console.log(error);
+             
+          });
+      }
+  
+     
+      function addWishlistQty() {
+          let currentWtQty = parseInt(document.getElementById('w-qty').innerText);
+          document.getElementById('w-qty').innerText = currentWtQty + 1;
+      }
+  
+     
+      function showToast(message) {
+          Toastify({
+              text: message,
+              duration: 3000,
+              gravity: "top",
+              position: "right",
+              backgroundColor: "#333",
+              stopOnFocus: true
+          }).showToast();
+      }
+  </script>
   </body>
 </html>

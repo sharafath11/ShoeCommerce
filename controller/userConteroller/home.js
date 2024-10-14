@@ -16,10 +16,7 @@ export const homeRender = async (req, res) => {
     } else {
       req.session.cartQty = 0;
     }
-
     const productsN = await ProductModel.find().populate('categoryId').exec();
-   
-    
     const products = productsN.filter((item, index) => !item.blocked && !item.categoryId.blocked);
     if (!user || !user._id) {
       return res.render("user/index", {
@@ -51,6 +48,7 @@ export const homeRender = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server error", error });
+    return res.render("user/error");
+   
   }
 };
