@@ -1,4 +1,3 @@
-
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth2";
 import jwt from "jsonwebtoken";
@@ -24,8 +23,6 @@ passport.use(
         console.log("JWT Token Generated: ", token);
         done(null, { token, profile });
       } catch (error) {
-        
-        
         done(error, false);
       }
     }
@@ -35,11 +32,11 @@ passport.use(
 export const googleAuthCallback = async (req, res) => {
   try {
     const { id, email } = req.user.profile;
-    let user = await userModel.findOne({ googleId: id }) || await userModel.findOne({ email });
-    
-    
+    let user =
+      (await userModel.findOne({ googleId: id })) ||
+      (await userModel.findOne({ email }));
+
     if (user) {
-    
       if (!user.googleUser) {
         user.googleUser = true;
         user.googleId = id;
@@ -47,15 +44,17 @@ export const googleAuthCallback = async (req, res) => {
         await user.save();
         console.log("Updated existing user to Google user");
       }
-      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
-      req.session.user=user
-      req.session.token=token
-      res.redirect("/")
-     
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+        expiresIn: "1h",
+      });
+      req.session.user = user;
+      req.session.token = token;
+      res.redirect("/");
     } else {
-    
       const { name } = req.user.profile || {};
-      const username = name ? `${name.givenName || ""} ${name.familyName || ""}`.trim() : "Aro";
+      const username = name
+        ? `${name.givenName || ""} ${name.familyName || ""}`.trim()
+        : "Aro";
       user = new userModel({
         username,
         email,
@@ -64,7 +63,9 @@ export const googleAuthCallback = async (req, res) => {
         isVerified: true,
       });
       await user.save();
-      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+        expiresIn: "1h",
+      });
       return res.status(200).json({
         success: true,
         token,
@@ -75,10 +76,8 @@ export const googleAuthCallback = async (req, res) => {
   } catch (error) {
     console.error("Error during Google auth callback:", error);
     return res.render("user/error");
-   
   }
 };
-
 
 export const authSuccess = (req, res) => {
   res.json({ message: "Login Successful" });
@@ -91,14 +90,10 @@ export const authProtected = (req, res) => {
   const { email } = req.user;
   res.send(`Hello ${email}, you have accessed a protected route!`);
 };
-export const catchError=(req,res,next)=>{
-
-  if(req.query.error){
-    return res.redirect("/")
+export const catchError = (req, res, next) => {
+  if (req.query.error) {
+    return res.redirect("/");
+  } else {
+    next();
   }
-  else{
-    next()
-  }
- 
-  
-}
+};

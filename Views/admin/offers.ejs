@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Admin Offers</title>
+    <style>
+        body {
+            padding: 20px;
+        }
+        h1 {
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Admin Offers</h1>
+        
+        <!-- Add Offer Button -->
+        <button type="button" class="btn btn-primary mb-4" data-bs-toggle="modal" data-bs-target="#addOfferModal" onclick="clearAddForm()">
+            Add New Offer
+        </button>
+
+        <!-- Filter by Category -->
+        <div class="mb-4">
+            <h5>Filter by Category</h5>
+            <select class="form-select mb-3" aria-label="Default select example">
+                <option selected>All Categories</option>
+                <% categories.forEach(category => { %>
+                    <option value="<%= category.id %>"><%= category.name %></option>
+                <% }) %>
+            </select>
+        </div>
+
+        <!-- Offers Table -->
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Discount</th>
+                    <th>Discount Type</th>
+                    <th>Category</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- You will populate the table rows dynamically here -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal for Adding Offers -->
+    <div class="modal fade" id="addOfferModal" tabindex="-1" aria-labelledby="addOfferModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addOfferModalLabel">Add Offer</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addOfferForm">
+                        <div class="mb-3">
+                            <label for="addOfferTitle" class="form-label">Offer Title</label>
+                            <input type="text" class="form-control" id="addOfferTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="addOfferDescription" class="form-label">Description</label>
+                            <input type="text" class="form-control" id="addOfferDescription" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="addOfferDiscount" class="form-label">Discount</label>
+                            <input type="number" class="form-control" id="addOfferDiscount" min="0" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Discount Type</label><br>
+                            <input type="radio" name="addDiscountType" id="addDiscountPercentage" value="Percentage" checked> 
+                            <label for="addDiscountPercentage">Percentage</label><br>
+                            <input type="radio" name="addDiscountType" id="addDiscountFixed" value="Fixed">
+                            <label for="addDiscountFixed">Fixed</label>
+                        </div>
+                        <div class="mb-3">
+                            <label for="addOfferCategory" class="form-label">Category</label>
+                            <select class="form-select mb-3" id="addOfferCategory" aria-label="Default select example">
+                                <option selected>All Categories</option>
+                                <% categories.forEach(category => { %>
+                                    <option value="<%= category.id %>"><%= category.name %></option>
+                                <% }) %>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="addOfferStartDate" class="form-label">Start Date</label>
+                            <input type="date" class="form-control" id="addOfferStartDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="addOfferEndDate" class="form-label">End Date</label>
+                            <input type="date" class="form-control" id="addOfferEndDate" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" form="addOfferForm" >Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Editing Offers -->
+    <div class="modal fade" id="editOfferModal" tabindex="-1" aria-labelledby="editOfferModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editOfferModalLabel">Edit Offer</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editOfferForm">
+                        <div class="mb-3">
+                            <label for="editOfferTitle" class="form-label">Offer Title</label>
+                            <input type="text" class="form-control" id="editOfferTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editOfferDescription" class="form-label">Description</label>
+                            <input type="text" class="form-control" id="editOfferDescription" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editOfferDiscount" class="form-label">Discount</label>
+                            <input type="number" class="form-control" id="editOfferDiscount" min="0" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Discount Type</label><br>
+                            <input type="radio" name="editDiscountType" id="editDiscountPercentage" value="Percentage" checked> 
+                            <label for="editDiscountPercentage">Percentage</label><br>
+                            <input type="radio" name="editDiscountType" id="editDiscountFixed" value="Fixed">
+                            <label for="editDiscountFixed">Fixed</label>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editOfferCategory" class="form-label">Category</label>
+                            <select class="form-select mb-3" id="editOfferCategory" aria-label="Default select example">
+                                <option selected>All Categories</option>
+                                <% categories.forEach(category => { %>
+                                    <option value="<%= category.id %>"><%= category.name %></option>
+                                <% }) %>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editOfferStartDate" class="form-label">Start Date</label>
+                            <input type="date" class="form-control" id="editOfferStartDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editOfferEndDate" class="form-label">End Date</label>
+                            <input type="date" class="form-control" id="editOfferEndDate" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" form="editOfferForm">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function clearAddForm() {
+            document.getElementById('addOfferForm').reset();
+            document.getElementById('addDiscountPercentage').checked = true; 
+        }
+
+        function editOffer(id, title, description, discount, discountType, category, startDate, endDate) {
+            document.getElementById('editOfferTitle').value = title;
+            document.getElementById('editOfferDescription').value = description;
+            document.getElementById('editOfferDiscount').value = discount;
+            document.querySelector(`input[name="editDiscountType"][value="${discountType}"]`).checked = true; 
+            document.getElementById('editOfferCategory').value = category;
+            document.getElementById('editOfferStartDate').value = startDate; // Add start date
+            document.getElementById('editOfferEndDate').value = endDate; // Add end date
+            // Open the modal
+            const editModal = new bootstrap.Modal(document.getElementById('editOfferModal'));
+            editModal.show();
+        }
+    </script>
+</body>
+</html>
+
+<!-- Axios -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<!-- Toastify CSS and JS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+<script src="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.js"></script>
+
+<!-- SweetAlert -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+
+<script>
+
+async function addCoffers(OffersData) {
+    try {
+        const response = await axios.post('/admin/addCoffers', OffersData);
+
+        if (response.status === 200) { 
+
+            Toastify({
+                text: "Product added successfully!",
+                duration: 3000,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "green",
+                stopOnFocus: true, 
+            }).showToast();
+
+            
+            await Swal.fire({
+                title: 'Success!',
+                text: 'Product has been added.',
+                icon: 'success',
+                confirmButtonText: 'Okay'
+            });
+
+        }
+    } catch (error) {
+        console.error("There was an error adding the product!", error);
+        Toastify({
+            text: "Failed to add product!",
+            duration: 3000,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "red",
+            stopOnFocus: true,
+        }).showToast();
+        await Swal.fire({
+            title: 'Error!',
+            text: error.response ? error.response.data.message : 'Something went wrong!',
+            icon: 'error',
+            confirmButtonText: 'Okay'
+        });
+    }
+}
+document.getElementById('addOfferForm').addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const productData = {
+        title: document.getElementById('addOfferTitle').value,
+        description: document.getElementById('addOfferDescription').value,
+        discount: parseFloat(document.getElementById('addOfferDiscount').value),
+        discountType: document.querySelector('input[name="addDiscountType"]:checked').value,
+        category: document.getElementById('addOfferCategory').value,
+        startDate: document.getElementById('addOfferStartDate').value,
+        endDate: document.getElementById('addOfferEndDate').value
+ 
+    };
+
+    await addCoffers(productData);
+});
+
+</script>

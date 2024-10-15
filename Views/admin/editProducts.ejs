@@ -76,17 +76,31 @@
                 <button type="button" id="addSizeStock" class="btn btn-primary mt-2">Add Size & Stock</button>
             </div>
             
-            <div class="mb-3">
-                <label for="price" class="form-label">Price</label>
-                <input
+            <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="price" class="form-label">Price</label>
+                  <input
                     type="number"
                     class="form-control"
                     id="price"
                     name="price"
                     value="<%= product.price %>"
                     required
-                />
-            </div>
+                  />
+                </div>
+                <div class="col-md-6">
+                  <label for="originalPrice" class="form-label">Original Price</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="originalPrice"
+                    name="originalPrice"
+                    value="<%= product.originalPrice %>" 
+                    required
+                  />
+                </div>
+              </div>
+              
             <div class="mb-3">
                 <label for="color" class="form-label">Color</label>
                 <input
@@ -226,6 +240,7 @@
             const color = document.getElementById("color").value.trim();
             const productDescription = document.getElementById("description").value.trim();
             const productPrice = document.getElementById("price").value.trim();
+            const originalPrice=document.getElementById("originalPrice").value.trim()
             const productCategory = document.getElementById("category").value.trim();
     
             if (name === "" || brand === "" || color === "" || productDescription === "" || productPrice === "" || productCategory === "") {
@@ -237,6 +252,10 @@
                 showToast("Price must be greater than zero.");
                 return;
             }
+            if (parseFloat(productPrice) > parseFloat(originalPrice)) {
+         showToast("Price greater than Original Price, it is not ethical!");
+          return false; 
+    }
     
             let isValidSizeStock = false;
     
@@ -292,6 +311,7 @@
             formData.append("color", color);
             formData.append("description", productDescription);
             formData.append("price", productPrice);
+            formData.append("originalPrice",originalPrice)
             formData.append("category", productCategory);
             
             formData.append("sizes", JSON.stringify(availableSizes));

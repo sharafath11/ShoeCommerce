@@ -11,6 +11,7 @@ import multer from "multer";
 import path from 'path'
 import { reviewBlockController, reviewRender } from "../controller/adminController/reviewsController.js";
 import { addCoupen, coupenRender, coupenUpdate } from "../controller/adminController/coupen.js";
+import { addCoffers, renderOffersPage } from "../controller/adminController/offers.js";
 
 const router=express.Router();
 const storage = multer.diskStorage({
@@ -50,9 +51,11 @@ router.post('/users/toggle-block/:id',verifyToken,isBlockFn);
 router.get('/reviews/:id',verifyToken, reviewRender);
 
 router.patch('/reviews/:id',verifyToken,reviewBlockController)
-router.get("/coupen",coupenRender)
-router.post("/coupons/addCoupen",addCoupen)
-router.put("/coupons/update",coupenUpdate)
+router.get("/coupen",verifyToken,coupenRender)
+router.post("/coupons/addCoupen",verifyToken,addCoupen)
+router.put("/coupons/update",verifyToken,coupenUpdate)
+router.get("/offers",verifyToken,renderOffersPage)
+router.post("/admin/addCoffers",verifyToken,addCoffers)
 
 
 export default router
