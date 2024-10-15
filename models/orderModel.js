@@ -13,7 +13,6 @@ const OrderSchema = new mongoose.Schema({
         ref: "Product",
         required: true,
       },
-
       name: {
         type: String,
         required: true,
@@ -26,9 +25,9 @@ const OrderSchema = new mongoose.Schema({
         type: Number,
         required: true,
       },
-      isCanceld:{
-        type:Boolean,
-        default:false
+      isCanceld: {
+        type: Boolean,
+        default: false,
       },
       quantity: {
         type: Number,
@@ -72,17 +71,25 @@ const OrderSchema = new mongoose.Schema({
     enum: ["Pending", "Completed", "Shipped"],
     default: "Pending",
   },
-  isCanceld:{
-    type:Boolean,
-    default:false
+  isCanceld: {
+    type: Boolean,
+    default: false,
   },
   totalAmount: {
     type: Number,
     required: true,
   },
-  orderId:{
-    type:String
-  }
+  orderId: {
+    type: String,
+  },
+  // isCoupenApplied:{
+  //   type:Boolean,
+  //   default:false,
+  // },
+  couponId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Coupon", 
+  },
 });
 
 const OrderModel = mongoose.model("Order", OrderSchema);

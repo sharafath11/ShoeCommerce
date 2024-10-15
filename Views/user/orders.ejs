@@ -481,8 +481,6 @@
     </script>
     <script>
     function deleteOrderItem(orderId, productId,size) {
-  
-    // Show a confirmation alert using SweetAlert
     Swal.fire({
         title: 'Are you sure?',
         text: 'You won\'t be able to revert this!',
@@ -496,7 +494,9 @@
            
             axios.put(`/delete-order-item/${orderId}/${productId}`,{size:size})
                 .then(response => {
-                    
+                    if(!response.data.ok){
+                      return showToast(response.data.msg)
+                    }
                     Swal.fire({
                         icon: 'success',
                         title: 'Deleted!',
@@ -522,8 +522,6 @@
         }
     });
 }
-
-
     </script>
   </body>
 </html>

@@ -126,7 +126,9 @@
                 ></textarea>
               </div>
               <div class="row">
-                <div class="col-md-6 mb-3">
+              </div>
+              <div class="row mb-3">
+                <div class="col-md-6">
                   <label for="productPrice" class="form-label">Price</label>
                   <input
                     type="number"
@@ -138,7 +140,21 @@
                     required
                   />
                 </div>
+                <div class="col-md-6">
+                  <label for="originalPrice" class="form-label">Original Price</label>
+                  <input
+                    type="number"
+                    name="originalPrice"
+                    class="form-control"
+                    id="originalPrice"
+                    placeholder="Enter original price"
+                    min="1"
+                    required
+                  />
+                </div>
               </div>
+              
+              
               <div class="mb-3">
                 <label for="productCategory" class="form-label">Category</label>
                 <select
@@ -287,6 +303,7 @@
             .getElementById("productDescription")
             .value.trim();
           const price = document.getElementById("productPrice").value.trim();
+          const originalPrice = document.getElementById("originalPrice").value.trim();
           const category = document
             .getElementById("productCategory")
             .value.trim();
@@ -341,6 +358,7 @@
           formData.append("color", color);
           formData.append("description", description);
           formData.append("price", price);
+          formData.append("originalPrice",originalPrice)
           formData.append("category", category);
           formData.append("availableSize", JSON.stringify(sizeStockData));
 

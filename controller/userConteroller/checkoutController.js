@@ -1,5 +1,7 @@
+import mongoose from "mongoose";
 import AddressModel from "../../models/addressModel.js";
 import CartModel from "../../models/cartModel.js";
+import CouponModel from "../../models/coupenModel.js";
 import OrderModel from "../../models/orderModel.js";
 import ProductModel from "../../models/prodectsModel.js";
 
@@ -7,9 +9,10 @@ import ProductModel from "../../models/prodectsModel.js";
 export const getCheckout = async (req, res) => {
   try {
     const { user, WishlistQty, cartQty } = req.session;
-    const [cartDetails, addresses] = await Promise.all([
+    const [cartDetails, addresses,coupens] = await Promise.all([
       CartModel.findOne({ userId: user._id }).lean(),
-      AddressModel.find({ userId: user._id }).sort({ createdAt: -1 }).lean()
+      AddressModel.find({ userId: user._id }).sort({ createdAt: -1 }).lean(),
+      CouponModel.find({isActive:true})
     ]);
 
     if (!cartDetails || cartDetails.products.length === 0) {
@@ -32,7 +35,8 @@ export const getCheckout = async (req, res) => {
       WishlistQty,
       cartQty,
       cartItems: cartItemsWithDetails,
-      addresses
+      addresses,
+      coupens
     });
   } catch (error) {
     console.error("Error fetching checkout details:", error.message);
@@ -41,10 +45,15 @@ export const getCheckout = async (req, res) => {
   }
 };
 
+
+
 export const checkoutFn = async (req, res) => {
   try {
-    const { cartItems, selectedAddresses } = req.body; 
-
+    const { cartItems, selectedAddresses, coupenId } = req.body;
+     console.log('====================================');
+     console.log(coupenId);
+     console.log('====================================');
+    // Initialize the total amount
     const orderItems = cartItems.map(item => ({
       productId: item.productId,
       name: item.name,
@@ -57,38 +66,62 @@ export const checkoutFn = async (req, res) => {
 
     const totalAmount = orderItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
     const userId = req.session.user._id;  
-    const selectedAddress = selectedAddresses[0]; 
+    const selectedAddress = selectedAddresses[0];
 
+    // Check for coupon application
+    let coupon = null;
+    let finalAmount = totalAmount + 50; // Assuming 50 is a delivery charge
+
+    if (coupenId && mongoose.Types.ObjectId.isValid(coupenId)) {
+      coupon = await CouponModel.findById(coupenId);
+      
+      if (!coupon || !coupon.isActive) {
+        return res.status(400).json({ ok: false, msg: "Invalid or inactive coupon.", red: "/cart" });
+      }
+      if (finalAmount < coupon.minimumAmount) {
+        return res.status(400).json({
+          message: `Coupon cannot be applied. Minimum order total should be ₹${coupon.minimumPrice}.`
+        });
+      }
+      if (coupon.discountType === "fixed") {
+        finalAmount -= coupon.discountValue;
+      } else if (coupon.discountType === "percentage") {
+        finalAmount -= (totalAmount * coupon.discountValue) / 100;
+      }
+
+      // Ensure the total is not less than zero
+      if (finalAmount < 0) {
+        finalAmount = 0;
+      }
+    }
+
+    // Check stock and update products
     for (const item of orderItems) {
       const product = await ProductModel.findById(item.productId); 
-    
+      
       if (!product) {
-        return json({ ok: false, msg: "Product not found", red: "/cart" });
+        return res.json({ ok: false, msg: "Product not found", red: "/cart" });
       }
-      const sizeVariantIndex = product.availableSize.findIndex(size => size.size === item.size);
-    
-      if (sizeVariantIndex === -1) {
-        return json({ ok: false, msg: `Size ${item.size} not found`, red: "/cart" });
-      }
-    
-      const sizeVariant = product.availableSize[sizeVariantIndex];
 
+      const sizeVariantIndex = product.availableSize.findIndex(size => size.size === item.size);
+      if (sizeVariantIndex === -1) {
+        return res.json({ ok: false, msg: `Size ${item.size} not found`, red: "/cart" });
+      }
+
+      const sizeVariant = product.availableSize[sizeVariantIndex];
       if (sizeVariant.stock < item.quantity) {
-        return json({ ok: false, msg: `Insufficient stock for size ${item.size}`, red: "/cart" });
+        return res.json({ ok: false, msg: `Insufficient stock for size ${item.size}`, red: "/cart" });
       }
 
       sizeVariant.stock -= item.quantity;
-    
-      
-    
-      
       await product.save();
     }
-    
+
+    // Generate a new order
     function generateOrderId() {
       return 'ORD-' + Math.random().toString(36).substr(2, 9).toUpperCase();
     }
-    
+
     const orderId = generateOrderId();
     const newOrder = new OrderModel({
       user: userId,
@@ -101,19 +134,19 @@ export const checkoutFn = async (req, res) => {
         postalCode: selectedAddress.zip, 
         country: selectedAddress.country, 
       }, 
-      totalAmount: totalAmount+50,
-      orderId:orderId
+      totalAmount: finalAmount,
+      orderId: orderId,
+      // isCoupenApplied: coupon ? true : false,
+      couponId: coupon ? coupon._id : null,
     });
 
     await newOrder.save();
-    const cart = await CartModel.deleteOne({ userId: userId });
+    await CartModel.deleteOne({ userId: userId });
+
     return res.status(201).json({ ok: true, msg: "Order placed successfully!", red: "/orders" });
     
-} catch (error) {
-  console.error("Error fetching cart details:", error);
-  return res.render("user/error");
-}
-
+  } catch (error) {
+    console.error("Error processing checkout:", error);
+    return res.render("user/error");
+  }
 };
-
-

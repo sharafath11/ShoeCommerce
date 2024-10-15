@@ -6,9 +6,12 @@ export const coupenRender=async (req,res)=>{
 }
 export const addCoupen = async (req, res) => {
     try {
-        const { code, discountType, discountValue, startingDate, endingDate, minimumPrice} = req.body;
-        if (!code || !discountType || !discountValue || !startingDate || !endingDate || !minimumPrice) {
-            return res.status(400).json({ message: "All fields are required" });
+        const { name,code, discountType, discountValue, startingDate, endingDate, minimumPrice} = req.body;
+        console.log('====================================');
+        console.log(name);
+        console.log('====================================');
+        if (!code || !discountType || !discountValue || !startingDate || !endingDate || !minimumPrice ||!name) {
+            return res.json({ msg: "All fields are required" });
         }
         const existingCoupon = await CouponModel.findOne({ code });
         if (existingCoupon) {
@@ -16,6 +19,7 @@ export const addCoupen = async (req, res) => {
         }
         const newCoupon = new CouponModel({
             code,
+            name,
             discountType,
             discountValue,
             startingDate,
@@ -30,7 +34,7 @@ export const addCoupen = async (req, res) => {
 };
 
 export const coupenUpdate = async (req, res) => {
-    const {_id, code, discountType, discountValue, minimumPrice, startingDate, endingDate, isActive } = req.body; // Changed expiryDate to endingDate
+    const {_id, code, discountType, discountValue, minimumPrice, startingDate, endingDate, isActive,name } = req.body; // Changed expiryDate to endingDate
     
     console.log('====================================');
     console.log("Starting Date:", startingDate, "Ending Date:", endingDate); // Added logging for clarity
@@ -61,6 +65,7 @@ export const coupenUpdate = async (req, res) => {
             { _id },
             { 
                 code,
+                name,
                 discountType, 
                 discountValue, 
                 minimumPrice, 
@@ -72,10 +77,10 @@ export const coupenUpdate = async (req, res) => {
         );
 
         if (!updatedCoupon) {
-            return res.status(404).json({ error: "Coupon not found!" });
+            return res.json({ msg: "Coupon not found!" });
         }
 
-        return res.status(200).json({ message: "Coupon updated successfully!", coupon: updatedCoupon });
+        return res.status(200).json({ msg: "Coupon updated successfully!", coupon: updatedCoupon });
     } catch (error) {
         console.error('Error updating coupon:', error);
         return res.status(500).json({ error: "Error updating coupon!" });

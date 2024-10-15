@@ -14,7 +14,7 @@ import {  protectedHand } from "../middleware/protectedRoutes.js";
 import { logoutFn } from "../controller/userConteroller/logoutController.js";
 import { removeWhislist, renderWishlistPage, whislistFn } from "../controller/userConteroller/whislistController.js";
 import noCache from "../middleware/cachClear.js";
-import { addAddress, deletePerItemInOrder, getOrderReanderPage, profileRender, removeAddress, removeOrders, renderAddresPage, updateAddress, updateProfile } from "../controller/userConteroller/profileController.js";
+import { addAddress, deletePerItemInOrder, getOrderReanderPage, profileRender, removeAddress, removeOrders, renderAddressPage, updateAddress, updateProfile } from "../controller/userConteroller/profileController.js";
 import { showLogin } from "../middleware/showLogin.js";
 import { forgetPassword, forgetPasswordRender, renderResetPasswordPage, resetPassword } from "../controller/userConteroller/forgotPassword.js";
 import { changePassword, renderSettings } from "../controller/userConteroller/settings.js";
@@ -65,7 +65,7 @@ router.post('/cart/update-quantity',qtyHandler );
 // router.get("/shopDetials",shopDetialsRender);
 router.get("/profile",profileRender)
 router.post("/update-profile/:id",protectedHand,updateProfile);
-router.get("/address",renderAddresPage)
+router.get("/address",renderAddressPage)
 router.post("/addAddress",addAddress);
 router.delete("/removeAddress/:id",removeAddress);
 router.post("/updateAddress",updateAddress);

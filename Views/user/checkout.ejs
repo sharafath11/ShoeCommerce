@@ -73,6 +73,41 @@
         padding-left: 8px;
         font-size: 16px;
       }
+      /*  */
+
+.dropdown-menu {
+  width: 100%; /* Full width for better spacing */
+  max-width: 400px; /* Adjust size for a cleaner look */
+}
+
+.dropdown-item {
+  padding: 10px 15px;
+  border-bottom: 1px solid #f0f0f0; /* Light border between items */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.dropdown-item strong {
+  font-size: 1.1rem; /* Larger font for coupon name */
+}
+
+.dropdown-item small {
+  color: #6c757d; /* Muted text for the expiration date */
+}
+
+
+
+.dropdown-menu p-3 {
+  border-radius: 10px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for a floating effect */
+}
+
     </style>
 
     <!-- Start Header Area -->
@@ -111,8 +146,32 @@
             <button class="tp_btn btn" onclick="applyCouponCode()">
               Apply Coupon
             </button>
+            <div class="btn-group">
+              <button class="tp_btn btn dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Available Coupons
+              </button>
+              <div class="dropdown-menu p-3 shadow-lg rounded">
+                <% if (coupens.length > 0) { %>
+                  <% coupens.forEach((coupen) => { %>
+                    <div class="dropdown-item d-flex justify-content-between align-items-center">
+                      <div>
+                        <strong><%= coupen.name %></strong>
+                        <br>
+                        <small class="text-muted">Expires on: <%= coupen.endingDate.toDateString() %></small>
+                      </div>
+                      <!-- <span class="badge badge-success ml-3">Available</span> -->
+                    </div>
+                  <% }) %>
+                <% } else { %>
+                  <div class="dropdown-item text-muted">No available coupons</div>
+                <% } %>
+              </div>
+            </div>
+            
+            
             <div id="couponMessage" class="mt-2"></div>
-            <!-- For displaying messages -->
+           
+            
           </div>
         </div>
         <div class="billing_details">
@@ -127,14 +186,14 @@
                   <div
                     class="d-flex justify-content-between align-items-center mb-3"
                   >
-                    <h6>Address <%= index + 1 %> (<%= address.type %>)</h6>
-
-                    <input
+                    <h6>Address <%= index + 1 %> (<%= address.type %>) <input
                       type="checkbox"
                       name="selectedAddresses"
                       id="check<%= index %>"
                       value="<%= index %>"
-                    />
+                    /></h6>
+
+                    
                     <label for="check<%= index %>"></label>
                   </div>
                   <div class="row mb-3">
@@ -371,7 +430,7 @@
                         ></span
                       >
                       <span class="last" id="product-price-<%= index %>"
-                        >$<%= item.product.price * item.quantity %></span
+                        >₹<%= item.product.price * item.quantity %></span
                       >
                     </a>
                   </li>
@@ -382,7 +441,7 @@
                   <li>
                     <a href="#"
                       >Subtotal
-                      <span id="totalAmount">
+                      <span id="">
                         ₹<%= cartItems.reduce((total, item) => total +
                         (item.product.price * item.quantity), 0) %>
                       </span></a
@@ -391,6 +450,10 @@
                   <li>
                     <a href="#">Shipping <span>Flat rate: ₹50.00</span></a>
                   </li>
+                  <li>
+                    <a href="#">Discount <span id="discount">₹00.00</span></a>
+                  </li>
+                  
                   <li>
                     <a href="#"
                       >Total
@@ -467,8 +530,9 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   </body>
   <script>
+    let coupenId
     function checkoutHandler(e) {
-      e.preventDefault();
+      
       const selectedCheckboxes = document.querySelectorAll(
         'input[name="selectedAddresses"]:checked'
       );
@@ -502,8 +566,9 @@
       const datas = {
         selectedAddresses: addAddress,
         cartItems: orderItems,
+        coupenId:coupenId||""
       };
-      const ok = false;
+      let ok = false;
       if (selectedAddresses.length == 0) {
         showToast("Please select a addres");
         ok = true;
@@ -559,15 +624,13 @@
       const indiaPinPattern = /^\d{6}$/;
       return indiaPinPattern.test(pincode);
     }
-    function gatherOrderData() {
+    function gatherOrderData(coupen) {
       const orderData = [];
       const items = document.querySelectorAll('.list li[id^="product-item-"]');
 
       items.forEach((item, index) => {
         const productId = document.getElementById(`productId-${index}`).value;
         const size = document.getElementById(`product-size-${index}`).innerText;
-        console.log("====================================");
-        console.log(size);
         if (!size) {
           showToast("Please selecet you want size in cart");
           return;
@@ -641,7 +704,7 @@
       }
       confirmAction("Are you sure?", "Add the address?", "Yes, Add it!").then(
         (result) => {
-          console.log(result);
+        
 
           if (result.isConfirmed) {
             axios
@@ -669,33 +732,42 @@
     /// coupennnnnnnnnnnnnnnnnnnnnnn
 
     async function applyCouponCode() {
-      const couponCode = document.getElementById("couponCode").value.trim();
-      const messageDiv = document.getElementById("couponMessage");
-      const orderTotal = document.getElementById("totalAmount").value;
+  const couponCode = document.getElementById("couponCode").value.trim();
+  const messageDiv = document.getElementById("couponMessage");
+  const totalAmountSpan = document.getElementById("totalAmount");
+  const totalAmount = totalAmountSpan.innerText;
+  const orderTotal = parseFloat(totalAmount.replace(/[₹,]/g, '').trim());
 
-      if (!couponCode) {
-        messageDiv.innerText = "Please enter a coupon code.";
-        return;
-      }
+  if (!couponCode) {
+    messageDiv.innerText = "Please enter a coupon code.";
+    return;
+  }
 
-      try {
-        const response = await axios.post("/api/coupons/apply", {
-          code: couponCode,
-          orderTotal: orderTotal, 
-        });
+  try {
+    const response = await axios.post("/coupons/apply", {
+      code: couponCode,
+      orderTotal: orderTotal, 
+    });
 
-        const result = response.data;
-
-        messageDiv.innerText = `Coupon applied! Discount: ${result.discountValue} ${result.discountType}. New Total: ${result.newTotal}`;
-        // Update your total price or any other UI elements as needed
-      } catch (error) {
-        if (error.response) {
-          messageDiv.innerText =
-            error.response.data.message || "Failed to apply coupon.";
-        } else {
-          messageDiv.innerText = "An error occurred. Please try again later.";
-        }
-      }
+    const result = response.data;
+    if (result.ok) {
+      messageDiv.innerText = `Coupon applied! Discount: ${result.discountValue} ${result.discountType}. New Total: ₹${result.newTotal}`;
+      totalAmountSpan.innerText = `₹${result.newTotal}`;
+      document.getElementById("discount").innerText = `₹${result.discountValue}`;
+      coupenId = result.coupon._id;  
+    } else {
+      showToast(result.msg);  
     }
+  } catch (error) {
+    if (error.response && error.response.data) {
+      messageDiv.innerText = error.response.data.message || "Failed to apply coupon.";
+    } else {
+      messageDiv.innerText = "An error occurred. Please try again later.";
+    }
+    console.error("Error applying coupon:", error);  
+  }
+
+}
+
   </script>
 </html>
