@@ -16,7 +16,7 @@ export const getCheckout = async (req, res) => {
     ]);
 
     if (!cartDetails || cartDetails.products.length === 0) {
-      return res.render("user/checkout", { user, WishlistQty, cartQty, cartItems: [], addresses });
+      return res.render("user/checkout", { user, WishlistQty, cartQty, cartItems: [], addresses,coupens });
     }
 
     const productIds = cartDetails.products.map((cartItem) => cartItem.productId);
@@ -50,10 +50,6 @@ export const getCheckout = async (req, res) => {
 export const checkoutFn = async (req, res) => {
   try {
     const { cartItems, selectedAddresses, coupenId } = req.body;
-     console.log('====================================');
-     console.log(coupenId);
-     console.log('====================================');
-    // Initialize the total amount
     const orderItems = cartItems.map(item => ({
       productId: item.productId,
       name: item.name,

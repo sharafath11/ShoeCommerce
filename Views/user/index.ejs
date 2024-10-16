@@ -289,10 +289,17 @@
                 <h6><%= product.description %></h6>
                 <div class="price">
                   <h6>₹<%= product.price %></h6>
-                   <% if (product.originalPrice) { %>
-                    <h6 class="l-through" style="color: #efcf12;">₹<%= product.originalPrice %></h6>
+              
+                  <% if (product.originalPrice) { %>
+                      <h6 class="l-through" style="color: #efcf12; text-decoration: line-through;">₹<%= product.originalPrice %></h6>
                   <% } %> 
-                </div>
+              
+                  <% if (product.discountApplied > 0) { %>
+                      <h6 class="discount-badge" style="color: #ff4d4d; background-color: #f9e7e7; padding: 5px; border-radius: 5px;">
+                          <%= product.discountApplied %>% OFF
+                      </h6>
+                  <% } %>
+              </div>              
                 <% if (product.availableSize && product.availableSize.length > 0) { %>
                   <div class="available-sizes d-flex justify-content-around">
                    

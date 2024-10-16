@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 const categoryOfferSchema = new mongoose.Schema({
     categoryId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Category', // Assuming you have a Category model
+        ref: 'Category', 
         required: true,
     },
     title: {
@@ -19,11 +19,6 @@ const categoryOfferSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
-    discountType: {
-        type: String,
-        enum: ['Percentage', 'Fixed'],
-        required: true,
-    },
     startDate: {
         type: Date,
         required: true, 
@@ -31,6 +26,10 @@ const categoryOfferSchema = new mongoose.Schema({
     expireDate: {
         type: Date,
         required: true, 
+    },
+    isActive:{
+        type:Boolean,
+        default:false
     },
     createdAt: {
         type: Date,

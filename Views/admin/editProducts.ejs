@@ -85,7 +85,7 @@
                     id="price"
                     name="price"
                     value="<%= product.price %>"
-                    required
+                  
                   />
                 </div>
                 <div class="col-md-6">
@@ -354,7 +354,7 @@
                                 showToast(response.data.msg);
                                 window.location.href = response.data.red;
                             } else {
-                                showToast(response.data.error);
+                                showToast(response.data.msg);
                             }
                         })
                         .catch((error) => {

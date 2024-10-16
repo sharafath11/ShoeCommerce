@@ -481,21 +481,14 @@
                 <div class="payment_item active">
                   <div class="radion_btn">
                     <input type="radio" id="f-option6" name="selector" />
-                    <label for="f-option6">Paypal</label>
+                    <label for="f-option6">Online payment</label>
                     <img src="img/product/card.jpg" alt="" />
-                    <div class="check"></div>
+                    
                   </div>
-                  <p>
-                    Pay via PayPal; you can pay with your credit card if you
-                    don’t have a PayPal account.
-                  </p>
+                  
                 </div>
-                <div class="creat_account">
-                  <input type="checkbox" id="f-option4" name="selector" />
-                  <label for="f-option4">I’ve read and accept the </label>
-                  <a href="#">terms & conditions*</a>
-                </div>
-                <a class="primary-btn" href="#">Proceed to Paypal</a>
+                
+                <span class="primary-btn" >Proceed to online </span>
               </div>
             </div>
           </div>
@@ -563,6 +556,9 @@
         showToast("Please add some products in Cart");
         return;
       }
+  console.log('====================================');
+  console.log(orderItems);
+  console.log('====================================');
       const datas = {
         selectedAddresses: addAddress,
         cartItems: orderItems,
@@ -643,15 +639,14 @@
         ).innerText;
         const price = document
           .getElementById(`product-price-${index}`)
-          .innerText.replace("$", "");
-
+          .innerText.replace("₹", "");
         orderData.push({
           productId,
           name: productName,
           size: parseInt(size),
           quantity: parseInt(quantity, 10),
-          price: parseFloat(price),
-          total: parseFloat(price) * parseInt(quantity, 10),
+          price: Number(price),
+          total: Number(price) * Number(quantity, 10),
         });
       });
 

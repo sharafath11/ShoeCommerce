@@ -42,7 +42,10 @@ const productSchema = new mongoose.Schema(
     },
     originalPrice:{
       type:Number,
-      
+    },
+    discountApplied:{
+      type:Number,
+      default:0
     },
   
     blocked: {

@@ -171,14 +171,11 @@ export const editProducts = async (req, res) => {
     color,
   } = req.body;
 
-
   const images = req.files ? req.files.map((file) => file.path) : [];
 
- 
   brand = brand.charAt(0).toUpperCase() + brand.slice(1).toLowerCase();
   name = name.toUpperCase();
   color = color.charAt(0).toUpperCase() + color.slice(1).toLowerCase();
-
 
   const toTitleCase = (str) => {
     return str
@@ -192,6 +189,12 @@ export const editProducts = async (req, res) => {
   
   try {
 
+    const product = await ProductModel.findById(id);
+    if (product.discountApplied > 0 && product.price !== price) {
+      req.session.toast = "Offer applied, you cannot change the price";
+      return res.json({ ok: false, msg: "Offer applied, you cannot change the price" });
+    }
+
     let parsedSizes;
     if (sizes) {
       parsedSizes = JSON.parse(sizes); 
@@ -199,7 +202,6 @@ export const editProducts = async (req, res) => {
       parsedSizes = []; 
     }
 
-    
     const updateData = {
       name,
       brand,
@@ -212,12 +214,10 @@ export const editProducts = async (req, res) => {
       categoryId: category,
     };
 
-   
     if (images.length > 0) {
       updateData.images = images;
     }
 
-   
     const updatedProduct = await ProductModel.findByIdAndUpdate(id, updateData, { new: true });
 
     if (!updatedProduct) {
@@ -225,7 +225,6 @@ export const editProducts = async (req, res) => {
       return res.redirect("/admin/products");
     }
 
-   
     req.session.toast = "Product updated successfully";
     res.status(200).json({ ok: true, msg: "Edited successfully", red: "/admin/products" });
   } catch (error) {

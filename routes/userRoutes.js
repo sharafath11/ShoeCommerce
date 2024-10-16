@@ -65,22 +65,22 @@ router.post('/cart/update-quantity',qtyHandler );
 // router.get("/shopDetials",shopDetialsRender);
 router.get("/profile",profileRender)
 router.post("/update-profile/:id",protectedHand,updateProfile);
-router.get("/address",renderAddressPage)
-router.post("/addAddress",addAddress);
-router.delete("/removeAddress/:id",removeAddress);
-router.post("/updateAddress",updateAddress);
-router.get("/orders",getOrderReanderPage)
-router.delete("/removeOrder/:id",removeOrders)
-router.put("/delete-order-item/:orderId/:productId",deletePerItemInOrder)
-router.get("/order/bill/:orderId",billContoller)
+router.get("/address",protectedHand,renderAddressPage)
+router.post("/addAddress",protectedHand,addAddress);
+router.delete("/removeAddress/:id",protectedHand,removeAddress);
+router.post("/updateAddress",protectedHand,updateAddress);
+router.get("/orders",protectedHand,getOrderReanderPage)
+router.delete("/removeOrder/:id",protectedHand,removeOrders)
+router.put("/delete-order-item/:orderId/:productId",protectedHand,deletePerItemInOrder)
+router.get("/order/bill/:orderId",protectedHand,billContoller)
 router.get("/forgot-password",forgetPasswordRender )
 router.post("/forgot-password",forgetPassword )
 router.get('/reset-password/:token', renderResetPasswordPage);
 router.post('/reset-password', resetPassword);
 router.get("/settings",renderSettings);
-router.post("/changepassword",changePassword)
+router.post("/changepassword",protectedHand,changePassword)
 router.post("/product/reviews", upload.single('reviewImage'),reviewHandler)
 router.get("/product/reviews",reviewPagenation);
 router.get("/shop",filteredProducts)
-router.post("/coupons/apply",applyCoupen)
+router.post("/coupons/apply",protectedHand,applyCoupen)
 export default router
