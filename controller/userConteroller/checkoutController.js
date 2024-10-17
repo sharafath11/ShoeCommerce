@@ -49,7 +49,7 @@ export const getCheckout = async (req, res) => {
 
 export const checkoutFn = async (req, res) => {
   try {
-    const { cartItems, selectedAddresses, coupenId } = req.body;
+    const { cartItems, selectedAddresses, coupenId,paymentMethod } = req.body;
     const orderItems = cartItems.map(item => ({
       productId: item.productId,
       name: item.name,
@@ -58,6 +58,7 @@ export const checkoutFn = async (req, res) => {
       imageUrl: item.imageUrl,
       price: item.price,
       quantity: item.quantity,
+      
     }));
 
     const totalAmount = orderItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
@@ -85,7 +86,6 @@ export const checkoutFn = async (req, res) => {
         finalAmount -= (totalAmount * coupon.discountValue) / 100;
       }
 
-      // Ensure the total is not less than zero
       if (finalAmount < 0) {
         finalAmount = 0;
       }
@@ -130,9 +130,10 @@ export const checkoutFn = async (req, res) => {
         postalCode: selectedAddress.zip, 
         country: selectedAddress.country, 
       }, 
-      totalAmount: finalAmount,
+      totalAmount:  Math.round(finalAmount),
       orderId: orderId,
       // isCoupenApplied: coupon ? true : false,
+      paymentMethod,
       couponId: coupon ? coupon._id : null,
     });
 

@@ -115,6 +115,7 @@
                                     <th>Status</th>
                                     <th>Total</th>
                                     <th>Actions</th>
+                                    <th>Payment Status</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -151,9 +152,19 @@
                                         <button onclick="confirmUpdate(event, '<%= order.id %>')">Update The order</button>
                                       <% } %>
                                     </td>
+                                    <td>
+                                      <% if (order.paymentStatus === 'Paid') { %>
+                                        <span class="badge bg-success">Paid</span>
+                                      <% } else if (order.paymentStatus === 'Pending') { %>
+                                        <span class="badge bg-warning">Pending</span>
+                                      <% } else if (order.paymentStatus === 'Failed') { %>
+                                        <span class="badge bg-danger">Failed</span>
+                                      <% } %>
+                                    </td>
                                   </tr>
                                 <% }); %>
                               </tbody>
+                              
                               
                         </table>
                     </div>

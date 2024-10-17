@@ -143,7 +143,7 @@
               placeholder="Enter coupon code"
               class="form-control"
             />
-            <button class="tp_btn btn" onclick="applyCouponCode()">
+            <button class="tp_btn btn" id="coupen-btn" onclick="applyCouponCode()">
               Apply Coupon
             </button>
             <div class="btn-group">
@@ -488,7 +488,8 @@
                   
                 </div>
                 
-                <span class="primary-btn" >Proceed to online </span>
+                <span class="primary-btn" onclick="proceedToPayment()">Proceed to online</span>
+
               </div>
             </div>
           </div>
@@ -521,6 +522,8 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
   </body>
   <script>
     let coupenId
@@ -556,13 +559,11 @@
         showToast("Please add some products in Cart");
         return;
       }
-  console.log('====================================');
-  console.log(orderItems);
-  console.log('====================================');
       const datas = {
         selectedAddresses: addAddress,
         cartItems: orderItems,
-        coupenId:coupenId||""
+        coupenId:coupenId||"",
+        paymentMethod:"COD"
       };
       let ok = false;
       if (selectedAddresses.length == 0) {
@@ -749,7 +750,9 @@
       messageDiv.innerText = `Coupon applied! Discount: ${result.discountValue} ${result.discountType}. New Total: ₹${result.newTotal}`;
       totalAmountSpan.innerText = `₹${result.newTotal}`;
       document.getElementById("discount").innerText = `₹${result.discountValue}`;
+      document.getElementById("coupen-btn").disabled=true
       coupenId = result.coupon._id;  
+      showToast(result.msg)
     } else {
       showToast(result.msg);  
     }
@@ -765,4 +768,167 @@
 }
 
   </script>
+<script>
+  function proceedToPayment() {
+  // Gather selected addresses
+  const selectedCheckboxes = document.querySelectorAll(
+    'input[name="selectedAddresses"]:checked'
+  );
+
+  const addAddress = [];
+  const selectedAddresses = Array.from(selectedCheckboxes).map(
+    (checkbox) => {
+      const index = checkbox.value;
+
+      const address = {
+        type: document.getElementById(`type${index}`).value,
+        streetAddress: document.getElementById(`streetAddress${index}`).value,
+        city: document.getElementById(`city${index}`).value,
+        state: document.getElementById(`state${index}`).value,
+        zip: document.getElementById(`zip${index}`).value,
+        country: document.getElementById(`country${index}`).value,
+      };
+
+      addAddress.push(address);
+      return address;
+    }
+  );
+
+  // Validate that an address is selected
+  if (selectedAddresses.length === 0) {
+    showToast("Please select an address");
+    return;
+  }
+
+  // Validate that each address has a valid pincode
+  const invalidPincode = addAddress.some(address => !isValidPincode(address.zip));
+  if (invalidPincode) {
+    showToast("Please enter a valid 6-digit pincode");
+    return;
+  }
+
+  // Gather order items
+  const orderItems = gatherOrderData();
+  if (orderItems.length === 0) {
+    showToast("Please add some products to your cart");
+    return;
+  }
+  const totalAmountSpan = document.getElementById("totalAmount");
+  const totalAmount = totalAmountSpan.innerText;
+  const orderTotal = parseFloat(totalAmount.replace(/[₹,]/g, '').trim());
+  const totalAmountInPaise = orderTotal * 100
+
+
+  const orderDetails = {
+    amount: totalAmountInPaise,  
+    currency: "INR",
+    receipt: "receipt#1",
+    selectedAddresses: addAddress,
+    cartItems: orderItems,
+    coupenId: coupenId || "" 
+  };
+
+  confirmAction("Are you sure?", "Proceed with online payment?", "Yes, Pay Now!")
+    .then(result => {
+      if (result.isConfirmed) {
+        axios.post('/payment/create-order', orderDetails)
+          .then(response => {
+            const { orderId, amount, currency ,order} = response.data;
+
+         
+            var options = {
+              "key": "rzp_test_0NNl9o6nbS0KBP", 
+              "amount":amount,
+              "currency": currency,
+              "name": "ST SHOP",
+              "description": "Order Payment",
+              "order_id": orderId, 
+              "handler": function (responseV) {
+                showToast("Payment Successful: " + responseV.razorpay_payment_id);
+                axios.post('/payment/verify', {
+                  _id:order._id,
+                  paymentId: responseV.razorpay_payment_id,
+                  orderId: responseV.razorpay_order_id,
+                  signature: responseV.razorpay_signature
+                }).then(verificationResponse => {
+                  setTimeout(() => {
+                 window.location.href='/orders'
+                }, 1000);
+                  
+                }).catch(err => {
+                  showToast("Payment verification failed.");
+                  console.error("Verification failed:", err);
+                });
+              }
+            };
+
+            var rzp1 = new Razorpay(options);
+            rzp1.open();
+          })
+          .catch(err => {
+            console.error("Payment initiation failed:", err);
+            showToast("Payment initiation failed. Please try again.");
+          });
+      }
+    });
+}
+function confirmAction(title, text, confirmButtonText) {
+  return Swal.fire({
+    title: title,
+    text: text,
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: confirmButtonText,
+  });
+}
+
+
+function showToast(message) {
+  Toastify({
+    text: message,
+    duration: 2000,
+    gravity: "top",
+    position: "right",
+    backgroundColor: "#333",
+    stopOnFocus: true,
+  }).showToast();
+}
+
+
+// function isValidPincode(pincode) {
+//   const indiaPinPattern = /^\d{6}$/;
+//   return indiaPinPattern.test(pincode);
+// }
+
+// function gatherOrderData() {
+//   const orderData = [];
+//   const items = document.querySelectorAll('.list li[id^="product-item-"]');
+
+//   items.forEach((item, index) => {
+//     const productId = document.getElementById(`productId-${index}`).value;
+//     const size = document.getElementById(`product-size-${index}`).innerText;
+//     if (!size) {
+//       showToast("Please select a size for the product.");
+//       return;
+//     }
+//     const productName = document.getElementById(`product-name-${index}`).innerText;
+//     const quantity = document.getElementById(`product-quantity-${index}`).innerText;
+//     const price = document.getElementById(`product-price-${index}`).innerText.replace("₹", "");
+
+//     orderData.push({
+//       productId,
+//       name: productName,
+//       size: parseInt(size),
+//       quantity: parseInt(quantity, 10),
+//       price: Number(price),
+//       total: Number(price) * Number(quantity, 10),
+//     });
+//   });
+
+//   return orderData;
+// }
+
+</script>
 </html>

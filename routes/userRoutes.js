@@ -24,6 +24,7 @@ import path from 'path';
 import { filteredProducts } from "../controller/userConteroller/filterProductsContoller.js";
 import { billContoller } from "../controller/userConteroller/billController.js";
 import { applyCoupen } from "../controller/userConteroller/coupenController.js";
+import { createOrder, verifyRazorpay } from "../controller/userConteroller/razorpay.js";
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'public/reviewImages'); 
@@ -82,5 +83,7 @@ router.post("/changepassword",protectedHand,changePassword)
 router.post("/product/reviews", upload.single('reviewImage'),reviewHandler)
 router.get("/product/reviews",reviewPagenation);
 router.get("/shop",filteredProducts)
-router.post("/coupons/apply",protectedHand,applyCoupen)
+router.post("/coupons/apply",protectedHand,applyCoupen);
+router.post('/payment/create-order',createOrder)
+router.post('/payment/verify',verifyRazorpay)
 export default router

@@ -90,6 +90,25 @@ const OrderSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Coupon", 
   },
+  paymentMethod: {
+    type: String,
+    enum: ["COD", "Razorpay"], 
+    required: true,
+  },
+  paymentStatus: {
+    type: String,
+    enum: ["Pending", "Paid", "Failed"],
+    default: "Pending",  
+  },
+  razorpayPaymentId: {
+    type: String,  
+  },
+  razorpayOrderId: {
+    type: String, 
+  },
+  razorpaySignature: {
+    type: String, 
+  },
 });
 
 const OrderModel = mongoose.model("Order", OrderSchema);

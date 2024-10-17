@@ -8,6 +8,8 @@ import mongoose from "mongoose";
 import session from 'express-session'
 import MongoStore from 'connect-mongo';
 import { disableExpiredCoupons } from "./middleware/expireCoupen.js";
+
+
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -22,7 +24,6 @@ app.use(session({
       secure: false, 
   }
 }));
-
 mongoose
   .connect("mongodb://localhost:27017/bro1")
   .then((res) => {
@@ -31,6 +32,7 @@ mongoose
   .catch((error) => {
     console.log(error);
   });
+ 
 app.set("view engine", "ejs");
 app.set("views", "./Views");
 app.use(bodyParser.json());
@@ -44,6 +46,6 @@ disableExpiredCoupons();
 app.use("/", userRoutes);
 app.use("/admin", adminRoutes);
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+ console.log(`Server is running on port ${PORT}`);
 });
 3

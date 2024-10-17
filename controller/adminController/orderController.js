@@ -23,17 +23,22 @@ export const updateOrder = async (req, res) => {
   const { orderStatus, orderId } = req.body;
 
   try {
+    const updateFields = { status: orderStatus };
+    if (orderStatus === 'Completed') {
+      updateFields.paymentStatus = 'Paid';
+    }
+
     const updatedOrder = await OrderModel.findByIdAndUpdate(
       orderId,
-      { status: orderStatus },
+      updateFields,
       { new: true }
     );
 
     res.json({
       ok: true,
       msg: "Order updated successfully",
-      status:orderStatus
-      
+      status: orderStatus,
+      paymentStatus: updatedOrder.paymentStatus
     });
   } catch (error) {
     console.error(error);
@@ -43,14 +48,12 @@ export const updateOrder = async (req, res) => {
     });
   }
 };
+
 export const orderCnc = async (req, res) => {
-  const searchQuery = req.query.search || ''; // Get the search query from query params, default to empty string
+  const searchQuery = req.query.search || ''; 
 
   try {
-    // Find all orders that are canceled
     let canceldOrders = (await OrderModel.find()).filter((item) => item.isCanceld);
-
-    // If a search query is provided, filter the orders based on the orderId
     if (searchQuery) {
       canceldOrders = canceldOrders.filter((order) =>
         order.orderId.toLowerCase().includes(searchQuery.toLowerCase()) // Case-insensitive search

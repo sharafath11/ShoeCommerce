@@ -23,7 +23,7 @@ export const applyCoupen = async (req, res) => {
           msg: `Coupon cannot be applied. Minimum order total should be ₹${coupon.minimumPrice}.`
         });
       }
-      console.log(coupon.discountType)
+
       let newTotal;
 
 if (coupon.discountType === "percentage") {
