@@ -1,6 +1,7 @@
 import OTP from "../../models/otpModel.js";
 import userModel from "../../models/userModel.js";
 import bcrypt from 'bcrypt';
+import WalletModel from "../../models/wallet.js";
 
 export const registerGetFn = async (req, res) => {
   const user = req.session.user;
@@ -30,7 +31,13 @@ export const userRegister = async (req, res) => {
       });
       await newUser.save();
       await OTP.deleteOne({ email });
-
+      const newWallet = new WalletModel({
+        user: newUser._id,  
+        balance: 0.0,       
+        transactions: [],   
+      });
+      
+      await newWallet.save();
       return res.json({ success: true, msg: "User registered successfully", redirect: "/login" });
     } else {
       return res.json({ success: false, msg: "Invalid OTP" });

@@ -2,6 +2,7 @@ import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth2";
 import jwt from "jsonwebtoken";
 import userModel from "../../models/userModel.js";
+import WalletModel from "../../models/wallet.js";
 
 // Google strategy configuration
 passport.use(
@@ -63,9 +64,18 @@ export const googleAuthCallback = async (req, res) => {
         isVerified: true,
       });
       await user.save();
+     
       const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
         expiresIn: "1h",
       });
+      const newWallet = new WalletModel({
+        user: user._id,  
+        balance: 0.0,       
+        transactions: [],   
+      });
+      console.log(newWallet);
+      
+      await newWallet.save();
       return res.status(200).json({
         success: true,
         token,

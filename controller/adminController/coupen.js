@@ -7,16 +7,18 @@ export const coupenRender=async (req,res)=>{
 export const addCoupen = async (req, res) => {
     try {
         const { name,code, discountType, discountValue, startingDate, endingDate, minimumPrice} = req.body;
-        console.log('====================================');
-        console.log(name);
-        console.log('====================================');
+
         if (!code || !discountType || !discountValue || !startingDate || !endingDate || !minimumPrice ||!name) {
             return res.json({ msg: "All fields are required" });
         }
         const existingCoupon = await CouponModel.findOne({ code });
         if (existingCoupon) {
-            return res.status(400).json({ message: "Coupon code already exists" });
+            return res.json({ msg: "Coupon code already exists" });
         }
+        if (discountType === "percentage" && discountValue> 99) {
+          return res.json({ ok: false, msg: "Discount cannot exceed 99%" });
+        }
+      
         const newCoupon = new CouponModel({
             code,
             name,
@@ -32,59 +34,59 @@ export const addCoupen = async (req, res) => {
         res.status(500).json({ ok: false, msg: "Error adding coupon", error: error.message });
     }
 };
-
 export const coupenUpdate = async (req, res) => {
-    const {_id, code, discountType, discountValue, minimumPrice, startingDate, endingDate, isActive,name } = req.body; // Changed expiryDate to endingDate
-    
-    console.log('====================================');
-    console.log("Starting Date:", startingDate, "Ending Date:", endingDate); // Added logging for clarity
-    console.log('====================================');
-
-    // Convert string dates to Date objects for comparison
+    const { _id, code, discountType, discountValue, minimumPrice, startingDate, endingDate, isActive, name } = req.body;
+  
     const startingDateObj = new Date(startingDate);
-    const endingDateObj = new Date(endingDate); // Changed expiryDate to endingDate
-
-    // Debugging: log the dates for validation
-    // console.log('====================================');
-    // console.log("Starting Date Object:", startingDateObj);
-    // console.log("Ending Date Object:", endingDateObj);
-    // console.log('====================================');
-
-    // Server-side validation checks
-    if (startingDateObj >= endingDateObj) { // Changed expiryDateObj to endingDateObj
-        return res.status(400).json({ error: "Ending Date must be after Starting Date!" });
+    const endingDateObj = new Date(endingDate);
+  
+    if (startingDateObj >= endingDateObj) {
+      return res.json({ error: "Ending Date must be after Starting Date!" });
     }
-    
-    if (discountType === 'fixed' && minimumPrice < discountValue) {
-        return res.status(400).json({ error: "Minimum Price must be greater than or equal to Discount Value!" });
+  
+    if (new Date() > endingDateObj) {
+        return res.json({ ok:false,msg: "Current date cannot be greater than Ending Date!" });
+      }
+  
+    const discountValueNum = Number(discountValue);
+    const minimumPriceNum = Number(minimumPrice);
+    if (discountType === "percentage" && discountValue> 99) {
+      return res.json({ ok: false, msg: "Discount cannot exceed 99%" });
     }
-
+    if (discountType === 'fixed' && minimumPriceNum < discountValueNum) {
+      return res.json({ok:false, msg: "Minimum Price must be greater than or equal to Discount Value!" });
+    }
+  
     try {
-        // Update the coupon in the database
-        const updatedCoupon = await CouponModel.findOneAndUpdate(
-            { _id },
-            { 
-                code,
-                name,
-                discountType, 
-                discountValue, 
-                minimumPrice, 
-                startingDate: startingDateObj,
-                endingDate: endingDateObj, // Use endingDateObj here
-                isActive 
-            },
-            { new: true, runValidators: true }
-        );
-
-        if (!updatedCoupon) {
-            return res.json({ msg: "Coupon not found!" });
-        }
-
-        return res.status(200).json({ msg: "Coupon updated successfully!", coupon: updatedCoupon });
+      const existingCoupon = await CouponModel.findOne({ code, _id: { $ne: _id } });
+      if (existingCoupon) {
+        return res.json({ ok: false, msg: "Coupon code already exists!" });
+      }
+  
+      const updatedCoupon = await CouponModel.findOneAndUpdate(
+        { _id },
+        {
+          code,
+          name,
+          discountType,
+          discountValue: discountValueNum,
+          minimumPrice: minimumPriceNum,
+          startingDate: startingDateObj,
+          endingDate: endingDateObj,
+          isActive
+        },
+        { new: true, runValidators: true }
+      );
+  
+      if (!updatedCoupon) {
+        return res.json({ ok: false, msg: "Coupon not found!" });
+      }
+  
+      return res.status(200).json({ ok: true, msg: "Coupon updated successfully!", coupon: updatedCoupon });
     } catch (error) {
-        console.error('Error updating coupon:', error);
-        return res.status(500).json({ error: "Error updating coupon!" });
+      return res.status(500).json({ error: "Error updating coupon!" });
     }
-};
-
+  };
+  
+  
 

@@ -3,7 +3,7 @@ import { getAdmin } from "../controller/adminController/homeController.js";
 import { getUsers, isBlockFn } from "../controller/adminController/userController.js";
 import { adminLogin, adminLoginPost, adminLogout } from "../controller/adminController/loginController.js";
 import {  verifyToken } from "../controller/adminController/protectRoutes.js";
-import { getOrders, orderCnc, SingleOrder, updateOrder } from "../controller/adminController/orderController.js";
+import { getOrders, orderCnc, returnOrders, SingleOrder, updateOrder } from "../controller/adminController/orderController.js";
 import noCache from "../middleware/cachClear.js";
 import { addProducts,editProducts,productListUnlist,renderAddProdects,renderEditPage,renderProductsPage } from "../controller/adminController/prodectController.js";
 import { addCategory, categorieBlock, editCategory, getAddCategory, getCategory, getEditCategory } from "../controller/adminController/categoryController.js";
@@ -12,6 +12,7 @@ import path from 'path'
 import { reviewBlockController, reviewRender } from "../controller/adminController/reviewsController.js";
 import { addCoupen, coupenRender, coupenUpdate } from "../controller/adminController/coupen.js";
 import { addCoffers, editCoffers, renderOffersPage } from "../controller/adminController/offers.js";
+import { orderReturnAccept } from "../controller/adminController/walletController..js";
 
 const router=express.Router();
 const storage = multer.diskStorage({
@@ -32,6 +33,7 @@ router.post("/logout",verifyToken,adminLogout)
 router.get("/orders",verifyToken,getOrders)
 router.post("/updateOrder",verifyToken,updateOrder)
 router.get("/orders/canceld",verifyToken,orderCnc)
+router.get("/orders/return",returnOrders)
 router.get('/order/singleOrder/:id',SingleOrder)
 router.get("/category",verifyToken,getCategory)
 router.get("/category/addcategory",verifyToken,getAddCategory)
@@ -57,5 +59,6 @@ router.put("/coupons/update",verifyToken,coupenUpdate)
 router.get("/offers",verifyToken,renderOffersPage)
 router.post("/addCoffers",verifyToken,addCoffers)
 router.post("/editCoffers/:id",verifyToken,editCoffers)
+router.post("/accept-return",orderReturnAccept)
 
 export default router

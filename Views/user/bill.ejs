@@ -109,7 +109,7 @@
           </thead>
           <tbody>
             <% order.items.forEach(item => { %>
-                <% if (!item.isCanceld) { %> <!-- Check if the item is not canceled -->
+                <% if (!item.isCanceld&& !item.isReturned) { %> 
                     <tr>
                         <td><%= item.name %></td>
                         <td><%= item.quantity %></td>

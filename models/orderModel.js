@@ -29,6 +29,13 @@ const OrderSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
       },
+      isReturned:{
+        type:Boolean,
+        default:false
+      },
+     reason:{
+       type:String
+     },
       quantity: {
         type: Number,
         required: true,
@@ -68,8 +75,14 @@ const OrderSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["Pending", "Completed", "Shipped"],
+    enum: ["Pending", "Delivered", "Shipped", "Returned"],
     default: "Pending",
+  },
+  deliveredDate: {  
+    type: Date,
+  },
+  returnEndDate:{
+    type: Date,
   },
   isCanceld: {
     type: Boolean,
@@ -82,32 +95,28 @@ const OrderSchema = new mongoose.Schema({
   orderId: {
     type: String,
   },
-  // isCoupenApplied:{
-  //   type:Boolean,
-  //   default:false,
-  // },
   couponId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Coupon", 
+    ref: "Coupon",
   },
   paymentMethod: {
     type: String,
-    enum: ["COD", "Razorpay"], 
+    enum: ["COD", "Razorpay","Wallet"],
     required: true,
   },
   paymentStatus: {
     type: String,
     enum: ["Pending", "Paid", "Failed"],
-    default: "Pending",  
+    default: "Pending",
   },
   razorpayPaymentId: {
-    type: String,  
+    type: String,
   },
   razorpayOrderId: {
-    type: String, 
+    type: String,
   },
   razorpaySignature: {
-    type: String, 
+    type: String,
   },
 });
 

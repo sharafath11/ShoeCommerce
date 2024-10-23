@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Returns Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Include Axios -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<!-- Include SweetAlert -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- Include Toastify -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.css">
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    <style>
+        body {
+            background-color: #fff9c4;
+        }
+        .navbar {
+            background-color: #ffd600;
+        }
+        .card {
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .badge-pending {
+            background-color: #ffd600;
+            color: black;
+        }
+        .badge-accepted {
+            background-color: #4caf50;
+            color: white;
+        }
+        .badge-rejected {
+            background-color: #f44336;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-dark">
+        <div class="container">
+            <span class="navbar-brand mb-0 h1">Admin Returns Dashboard</span>
+        </div>
+    </nav>
+
+    <div class="container my-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-funnel"></i> Filter Returns
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="date-filter" class="form-label">Date Range</label>
+                        <select id="date-filter" class="form-select">
+                            <option value="">All Time</option>
+                            <option value="today">Today</option>
+                            <option value="tomorrow">Tomorrow</option>
+                            <option value="this-week">This Week</option>
+                            <option value="this-month">This Month</option>
+                            <option value="this-year">This Year</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="status-filter" class="form-label">Status</label>
+                        <select id="status-filter" class="form-select">
+                            <option value="">All</option>
+                            <option value="pending">Pending</option>
+                            <option value="accepted">Accepted</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="price-sort" class="form-label">Price Sort</label>
+                        <select id="price-sort" class="form-select">
+                            <option value="">No Sort</option>
+                            <option value="low-to-high">Low to High</option>
+                            <option value="high-to-low">High to Low</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            <% returnedProducts.forEach((order, index) => { %>
+                <% order.items.forEach(item => { %>
+                    <% if (item.isReturned) { %>
+                    <div class="col">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">
+                                    <i class="bi bi-box-seam"></i> Return Request #<%= index + 1 %>
+                                </h5>
+                                <small class="text-muted">Order: <%= order.orderId %></small>
+                            </div>
+                            <div class="card-body">
+                                <p><strong>Customer:</strong> <%= order.user.username %></p>
+                                <p><strong>Item:</strong> <%= item.name %></p>
+                                <p><strong>size:</strong> <%= item.size %></p>
+                                <p><strong>qty:</strong> <%= item.quantity %></p>
+                                <p><strong>Reason:</strong> <%= item.reason %></p>
+                               
+                                <p><strong>Date:</strong> <%= new Date(order.orderDate).toLocaleDateString() %></p>
+                                <p><strong>Price:</strong> $<%= item.price.toFixed(2) %></p>
+                                <span class="badge badge-pending">Pending</span>
+                            </div>
+                            <div class="card-footer d-flex justify-content-between">
+                                <button class="btn btn-success" onclick="acceptHandler('<%= order.user.username %>', '<%= item.name %>', '<%= item.reason %>', '<%= item.price %>', '<%= order._id %>',' <%= item.size %>','<%= item.quantity %>')">
+                                    <i class="bi bi-check-circle"></i> Accept
+                                </button>
+                                <button class="btn btn-danger">
+                                    <i class="bi bi-x-circle"></i> Reject
+                                </button>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <% } %>
+                <% }); %>
+            <% }); %>
+        </div>
+        
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+    function acceptHandler(username, itemName, reason, price, orderId,size,qty) {
+    // Use SweetAlert to confirm the action
+    Swal.fire({
+        title: 'Are you sure?',
+        text: `You are about to accept the return of ${itemName} for ${username}.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, accept it!',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Send data to backend using Axios
+            axios.post('/admin/accept-return', {
+                username: username,
+                itemName: itemName,
+                reason: reason,
+                price: price,
+                orderId: orderId,
+                size,
+                qty
+            })
+            .then(response => {
+                // Show a success notification
+                Toastify({
+                    text: "Return accepted successfully!",
+                    duration: 3000,
+                    close: true,
+                    gravity: "top",
+                    position: 'right',
+                    backgroundColor: "green",
+                }).showToast();
+            })
+            .catch(error => {
+                // Handle any errors
+                Toastify({
+                    text: "Error accepting return. Please try again.",
+                    duration: 3000,
+                    close: true,
+                    gravity: "top",
+                    position: 'right',
+                    backgroundColor: "red",
+                }).showToast();
+                console.error("Error accepting return:", error);
+            });
+        }
+    });
+}
+
+</script>

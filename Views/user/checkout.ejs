@@ -451,7 +451,7 @@
                     <a href="#">Shipping <span>Flat rate: ₹50.00</span></a>
                   </li>
                   <li>
-                    <a href="#">Discount <span id="discount">₹00.00</span></a>
+                    <a href="#">Discount <span id="discount">0%</span></a>
                   </li>
                   
                   <li>
@@ -749,7 +749,7 @@
     if (result.ok) {
       messageDiv.innerText = `Coupon applied! Discount: ${result.discountValue} ${result.discountType}. New Total: ₹${result.newTotal}`;
       totalAmountSpan.innerText = `₹${result.newTotal}`;
-      document.getElementById("discount").innerText = `₹${result.discountValue}`;
+      document.getElementById("discount").innerText = `${result.discountValue}%`;
       document.getElementById("coupen-btn").disabled=true
       coupenId = result.coupon._id;  
       showToast(result.msg)

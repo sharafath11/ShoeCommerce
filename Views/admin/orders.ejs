@@ -90,7 +90,9 @@
                 </div>
                 <div>
                     <a href="/admin/orders/canceld">Cancled orders</a>
+                    <a href="/admin/orders/return">Returned orders</a>
                 </div>
+                
 
                 <!-- Orders Management Panel -->
                 <div class="card shadow-sm mb-4">
@@ -126,8 +128,8 @@
                                     <td><%= order.orderDate.toISOString().split('T')[0] %></td>
                                     <td>
                                       <span id="orderStatusBadge_<%= order.id %>">
-                                        <% if (order.status === 'Completed') { %>
-                                          <span class="badge bg-success">Completed</span>
+                                        <% if (order.status === 'Delivered') { %>
+                                          <span class="badge bg-success">Delivered</span>
                                         <% } else if (order.status === 'Pending') { %>
                                           <span class="badge bg-warning">Pending</span>
                                         <% } else if (order.status === 'Shipped') { %>
@@ -140,15 +142,19 @@
                                       <a href="/admin/order/singleOrder/<%= order.id %>" class="btn btn-sm btn-primary">View</a>
                                       <div class="custom-dropdown">
                                         <form id="orderForm_<%= order.id %>">
-                                          <select id="orderStatus_<%= order.id %>" name="status" class="form-select form-select-sm" 
-                                            <%= order.status === 'Completed' ? 'disabled' : '' %> >
-                                            <option value="Pending" <%= order.status === 'Pending' ? 'selected' : '' %>>Pending</option>
-                                            <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
-                                            <option value="Completed" <%= order.status === 'Completed' ? 'selected' : '' %>>Completed</option>
-                                          </select>
-                                        </form>
+                                            <% if (order.status === 'Delivered') { %>
+                                              <span>Delivered</span>
+                                            <% } else { %>
+                                              <select id="orderStatus_<%= order.id %>" name="status" class="form-select form-select-sm">
+                                                <option value="Pending" <%= order.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+                                                <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+                                                <option value="Delivered" <%= order.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                                              </select>
+                                            <% } %>
+                                          </form>
+                                          
                                       </div>
-                                      <% if (order.status !== 'Completed') { %>
+                                      <% if (order.status !== 'Delivered') { %>
                                         <button onclick="confirmUpdate(event, '<%= order.id %>')">Update The order</button>
                                       <% } %>
                                     </td>
@@ -175,87 +181,68 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> <!-- Axios script -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> 
 
     <script>
         function confirmUpdate(event, orderId) {
             event.preventDefault();
             const orderStatus = document.getElementById(`orderStatus_${orderId}`).value;
             const form = document.getElementById(`orderForm_${orderId}`);
-            confirmAction('Are you sure?', 'Update the address?', 'Yes, Add it!')
-            .then((result) => {
+            confirmAction('Are you sure?', 'Update the address?', 'Yes, Add it!').then((result) => {
                 if (result.isConfirmed) {
                     axios.post('/admin/updateOrder', { orderStatus, orderId })
-                    .then(response => {
-                        if (response.data.ok) {
-                            const updatedStatus = response.data.status;
-                    
-                    const statusElement = document.getElementById(`orderStatus_${orderId}`);
-                    statusElement.value = updatedStatus; 
-                    
-                   
-                    const badgeElement = document.getElementById(`orderStatusBadge_${orderId}`);
-                    if (badgeElement) {
-                      
-                        if (updatedStatus === 'Completed') {
-                            badgeElement.className = 'badge bg-success';
-                            badgeElement.textContent = 'Completed';
-                        } else if (updatedStatus === 'Pending') {
-                            badgeElement.className = 'badge bg-warning';
-                            badgeElement.textContent = 'Pending';
-                        } else if (updatedStatus === 'Shipped') {
-                            badgeElement.className = 'badge bg-info';
-                            badgeElement.textContent = 'Shipped';
-                        }
-                    }
-                            showToast(response.data.msg, "success");
-                        } else {
-                            showToast(response.data.msg, "error");
-                        }
-                    })
-                    .catch(error => {
-                        form.reset();
-                        showToast('There was an error adding the address:', error);
-                    });
+                        .then(response => {
+                            if (response.data.ok) {
+                                const updatedStatus = response.data.status;
+                                document.getElementById(`orderStatus_${orderId}`).value = updatedStatus;
+                                const badgeElement = document.getElementById(`orderStatusBadge_${orderId}`);
+                                if (badgeElement) {
+                                    badgeElement.className = updatedStatus === 'Delivered' ? 'badge bg-success' :
+                                        updatedStatus === 'Pending' ? 'badge bg-warning' : 'badge bg-info';
+                                    badgeElement.textContent = updatedStatus;
+                                }
+                                showToast(response.data.msg, "success");
+                            } else {
+                                showToast(response.data.msg, "error");
+                            }
+                        })
+                        .catch(error => {
+                            form.reset();
+                            showToast('There was an error adding the address:', 'error');
+                        });
                 } else {
                     form.reset();
                 }
             });
         }
-
+    
         function confirmAction(title, text, confirmButtonText) {
             return Swal.fire({
-                title: title,
-                text: text,
-                icon: 'warning',
+                title, text, icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: confirmButtonText
+                confirmButtonText
             });
         }
-
+    
         function showToast(message, type) {
             Toastify({
                 text: message,
                 duration: 3000,
-                gravity: "top", // 'top' or 'bottom'
-                position: 'right', // 'left', 'center' or 'right'
-                style: {
-                    background: type === "success" ? "green" : "red"
-                },
-                stopOnFocus: true 
+                gravity: "top",
+                position: 'right',
+                style: { background: type === "success" ? "green" : "red" },
+                stopOnFocus: true
             }).showToast();
         }
-    </script>
-    <script>
-        
+    
         function searchOrders() {
-          const query = document.getElementById('searchOrdersInput').value;
-          window.location.href = `/admin/orders?search=${query}`;
+            const query = document.getElementById('searchOrdersInput').value;
+            window.location.href = `/admin/orders?search=${query}`;
         }
-      </script>
-      
+    </script>
+    
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>

@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { categoryModel } from "../../models/category.js";
 import ProductModel from "../../models/prodectsModel.js";
+import OrderModel from "../../models/orderModel.js";
 
 export const renderProductsPage = async (req, res) => {
   let page = parseInt(req.query.page) || 1;
@@ -232,3 +233,6 @@ export const editProducts = async (req, res) => {
     res.status(500).json({ error: "An error occurred while updating the product" });
   }
 };
+export const returnOrders=async(req,res)=>{
+  const  returnOrders=await OrderModel.find({})
+}

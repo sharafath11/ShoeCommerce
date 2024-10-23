@@ -43,6 +43,8 @@
     <script src="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
 
     <style>
       .profile-container {
@@ -257,27 +259,47 @@
             <div>
               <h5>Order ID <%= order.orderId %></h5>
               <p><%= new Date(order.orderDate).toLocaleDateString() %></p>
+              <% if (order.paymentStatus === 'Paid') { %>
+                <div class="payment-status">
+                  <span class="text-success">Payment Completed</span>
+                </div>
+              <% } else { %>
+                <div class="retry-payment">
+                  <% if (order.paymentMethod === 'Razorpay') { %>
+                    <span class="text-danger">Payment Failed</span> <br>
+                    <button 
+                      class="btn btn-warning mt-3" 
+                      onclick="retryPayment('<%= order._id %>')">
+                      Retry Payment
+                    </button>
+                  <% } %>
+                </div>
+                
+              <% } %>
             </div>
             <div>
-              <td>
-                <% if (order.isCanceld) { %>
+              <td class="">
+                <div class="d-flex align-items-center justify-content-around ">
+                  <% if (order.isCanceld) { %>
                  
-                  <span class="badge bg-danger">Canceled</span>
-              <% } else { %>
-                 
-                  <span class="badge bg-<%= order.status === 'Completed' ? 'success' : order.status === 'Pending' ? 'warning' : 'info' %>">
-                      <%= order.status %>
-                  </span>
-              <% } %>
+                    <span class="badge bg-danger">Canceled</span>
+                <% } else { %>
+                   
+                    <span class="badge bg-<%= order.status === 'Delivered' ? 'success' : order.status === 'Pending' ? 'warning' : 'info' %>">
+                        <%= order.status %>
+                    </span>
+                <% } %>
+                <p>Shipped to: <%= order.address.type %></p>
+              <!-- <% if (order.status !== 'Delivered' && !order.isCanceld) { %>
+                
+            <% } %> -->
+                </div>
               
               
             </td>
             
-              <p>Shipped to: <%= order.address.type %></p>
-              <!-- <% if (order.status !== 'Completed' && !order.isCanceld) { %>
-                
-            <% } %> -->
-            <% if (order.status === 'Completed') { %>
+              
+            <% if (order.status === 'Delivered') { %>
               
               <a href="/order/bill/<%= order._id %>" class="btn btn-outline-light btn-sm bg-info">
                 <svg
@@ -305,7 +327,19 @@
                  
                  
               </button>
-          <% } else if (!order.isCanceld) { %>
+              <div class="d-flex align-items-center">
+               
+              
+                <% if (new Date() < new Date(order.returnEndDate)) { %> 
+                  <span class="ms-2 text-muted">
+                    Eligible for return until <%= new Date(order.returnEndDate).toDateString() %>
+                  </span>
+                  
+                <% } %>
+              </div>
+              
+              
+          <% } else if (!order.isCanceld&& !order.paymentStatus==="Paid") { %>
               
               <button
                   type="button"
@@ -353,48 +387,74 @@
 
           <div class="collapse" id="orderItemsCollapse-<%= order._id %>">
             <div class="order-items">
-                <% order.items.forEach(function(item, index) { %>
-                    <div class="order-item d-flex justify-content-between">
-                        <div>
-                            <a href="/singleprodect/<%= item.productId %>" style="font-style: none; text-decoration: none;">
-                                <span class="item-name"><%= item.name %></span>
-                            </a>
-                            <p>Size: <%= item.size %></p>
-                            <p class="quantity">Quantity: <%= item.quantity %></p>
-                        </div>
-                        <span>₹<%= (item.price * item.quantity).toFixed(2) %></span>
-        
-                        <% if (item.isCanceld) { %>
-                            <span class="text-danger">Canceled</span>
-                        <% } else if (!order.isCanceld) { %>
-                            <button 
-                                class="btn btn-link text-danger" 
-                                onclick="deleteOrderItem('<%= order._id %>', '<%= item.productId %>', '<%= item.size %>')">
-                                <svg 
-                                    xmlns="http://www.w3.org/2000/svg" 
-                                    width="24" 
-                                    height="24" 
-                                    viewBox="0 0 24 24" 
-                                    fill="none" 
-                                    stroke="currentColor" 
-                                    stroke-width="2" 
-                                    stroke-linecap="round" 
-                                    stroke-linejoin="round" 
-                                    class="lucide lucide-trash-2">
-                                    <path d="M3 6h18"></path>
-                                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                                    <line x1="10" x2="10" y1="11" y2="17"></line>
-                                    <line x1="14" x2="14" y1="11" y2="17"></line>
-                                </svg>
-                            </button>
-                        <% } %>
-                    </div>
-                <% }) %>
+              <% order.items.forEach(function(item, index) { %>
+                <div class="order-item d-flex justify-content-between">
+                  <div>
+                    <a href="/singleprodect/<%= item.productId %>" style="font-style: none; text-decoration: none;">
+                      <span class="item-name"><%= item.name %></span>
+                    </a>
+                    <p>Size: <%= item.size %></p>
+                    <p class="quantity">Quantity: <%= item.quantity %></p>
+                  </div>
+                  <span>₹<%= (item.price * item.quantity).toFixed(2) %></span>
+            
+                  <% 
+                    const currentDate = new Date();
+                    const returnEndDate = new Date(order.returnEndDate); 
+                  %>
+            
+                  <!-- Check if the return period has not ended -->
+                  <% if (currentDate <= returnEndDate) { %>
+                    <!-- Only show the "Return Item" button if the order is delivered -->
+                    <% if (order.status === 'Delivered' && !item.isCanceled && !item.isReturned) { %>
+                      <button class="btn btn-dark btn-sm ms-3" onclick="returnHandler('<%= order._id %>', '<%= item.productId %>', '<%= item.size %>',' <%= item.quantity %>')">
+                        <i class="fas fa-undo-alt"></i> Return Item
+                      </button>
+                    <% } %>
+                  <% } %>
+            
+                  <!-- Show "Canceled" label if item is canceled -->
+                  <% if (item.isCanceled) { %>
+                    <span class="text-danger">Canceled</span>
+                  <% } else if (item.isReturned) { %>
+                   
+                    <span class="text-success">Returned   </span> 
+                   
+                  <% } else if (order.status !== 'Delivered' && order.paymentStatus !== "Paid") { %>
+                    <!-- Show "Delete" button only if the order is not delivered -->
+                    <button 
+                      class="btn btn-link text-danger" 
+                      onclick="deleteOrderItem('<%= order._id %>', '<%= item.productId %>', '<%= item.size %>')">
+                      <svg 
+                        xmlns="http://www.w3.org/2000/svg" 
+                        width="24" 
+                        height="24" 
+                        viewBox="0 0 24 24" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        stroke-width="2" 
+                        stroke-linecap="round" 
+                        stroke-linejoin="round" 
+                        class="lucide lucide-trash-2">
+                        <path d="M3 6h18"></path>
+                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                        <line x1="10" x2="10" y1="11" y2="17"></line>
+                        <line x1="14" x2="14" y1="11" y2="17"></line>
+                      </svg>
+                    </button>
+                  <% } %>
+                </div>
+              <% }) %>
             </div>
-            <div>
-                <!-- Any additional content can go here -->
-            </div>
+            
+          </div>
+          
+            
+            
+            
+           
+            
         </div>
         
         
@@ -523,5 +583,122 @@
     });
 }
     </script>
+   <script>
+    function retryPayment(orderId) {
+      axios.post("/payment/retry-payment", { orderId })
+        .then((response) => {
+          const { amount, currency, newOderId } = response.data; // Assuming the server responds with these details
+        console.log(response.data);
+        
+          var options = {
+            "key": "rzp_test_0NNl9o6nbS0KBP", // Your Razorpay API key
+            "amount": amount, // Amount in the smallest unit (e.g., paise for INR)
+            "currency": currency, // Currency code (e.g., INR, USD)
+            "name": "ST SHOP",
+            "description": "Order Payment",
+            "order_id": newOderId, // The new order ID generated for this retry
+            "handler": function (responseV) {
+              // Payment successful
+              showToast("Payment Successful: " + responseV.razorpay_payment_id);
+              console.log(newOderId,'fghjkl');
+              
+              // Verify payment on the server
+              axios.post('/payment/retry-veryfy-payment', {
+                id:orderId,
+                orderId:newOderId,
+                paymentId: responseV.razorpay_payment_id,
+                signature: responseV.razorpay_signature
+              })
+                .then(verificationResponse => {
+                  console.log(verificationResponse);
+                  
+                  setTimeout(() => {
+                    window.location.href = '/orders';
+                  }, 1000);
+                })
+                .catch(err => {
+                  showToast("Payment verification failed1233333.");
+                  console.error("Verification failed:", err);
+                });
+            },
+            "prefill": {
+              
+              "name": "Customer Name",
+              "email": "customer@example.com",
+              "contact": "9999999999"
+            },
+            "theme": {
+              "color": "#F37254" // Customize theme color
+            }
+          };
+  
+          // Initialize and open the Razorpay payment gateway
+          var rzp1 = new Razorpay(options);
+          rzp1.open();
+        })
+        .catch(err => {
+          // Handle failure in initiating payment retry
+          showToast("Failed to retry payment.");
+          console.error("Retry payment failed:", err);
+        });
+    }
+
+    function returnHandler(orderId, productId, size,qty) {
+    Swal.fire({
+      title: 'Return Confirmation',
+      text: 'Please provide a reason for the return:',
+      input: 'text',
+      inputPlaceholder: 'Enter the reason',
+      inputValidator: (value) => {
+        if (!value) {
+          return 'You need to provide a reason!';
+        }
+      },
+      showCancelButton: true,
+      confirmButtonText: 'Submit Return',
+      cancelButtonText: 'Cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const reason = result.value;
+        const data = {
+          orderId: orderId,
+        productId: productId,
+        size: size,
+          reason: reason, 
+          qty,
+        };
+
+        // Send Axios POST request
+        axios.post('/orders/return', data)
+          .then(response => {
+            if(response.data.ok){
+              Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: response.data.msg,
+              });
+            }
+            else{
+              Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: response.data.msg,
+              });
+            }
+          })
+          .catch(error => {
+            // Handle error
+            console.error('There was an error processing the return:', error);
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'There was an error processing your return. Please try again.',
+            });
+          });
+      }
+    });
+}
+  </script>
+  
   </body>
 </html>

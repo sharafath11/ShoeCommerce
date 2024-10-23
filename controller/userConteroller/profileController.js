@@ -202,7 +202,10 @@ export const deletePerItemInOrder = async (req, res) => {
       allCanceled: order.items.every(i => i.isCanceld)
     });
   } catch (error) {
-    res.status(500).json({ message: 'Internal server error' });
+    console.log(error);
+    
+    return res.render("user/error");
+
   }
 };
 

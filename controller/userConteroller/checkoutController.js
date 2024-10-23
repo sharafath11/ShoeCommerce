@@ -115,7 +115,7 @@ export const checkoutFn = async (req, res) => {
 
     // Generate a new order
     function generateOrderId() {
-      return 'ORD-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+      return 'COD-' + Math.random().toString(36).substr(2, 9).toUpperCase();
     }
 
     const orderId = generateOrderId();
