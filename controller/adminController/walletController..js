@@ -2,54 +2,90 @@ import OrderModel from "../../models/orderModel.js";
 import WalletModel from "../../models/wallet.js";
 
 
-
+  
 export const orderReturnAccept = async (req, res) => {
     try {
-        // Destructure values from request body
-        const { orderId, itemName, reason, price, size, qty } = req.body;
+        const { orderId, itemName, reason, price, size, qty, productId } = req.body;
 
-        // Validate input
-        if (!orderId || !itemName || !reason || !price || !size || !qty) {
+        if (!orderId || !itemName || !reason || !price || !size || !qty || !productId) {
             return res.status(400).json({ message: 'All fields are required.' });
         }
 
-        // Find the order to ensure it exists
         const order = await OrderModel.findById(orderId);
         if (!order) {
             return res.status(404).json({ message: 'Order not found.' });
         }
 
-        // Find the user's wallet
-        const wallet = await WalletModel.findOne({ user: order.user }); // Assuming order.user is the user ID
+        const item = order.items.find(item => 
+            item.productId.toString() === productId && 
+            item.size === Number(size) && 
+            item.isReturned === true
+        );
 
-        // If wallet does not exist, create one (optional)
+        if (!item) {
+            return res.status(404).json({ message: 'Returned item not found in the order.' });
+        }
+
+        item.status = 'Approved';
+
+        const wallet = await WalletModel.findOne({ user: order.user });
         if (!wallet) {
             return res.status(404).json({ message: 'Wallet not found for the user.' });
         }
 
-        // Update the wallet balance
-        wallet.balance += price;
-
-        // Record the transaction
+        wallet.balance += Number(price);
         wallet.transactions.push({
             amount: price,
             transactionType: 'credit',
             description: `Return accepted for ${itemName}`,
-            size, // Add size from the request
-            qty,  // Add qty from the request
-            productId: order.items.find(item => item.name === itemName)._id, // Find product ID based on item name
-            status: 'approved',
-            date:new Date(),
-            reason: reason,
+            size,
+            qty,
+            productId: item.productId,
+            date: new Date(),
+            reason,
         });
 
-        // Save the updated wallet
         await wallet.save();
+        await order.save();
 
-        return res.status(200).json({ message: 'Return accepted and wallet updated.' });
+        return res.status(200).json({ message: 'Return accepted, order item status updated, and wallet updated.' });
 
     } catch (error) {
         console.error("Error accepting return:", error);
         return res.status(500).json({ message: 'Error accepting return.' });
     }
 };
+export const orderReturnReject = async (req, res) => {
+    try {
+        const { orderId, itemName, size, qty, productId } = req.body;
+        if (!orderId || !itemName  || !size || !qty || !productId) {
+            return res.status(400).json({ message: 'All fields are required.' });
+        }
+
+        const order = await OrderModel.findById(orderId);
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found.' });
+        }
+
+        const item = order.items.find(item => 
+            item.productId.toString() === productId && 
+            item.size === Number(size) && 
+            item.isReturned === true
+        );
+
+        if (!item) {
+            return res.status(404).json({ message: 'Returned item not found in the order.' });
+        }
+
+        item.status = 'Rejected'; // Update item status to "Rejected"
+
+        await order.save(); // Save the updated order
+
+        return res.status(200).json({ message: 'Return rejected and item status updated.' });
+
+    } catch (error) {
+        console.error("Error rejecting return:", error);
+        return res.status(500).json({ message: 'Error rejecting return.' });
+    }
+};
+

@@ -26,9 +26,11 @@ export const returnOrders = async (req, res) => {
       if (item.productId.equals(parsedProductId) && item.size === parsedSize && !item.isReturned) {
         item.isReturned = true;
         item.reason = reason;
+        item.status = 'Pending';
         totalReduction += item.price * item.quantity;
       }
     });
+
     if (totalReduction > 0) {
       order.totalAmount -= totalReduction;
     }

@@ -76,31 +76,88 @@ export const SingleOrder=async(req,res)=>{
   const ordersArray = order ? [order] : [];
   res.render("admin/SingleOrder",{orders:ordersArray})
 }
-
-
 export const returnOrders = async (req, res) => {
   try {
-    const ordersWithReturns = await OrderModel.find({
-      "items.isReturned": true,
-    })
-    .populate('user', 'username') 
-    .lean();
+    const { dateRange, status, priceSort, orderId } = req.query;
 
-    const returnedProducts = ordersWithReturns.map(order => {
-      const returnedItems = order.items.filter(item => item.isReturned);
-      return {
-        ...order,
-        items: returnedItems,
-        userName: order.user ? order.user.name : null,
-      };
-    }).filter(order => order.items.length > 0); 
-    
-    console.log(returnedProducts);
-    return res.render("admin/returenOrders", { returnedProducts });
-  
+    console.log("Query Params:", { dateRange, status, priceSort, orderId });
+
+    let query = { "items.isReturned": true };
+
+    // If orderId is provided, prioritize searching by the custom orderId field
+    if (orderId) {
+      query = { ...query, orderId: orderId }; // Assuming orderId is the custom field in your schema
+    }
+
+    // Fetch all orders with the specified query
+    const ordersWithReturns = await OrderModel.find(query)
+      .populate('user', 'username')
+      .lean();
+
+    console.log("Orders with Returns:", ordersWithReturns);
+
+    // Filter and map the returned products
+    const returnedProducts = ordersWithReturns
+      .map(order => {
+        // Start by filtering for returned items
+        let returnedItems = order.items.filter(item => item.isReturned);
+
+        // If a status is provided, further filter the returned items
+        if (status) {
+          returnedItems = returnedItems.filter(item => item.status === status.charAt(0).toUpperCase() + status.slice(1)); // Capitalize first letter
+        }
+
+        return {
+          ...order,
+          items: returnedItems,
+          userName: order.user ? order.user.username : null,
+        };
+      })
+      .filter(order => order.items.length > 0); // Keep orders with returned items
+
+    console.log("Returned Products After Mapping:", returnedProducts);
+
+    // Apply date filtering if orderId is not provided
+    let filteredProducts = returnedProducts;
+    if (!orderId) {
+      filteredProducts = returnedProducts.filter(order => {
+        const orderDate = new Date(order.orderDate);
+        switch (dateRange) {
+          case 'today':
+            return orderDate.toDateString() === new Date().toDateString();
+          case 'tomorrow':
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            return orderDate.toDateString() === tomorrow.toDateString();
+          case 'this-week':
+            const startOfWeek = new Date();
+            startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+            return orderDate >= startOfWeek && orderDate <= new Date();
+          case 'this-month':
+            return orderDate.getMonth() === new Date().getMonth();
+          case 'this-year':
+            return orderDate.getFullYear() === new Date().getFullYear();
+          default:
+            return true; // No date filter
+        }
+      });
+    }
+
+    console.log("Filtered Products After Date Filtering:", filteredProducts);
+
+    // Sort products based on priceSort
+    if (priceSort === 'low-to-high') {
+      filteredProducts.sort((a, b) => a.items[0].price - b.items[0].price);
+    } else if (priceSort === 'high-to-low') {
+      filteredProducts.sort((a, b) => b.items[0].price - a.items[0].price);
+    }
+
+    console.log("Final Filtered Returned Products:", filteredProducts);
+
+    return res.render("admin/returenOrders", { returnedProducts: filteredProducts });
+
   } catch (error) {
     console.error("Error fetching returned orders:", error);
     return res.status(500).json({ message: "Error fetching returned orders." });
   }
 };
-

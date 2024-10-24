@@ -41,100 +41,130 @@
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-dark">
-        <div class="container">
-            <span class="navbar-brand mb-0 h1">Admin Returns Dashboard</span>
-        </div>
-    </nav>
-
-    <div class="container my-4">
-        <div class="card mb-4">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="bi bi-funnel"></i> Filter Returns
-                </h5>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar on the left side -->
+            <div class="col-md-3">
+                <%- include('partials/sidebar') %>
             </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-4 mb-3">
-                        <label for="date-filter" class="form-label">Date Range</label>
-                        <select id="date-filter" class="form-select">
-                            <option value="">All Time</option>
-                            <option value="today">Today</option>
-                            <option value="tomorrow">Tomorrow</option>
-                            <option value="this-week">This Week</option>
-                            <option value="this-month">This Month</option>
-                            <option value="this-year">This Year</option>
-                        </select>
+
+            <!-- Main content (Filter and Dashboard) on the right side -->
+            <div class="col-md-9">
+                <nav class="navbar navbar-dark">
+                    <div class="container">
+                        <span class="navbar-brand mb-0 h1">Admin Returns Dashboard</span>
                     </div>
-                    <div class="col-md-4 mb-3">
-                        <label for="status-filter" class="form-label">Status</label>
-                        <select id="status-filter" class="form-select">
-                            <option value="">All</option>
-                            <option value="pending">Pending</option>
-                            <option value="accepted">Accepted</option>
-                            <option value="rejected">Rejected</option>
-                        </select>
+                </nav>
+
+                <div class="container my-4">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                <i class="bi bi-funnel"></i> Filter Returns
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="date-filter" class="form-label">Date Range</label>
+                                    <select id="date-filter" class="form-select">
+                                        <option value="">All Time</option>
+                                        <option value="today">Today</option>
+                                        <option value="tomorrow">Tomorrow</option>
+                                        <option value="this-week">This Week</option>
+                                        <option value="this-month">This Month</option>
+                                        <option value="this-year">This Year</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="status-filter" class="form-label">Status</label>
+                                    <select id="status-filter" class="form-select">
+                                        <option value="">All</option>
+                                        <option value="pending">Pending</option>
+                                        <option value="Approved">Accepted</option>
+                                        <option value="Rejected">Rejected</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="price-sort" class="form-label">Price Sort</label>
+                                    <select id="price-sort" class="form-select">
+                                        <option value="">No Sort</option>
+                                        <option value="low-to-high">Low to High</option>
+                                        <option value="high-to-low">High to Low</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-8 mb-3">
+                                    <label for="order-id-filter" class="form-label">Search by Order ID</label>
+                                    <input type="text" id="order-id-filter" class="form-control" placeholder="Enter Order ID">
+                                </div>
+                                <div class="col-md-4 mb-3 d-flex align-items-end">
+                                    <button id="search-order-btn" class="btn btn-success w-100">Search Order ID</button>
+                                </div>
+                            </div>
+                            <button id="filter-btn" class="btn btn-primary">Filter</button>
+                            <button onclick="resetFilter()" class="btn btn-dark">Reset filter</button>
+                        </div>
                     </div>
-                    <div class="col-md-4 mb-3">
-                        <label for="price-sort" class="form-label">Price Sort</label>
-                        <select id="price-sort" class="form-select">
-                            <option value="">No Sort</option>
-                            <option value="low-to-high">Low to High</option>
-                            <option value="high-to-low">High to Low</option>
-                        </select>
+
+                    <!-- Returned Products Section -->
+                    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                        <% returnedProducts.forEach((order, index) => { %>
+                            <% order.items.forEach(item => { %>
+                                <% if (item.isReturned) { %>
+                                    <div class="col">
+                                        <div class="card h-100">
+                                            <div class="card-header">
+                                                <h5 class="card-title mb-0">
+                                                    <i class="bi bi-box-seam"></i> Return Request #<%= index + 1 %>
+                                                </h5>
+                                                <small class="text-muted">Order ID: <%= order.orderId %></small>
+                                            </div>
+                                            <div class="card-body">
+                                                <p><strong>Customer:</strong> <%= order.user.username %></p>
+                                                <p><strong>Item:</strong> <%= item.name %></p>
+                                                <p><strong>Size:</strong> <%= item.size %></p>
+                                                <p><strong>Quantity:</strong> <%= item.quantity %></p>
+                                                <p><strong>Reason for Return:</strong> <%= item.reason %></p>
+                                                <p><strong>Date:</strong> <%= new Date(order.orderDate).toLocaleDateString() %></p>
+                                                <p><strong>Price:</strong> ₹<%= item.price.toFixed(2) %></p>
+                                                <span class="badge 
+                                                <%= item.status === 'Pending' ? 'bg-warning' : 
+                                                    item.status === 'Approved' ? 'bg-success' : 
+                                                    item.status === 'Rejected' ? 'bg-danger' : '' %>">
+                                                <%= item.status %>
+                                                </span>
+                                            </div>
+                                            <div class="card-footer d-flex justify-content-between">
+                                                <button class="btn btn-success" 
+                                                    onclick="acceptHandler('<%= order.user.username %>', '<%= item.name %>', '<%= item.reason %>', '<%= item.price %>', '<%= order._id %>', '<%= item.size %>', '<%= item.quantity %>', '<%= item.productId %>')" <%= item.status === 'Approved' ? 'disabled' : '' %>>
+                                                    <i class="bi bi-check-circle"></i> Accept
+                                                </button>
+                                                <button class="btn btn-danger" 
+                                                    onclick="rejectHandler('<%= item.name %>', '<%= order.user.username %>', '<%= order._id %>', '<%= item.size %>', '<%= item.quantity %>', '<%= item.productId %>')"
+                                                    <%= item.status === 'Approved' ? 'disabled' : '' %>>
+                                                    <i class="bi bi-x-circle"></i> Reject
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% } %>
+                            <% }); %>
+                        <% }); %>
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-            <% returnedProducts.forEach((order, index) => { %>
-                <% order.items.forEach(item => { %>
-                    <% if (item.isReturned) { %>
-                    <div class="col">
-                        <div class="card h-100">
-                            <div class="card-header">
-                                <h5 class="card-title mb-0">
-                                    <i class="bi bi-box-seam"></i> Return Request #<%= index + 1 %>
-                                </h5>
-                                <small class="text-muted">Order: <%= order.orderId %></small>
-                            </div>
-                            <div class="card-body">
-                                <p><strong>Customer:</strong> <%= order.user.username %></p>
-                                <p><strong>Item:</strong> <%= item.name %></p>
-                                <p><strong>size:</strong> <%= item.size %></p>
-                                <p><strong>qty:</strong> <%= item.quantity %></p>
-                                <p><strong>Reason:</strong> <%= item.reason %></p>
-                               
-                                <p><strong>Date:</strong> <%= new Date(order.orderDate).toLocaleDateString() %></p>
-                                <p><strong>Price:</strong> $<%= item.price.toFixed(2) %></p>
-                                <span class="badge badge-pending">Pending</span>
-                            </div>
-                            <div class="card-footer d-flex justify-content-between">
-                                <button class="btn btn-success" onclick="acceptHandler('<%= order.user.username %>', '<%= item.name %>', '<%= item.reason %>', '<%= item.price %>', '<%= order._id %>',' <%= item.size %>','<%= item.quantity %>')">
-                                    <i class="bi bi-check-circle"></i> Accept
-                                </button>
-                                <button class="btn btn-danger">
-                                    <i class="bi bi-x-circle"></i> Reject
-                                </button>
-                            </div>
-                            
-                        </div>
-                    </div>
-                    <% } %>
-                <% }); %>
-            <% }); %>
-        </div>
-        
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
 <script>
-    function acceptHandler(username, itemName, reason, price, orderId,size,qty) {
-    // Use SweetAlert to confirm the action
+    function acceptHandler(username, itemName, reason, price, orderId,size,qty,productId) {
+
     Swal.fire({
         title: 'Are you sure?',
         text: `You are about to accept the return of ${itemName} for ${username}.`,
@@ -146,7 +176,7 @@
         cancelButtonText: 'Cancel'
     }).then((result) => {
         if (result.isConfirmed) {
-            // Send data to backend using Axios
+
             axios.post('/admin/accept-return', {
                 username: username,
                 itemName: itemName,
@@ -154,18 +184,24 @@
                 price: price,
                 orderId: orderId,
                 size,
-                qty
+                qty,
+                productId
             })
             .then(response => {
-                // Show a success notification
+               
                 Toastify({
-                    text: "Return accepted successfully!",
-                    duration: 3000,
-                    close: true,
-                    gravity: "top",
-                    position: 'right',
-                    backgroundColor: "green",
-                }).showToast();
+    text: "Return accepted successfully!",
+    duration: 3000,
+    close: true,
+    gravity: "top",
+    position: 'right',
+    backgroundColor: "green",
+}).showToast();
+
+setTimeout(() => {
+    window.location.reload();
+}, 1000); 
+
             })
             .catch(error => {
                 // Handle any errors
@@ -182,5 +218,81 @@
         }
     });
 }
-
+function rejectHandler(itemName, username, orderId, size, qty, productId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: `You are about to reject the return of ${itemName} for ${username}.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, reject it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios.post('/admin/reject-return', {
+                    username: username,
+                    itemName: itemName,
+                    orderId: orderId,
+                    size,
+                    qty,
+                    productId
+                })
+                .then(response => {
+                    Toastify({
+                        text: "Return rejected successfully!",
+                        duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: 'right',
+                        backgroundColor: "red",
+                    }).showToast();
+                    setTimeout(() => {
+    window.location.reload();
+}, 1000);
+                })
+                .catch(error => {
+                    Toastify({
+                        text: "Error rejecting return. Please try again.",
+                        duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: 'right',
+                        backgroundColor: "red",
+                    }).showToast();
+                    console.error("Error rejecting return:", error);
+                });
+            }
+        });
+    }
 </script>
+<script>
+    document.getElementById('filter-btn').addEventListener('click', function() {
+    const dateRange = document.getElementById('date-filter').value;
+    const status = document.getElementById('status-filter').value;
+    const priceSort = document.getElementById('price-sort').value;
+    const url = `/admin/orders/return?dateRange=${encodeURIComponent(dateRange)}&status=${encodeURIComponent(status)}&priceSort=${encodeURIComponent(priceSort)}`;
+    window.location.href = url;  
+});
+document.getElementById('search-order-btn').addEventListener('click', function () {
+    const orderId = document.getElementById('order-id-filter').value;
+
+    if (!orderId) {
+        // showToast();
+        Toastify({
+                        text: "Please enter an Order ID to search.",
+                        duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: 'right',
+                        backgroundColor: "red",
+                    }).showToast();
+        return;
+    }
+    window.location.href=`/admin/orders/return?orderId=${orderId}`
+});
+function resetFIlter(){
+    window.location.href="/admin/orders/return"
+}
+</script>
+

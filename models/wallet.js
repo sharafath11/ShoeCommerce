@@ -40,11 +40,7 @@ const walletSchema = new Schema({
         ref: 'Product',
         required: true,
       },
-      status: {
-        type: String,
-        enum: ['pending', 'approved', 'rejected'],  
-        default: 'pending',
-      },
+    
       reason: {
         type: String,
         required: true,

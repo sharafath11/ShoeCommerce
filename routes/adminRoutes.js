@@ -12,7 +12,7 @@ import path from 'path'
 import { reviewBlockController, reviewRender } from "../controller/adminController/reviewsController.js";
 import { addCoupen, coupenRender, coupenUpdate } from "../controller/adminController/coupen.js";
 import { addCoffers, editCoffers, renderOffersPage } from "../controller/adminController/offers.js";
-import { orderReturnAccept } from "../controller/adminController/walletController..js";
+import { orderReturnAccept, orderReturnReject, } from "../controller/adminController/walletController..js";
 
 const router=express.Router();
 const storage = multer.diskStorage({
@@ -33,7 +33,7 @@ router.post("/logout",verifyToken,adminLogout)
 router.get("/orders",verifyToken,getOrders)
 router.post("/updateOrder",verifyToken,updateOrder)
 router.get("/orders/canceld",verifyToken,orderCnc)
-router.get("/orders/return",returnOrders)
+
 router.get('/order/singleOrder/:id',SingleOrder)
 router.get("/category",verifyToken,getCategory)
 router.get("/category/addcategory",verifyToken,getAddCategory)
@@ -59,6 +59,8 @@ router.put("/coupons/update",verifyToken,coupenUpdate)
 router.get("/offers",verifyToken,renderOffersPage)
 router.post("/addCoffers",verifyToken,addCoffers)
 router.post("/editCoffers/:id",verifyToken,editCoffers)
+router.get("/orders/return",returnOrders)
 router.post("/accept-return",orderReturnAccept)
+router.post("/reject-return",orderReturnReject)
 
 export default router

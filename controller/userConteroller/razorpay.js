@@ -3,7 +3,7 @@ import crypto from 'crypto';
 import OrderModel from "../../models/orderModel.js";
 import ProductModel from "../../models/prodectsModel.js";
 import CartModel from "../../models/cartModel.js";
-import { log } from "console";
+
 
 const razorpayI = new Razorpay({
     key_id:process.env.RKEY_ID,
@@ -194,9 +194,7 @@ export const createOrder = async (req, res) => {
   
       // Fetch the existing order from the database using the new Razorpay order ID
       const order = await OrderModel.findOne({ _id: id });
-      console.log('====================================');
-      console.log(order,orderId);
-      console.log('====================================');
+;
       if (!order) {
         return res.status(404).json({ ok: false, msg: 'Order not found' });
       }

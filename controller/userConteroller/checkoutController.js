@@ -61,14 +61,14 @@ export const checkoutFn = async (req, res) => {
       
     }));
 
-    const totalAmount = orderItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    const totalAmount =parseInt( orderItems.reduce((acc, item) => acc + item.price * item.quantity, 0))
     const userId = req.session.user._id;  
     const selectedAddress = selectedAddresses[0];
 
     // Check for coupon application
     let coupon = null;
     let finalAmount = totalAmount + 50; // Assuming 50 is a delivery charge
-
+ console.log("fgvhdb",finalAmount)
     if (coupenId && mongoose.Types.ObjectId.isValid(coupenId)) {
       coupon = await CouponModel.findById(coupenId);
       
@@ -113,7 +113,7 @@ export const checkoutFn = async (req, res) => {
       await product.save();
     }
 
-    // Generate a new order
+
     function generateOrderId() {
       return 'COD-' + Math.random().toString(36).substr(2, 9).toUpperCase();
     }

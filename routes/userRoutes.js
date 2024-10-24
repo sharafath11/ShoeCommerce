@@ -27,6 +27,7 @@ import { applyCoupen } from "../controller/userConteroller/coupenController.js";
 import { createOrder, retryPayment, verifyRazorpay, verifyRetryPayment, } from "../controller/userConteroller/razorpay.js";
 import { walletRender } from "../controller/userConteroller/wallet.js";
 import { returnOrders } from "../controller/userConteroller/ordersReturn.js";
+import { payWithWallet } from "../controller/userConteroller/payUsingWallet.js";
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'public/reviewImages'); 
@@ -92,4 +93,5 @@ router.post("/payment/retry-payment",retryPayment)
 router.post("/payment/retry-veryfy-payment",verifyRetryPayment)
 router.get("/wallet",walletRender)
 router.post("/orders/return",returnOrders)
+router.post("/checkout/wallet/pay",payWithWallet)
 export default router
