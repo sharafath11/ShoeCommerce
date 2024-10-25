@@ -117,6 +117,16 @@ const OrderSchema = new mongoose.Schema({
   razorpayPaymentId: {
     type: String,
   },
+  totelDiscountValue:{
+    type:Number
+  },
+  categoryDiscountValue:{
+    type:Number,
+    default:0
+  },
+  totelOrginalPrice:{
+    type:Number
+  },
   razorpayOrderId: {
     type: String,
   },

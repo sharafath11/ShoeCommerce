@@ -49,7 +49,8 @@ export const getCheckout = async (req, res) => {
 
 export const checkoutFn = async (req, res) => {
   try {
-    const { cartItems, selectedAddresses, coupenId,paymentMethod } = req.body;
+    const { cartItems, selectedAddresses, coupenId, paymentMethod } = req.body;
+
     const orderItems = cartItems.map(item => ({
       productId: item.productId,
       name: item.name,
@@ -58,20 +59,32 @@ export const checkoutFn = async (req, res) => {
       imageUrl: item.imageUrl,
       price: item.price,
       quantity: item.quantity,
-      
     }));
 
-    const totalAmount =parseInt( orderItems.reduce((acc, item) => acc + item.price * item.quantity, 0))
-    const userId = req.session.user._id;  
+    const totalAmount = parseInt(
+      orderItems.reduce((acc, item) => acc + item.price * item.quantity, 0)
+    );
+
+    let totelOrginalPrice = 0;
+    let categoryDiscountValue = 0;
+
+    for (const item of orderItems) {
+      const product = await ProductModel.findById(item.productId);
+      if (product) {
+        totelOrginalPrice += product.originalPrice * item.quantity;
+        const discountAmount = (product.originalPrice * (product.discountApplied / 100)) * item.quantity;
+        categoryDiscountValue += discountAmount;
+      }
+    }
+
+    const userId = req.session.user._id;
     const selectedAddress = selectedAddresses[0];
 
-    // Check for coupon application
     let coupon = null;
-    let finalAmount = totalAmount + 50; // Assuming 50 is a delivery charge
- console.log("fgvhdb",finalAmount)
+    let finalAmount = totalAmount + 50;
+
     if (coupenId && mongoose.Types.ObjectId.isValid(coupenId)) {
       coupon = await CouponModel.findById(coupenId);
-      
       if (!coupon || !coupon.isActive) {
         return res.status(400).json({ ok: false, msg: "Invalid or inactive coupon.", red: "/cart" });
       }
@@ -91,10 +104,8 @@ export const checkoutFn = async (req, res) => {
       }
     }
 
-    // Check stock and update products
     for (const item of orderItems) {
-      const product = await ProductModel.findById(item.productId); 
-      
+      const product = await ProductModel.findById(item.productId);
       if (!product) {
         return res.json({ ok: false, msg: "Product not found", red: "/cart" });
       }
@@ -113,7 +124,6 @@ export const checkoutFn = async (req, res) => {
       await product.save();
     }
 
-
     function generateOrderId() {
       return 'COD-' + Math.random().toString(36).substr(2, 9).toUpperCase();
     }
@@ -124,15 +134,17 @@ export const checkoutFn = async (req, res) => {
       items: orderItems,
       address: {
         type: selectedAddress.type,
-        streetAddress: selectedAddress.streetAddress, 
-        city: selectedAddress.city, 
-        state: selectedAddress.state, 
-        postalCode: selectedAddress.zip, 
-        country: selectedAddress.country, 
-      }, 
-      totalAmount:  Math.round(finalAmount),
+        streetAddress: selectedAddress.streetAddress,
+        city: selectedAddress.city,
+        state: selectedAddress.state,
+        postalCode: selectedAddress.zip,
+        country: selectedAddress.country,
+      },
+      
+      totalAmount: Math.round(finalAmount),
+      totelOrginalPrice,
+      categoryDiscountValue,
       orderId: orderId,
-      // isCoupenApplied: coupon ? true : false,
       paymentMethod,
       couponId: coupon ? coupon._id : null,
     });
@@ -141,7 +153,6 @@ export const checkoutFn = async (req, res) => {
     await CartModel.deleteOne({ userId: userId });
 
     return res.status(201).json({ ok: true, msg: "Order placed successfully!", red: "/orders" });
-    
   } catch (error) {
     console.error("Error processing checkout:", error);
     return res.render("user/error");

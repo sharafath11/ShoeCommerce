@@ -111,31 +111,46 @@ export const createOrder = async (req, res) => {
     }
   };
   
-
   export const verifyRazorpay = async (req, res) => {
     try {
       const { paymentId, orderId, signature } = req.body;
-
-      // Create HMAC for payment verification
+  
       const hmac = crypto.createHmac('sha256', process.env.RKEY_SECRET);
       hmac.update(orderId + "|" + paymentId);
       const generatedSignature = hmac.digest('hex');
   
       if (generatedSignature === signature) {
-        // If the signature matches, update payment status to 'Paid'
-        const updatedOrder = await OrderModel.findOneAndUpdate(
-          { razorpayOrderId: orderId },
-          { paymentStatus: 'Paid' },
-          { new: true }
-        );
-       
-      
-        if (!updatedOrder) {
+        let totalOriginalPrice = 0;
+        let categoryDiscountValue = 0;
+  
+        const order = await OrderModel.findOne({ razorpayOrderId: orderId });
+        if (!order) {
           return res.status(404).json({ ok: false, msg: 'Order not found' });
         }
-        return res.json({ ok: true, msg: 'Payment verified and updated successfully!', order: updatedOrder, red: "/orders" });
+  
+        for (const item of order.items) {
+          const product = await ProductModel.findById(item.productId);
+  
+          if (product) {
+            totalOriginalPrice += product.originalPrice * item.quantity;
+            const discountAmount = (product.originalPrice * (product.discountApplied / 100)) * item.quantity;
+            categoryDiscountValue += discountAmount;
+          }
+        }
+
+        order.paymentStatus = 'Paid';
+        order.totelOrginalPrice = totalOriginalPrice;
+        order.categoryDiscountValue = categoryDiscountValue;
+        await order.save();
+  
+        return res.json({
+          ok: true,
+          msg: 'Payment verified and updated successfully!',
+          order,
+          red: "/orders"
+        });
       } else {
-        
+
         await OrderModel.findOneAndUpdate(
           { razorpayOrderId: orderId },
           { paymentStatus: 'Failed' }
@@ -145,6 +160,7 @@ export const createOrder = async (req, res) => {
       }
     } catch (error) {
       console.error('Error verifying Razorpay payment:', error);
+  
       await OrderModel.findOneAndUpdate(
         { razorpayOrderId: req.body.orderId },
         { paymentStatus: 'Failed' }
@@ -153,31 +169,31 @@ export const createOrder = async (req, res) => {
       return res.json({ ok: false, msg: 'Internal Server Error. Order status updated to "Failed".' });
     }
   };
+  
+  
   export const retryPayment = async (req, res) => {
     try {
-      const { orderId } = req.body; // Get orderId from the request body
-      
-      // Find the order from the database
+      const { orderId } = req.body; 
+
       const order = await OrderModel.findById(orderId);
       if (!order) {
         return res.status(404).json({ message: 'Order not found' });
       }
-  
-      // Prepare the order details for retrying the payment
+
       const paymentDetails = {
-        amount: order.totalAmount * 100, // Razorpay expects the amount in paise (multiply by 100 if in INR)
-        currency: 'INR', // Currency, assuming INR, you can set dynamically
-        receipt: `receipt_order_${orderId}`, // Unique receipt ID for tracking
-        payment_capture: 1, // Auto-capture payment after authorization
+        amount: order.totalAmount * 100, 
+        currency: 'INR', 
+        receipt: `receipt_order_${orderId}`,
+        payment_capture: 1, 
       };
   
-      // Create a new Razorpay order
+
       const razorpayOrder = await razorpayI.orders.create(paymentDetails);
     
       res.status(200).json({
-        amount: razorpayOrder.amount, // Amount in the smallest currency unit (e.g., paise)
-        currency: razorpayOrder.currency, // Currency code
-        newOderId: razorpayOrder.id, // New Razorpay order ID
+        amount: razorpayOrder.amount,
+        currency: razorpayOrder.currency, 
+        newOderId: razorpayOrder.id,
       });
     } catch (error) {
       console.error('Error creating Razorpay order:', error);
@@ -186,42 +202,53 @@ export const createOrder = async (req, res) => {
   };
   export const verifyRetryPayment = async (req, res) => {
     try {
-      const { paymentId, orderId, signature ,id} = req.body; // Extract payment details from the request
+      const { paymentId, orderId, signature, id } = req.body;
   
       if (!paymentId || !orderId || !signature) {
         return res.status(400).json({ ok: false, msg: 'Missing required fields' });
       }
-  
-      // Fetch the existing order from the database using the new Razorpay order ID
       const order = await OrderModel.findOne({ _id: id });
-;
       if (!order) {
         return res.status(404).json({ ok: false, msg: 'Order not found' });
       }
   
-      // Create HMAC for payment verification
       const hmac = crypto.createHmac('sha256', process.env.RKEY_SECRET);
       hmac.update(`${orderId}|${paymentId}`);
       const generatedSignature = hmac.digest('hex');
   
       if (generatedSignature === signature) {
-        // If the signature matches, update the order's payment status to 'Paid'
-        const updatedOrder = await OrderModel.findOneAndUpdate(
-          { _id: id },  // Use `_id` to find the order by its unique MongoDB ID
-          { paymentStatus: 'Paid' },  // Update the payment status to 'Paid'
-          { new: true }  // Return the updated document
-        );
-        
 
+        let totalOriginalPrice = 0;
+        let categoryDiscountValue = 0;
+  
+        for (const item of order.items) {
+          const product = await ProductModel.findById(item.productId);
+          if (product) {
+            totalOriginalPrice += product.originalPrice * item.quantity;
+            const discountAmount = (product.originalPrice * (product.discountApplied / 100)) * item.quantity;
+            categoryDiscountValue += discountAmount;
+          }
+        }
+  
+        const updatedOrder = await OrderModel.findOneAndUpdate(
+          { _id: id },
+          {
+            paymentStatus: 'Paid',
+            totelOrginalPrice:totalOriginalPrice,
+            categoryDiscountValue
+          },
+          { new: true }
+        );
+  
         if (!updatedOrder) {
           return res.status(404).json({ ok: false, msg: 'Order update failed' });
         }
-
+  
         return res.status(200).json({
           ok: true,
           msg: 'Retry payment verified and order updated successfully!',
           order: updatedOrder,
-          redirect: '/orders', 
+          redirect: '/orders'
         });
       } else {
         await OrderModel.findOneAndUpdate(
@@ -237,7 +264,7 @@ export const createOrder = async (req, res) => {
     } catch (error) {
       console.error('Error verifying retried payment:', error);
       await OrderModel.findOneAndUpdate(
-        { razorpayOrderId: req.body.newOrderId },
+        { razorpayOrderId: req.body.orderId },
         { paymentStatus: 'Failed' }
       );
   
@@ -247,5 +274,4 @@ export const createOrder = async (req, res) => {
       });
     }
   };
- 
   

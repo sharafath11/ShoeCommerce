@@ -67,10 +67,11 @@
                     <th>Customer Name</th>
                     <th>Order Date</th>
                     <th>Order Items</th>
-                    <th>Total Amount</th>
+                    <th>Orginal Amount</th>
                     <th>Offer Price</th>
                    
                     <th>Coupon Discount</th>
+                    <th>Delivery Charge</th>
                     <th>Payment Method</th>
                     <th>Final Price</th>
                 </tr>
@@ -83,12 +84,13 @@
                             <td><%= order.user.username %></td>
                             <td><%= order.orderDate.toDateString() %></td>
                             <td><%= order.items.length %></td>
-                            <td><%=order.totalAmount%></td>
-                            <td><%= order.offerPrice %></td>
+                            <td><%=order.totelOrginalPrice%></td>
+                            <td><%= order.categoryDiscountValue %></td>
                             
-                            <td><%= order.couponDiscount %></td>
+                            <td><%= order.couponId ? order.couponId.discountValue : 0 %>%</td>
+                            <td>50</td>
                             <td><%= order.paymentMethod %></td>
-                            <td><%= order.finalPrice %></td>
+                            <td><%= order.totalAmount %></td>
                         </tr>
                     <% }) %>
                 </tbody>
