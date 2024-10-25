@@ -104,6 +104,9 @@ const OrderSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Coupon",
   },
+  coupenValue:{
+    type:Number
+  },
   paymentMethod: {
     type: String,
     enum: ["COD", "Razorpay","Wallet"],
@@ -127,6 +130,7 @@ const OrderSchema = new mongoose.Schema({
   totelOrginalPrice:{
     type:Number
   },
+
   razorpayOrderId: {
     type: String,
   },

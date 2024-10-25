@@ -81,6 +81,7 @@ export const checkoutFn = async (req, res) => {
     const selectedAddress = selectedAddresses[0];
 
     let coupon = null;
+    let cvalue=0
     let finalAmount = totalAmount + 50;
 
     if (coupenId && mongoose.Types.ObjectId.isValid(coupenId)) {
@@ -97,6 +98,7 @@ export const checkoutFn = async (req, res) => {
         finalAmount -= coupon.discountValue;
       } else if (coupon.discountType === "percentage") {
         finalAmount -= (totalAmount * coupon.discountValue) / 100;
+         cvalue=(totalAmount * coupon.discountValue) / 100 
       }
 
       if (finalAmount < 0) {
@@ -143,8 +145,10 @@ export const checkoutFn = async (req, res) => {
       
       totalAmount: Math.round(finalAmount),
       totelOrginalPrice,
+      totelDiscountValue:totelOrginalPrice-totalAmount,
       categoryDiscountValue,
       orderId: orderId,
+      coupenValue:cvalue,
       paymentMethod,
       couponId: coupon ? coupon._id : null,
     });

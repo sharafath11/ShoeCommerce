@@ -16,19 +16,26 @@
     <div class="d-flex justify-content-between mb-3">
         <div class="card p-2 col-md-4 text-center">
             <h5>Total Sales:</h5>
-            <p class="display-6" id="totalSales">$712.50</p>
+            <p class="display-6" id="totalSales"><%= totalSalesAmount %></p>
         </div>
         <div class="card p-2 col-md-4 text-center">
             <h5>Total Discount:</h5>
-            <p class="display-6" id="totalDiscount">$112.50</p>
+            <p class="display-6" id="totalDiscount"><%= totalDiscount %></p>
         </div>
+        <div class="col-md-4 text-end">
+            <button class="btn btn-success" onclick="downloadPDF()">Download PDF</button>
+            <button class="btn btn-info" onclick="downloadExcel()">Download Excel</button>
+        </div>
+        
+        
     </div>
+    
 
     <!-- Filter by Date and Payment Method -->
     <div class="row mb-3">
         <div class="col-md-6">
             <label for="dateFilter" class="filter-label">Filter by Date</label>
-            <select class="form-select filter-select" id="dateFilter" onchange="applyFilters()">
+            <select class="form-select filter-select" id="dateFilter">
                 <option value="">All Days</option>
                 <option value="daily">Daily</option>
                 <option value="weekly">Weekly</option>
@@ -37,27 +44,38 @@
                 <option value="custom">Custom</option>
             </select>
         </div>
-    
-        <div class="col-md-3" id="startDateInput" style="display:none;">
-            <label for="startDate" class="filter-label">Start Date</label>
-            <input type="date" class="form-control" id="startDate">
-        </div>
-        <div class="col-md-3" id="endDateInput" style="display:none;">
-            <label for="endDate" class="filter-label">End Date</label>
-            <input type="date" class="form-control" id="endDate">
-        </div>
-    
+        <form id="customDateFilterForm" onsubmit="customFiltering(event)">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="startDate" class="filter-label">Start Date</label>
+                    <input type="date" class="form-control" id="startDate" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="endDate" class="filter-label">End Date</label>
+                    <input type="date" class="form-control" id="endDate" required>
+                </div>
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-primary mt-4">Apply Custom Date Filters</button>
+                </div>
+            </div>
+        </form>
+        
+        
         <div class="col-md-6">
             <label for="paymentFilter" class="filter-label">Filter by Payment Method</label>
-            <select class="form-select filter-select" id="paymentFilter" onchange="applyFilters()">
+            <select class="form-select filter-select" id="paymentFilter">
                 <option value="">Select payment method</option>
                 <option value="COD">Cash on Delivery</option>
                 <option value="Razorpay">Razorpay</option>
                 <option value="Wallet">Wallet</option>
             </select>
         </div>
+    
+        <div class="col-md-12 mt-3">
+            <button class="btn btn-primary" onclick="applyFilters()">Apply Filters</button>
+        </div>
     </div>
-
+    
     <!-- Order Table -->
     <div class="table-responsive">
         <table class="table table-bordered text-center" id="orderTable">
@@ -85,9 +103,9 @@
                             <td><%= order.orderDate.toDateString() %></td>
                             <td><%= order.items.length %></td>
                             <td><%=order.totelOrginalPrice%></td>
-                            <td><%= order.categoryDiscountValue %></td>
+                            <td><%= order.totelDiscountValue %></td>
                             
-                            <td><%= order.couponId ? order.couponId.discountValue : 0 %>%</td>
+                            <td><%= order.coupenValue %></td>
                             <td>50</td>
                             <td><%= order.paymentMethod %></td>
                             <td><%= order.totalAmount %></td>
@@ -117,32 +135,52 @@
             endDateInput.style.display = 'none';
         }
     });
-
     function applyFilters() {
-        // Get filter values
-        const dateFilter = document.getElementById('dateFilter').value;
-        const startDate = document.getElementById('startDate').value;
-        const endDate = document.getElementById('endDate').value;
-        const paymentFilter = document.getElementById('paymentFilter').value;
+    // Get filter values from the dropdowns
+    const dateFilter = document.getElementById('dateFilter').value;
+    const paymentFilter = document.getElementById('paymentFilter').value;
 
-        // Construct the new URL with query parameters
-        const url = new URL(window.location.href);
-        url.searchParams.set('dateFilter', dateFilter);
-        url.searchParams.set('paymentFilter', paymentFilter);
-        
-        // Only add startDate and endDate if custom is selected
-        if (dateFilter === 'custom') {
-            url.searchParams.set('startDate', startDate);
-            url.searchParams.set('endDate', endDate);
-        } else {
-            // Remove startDate and endDate if not in custom mode
-            url.searchParams.delete('startDate');
-            url.searchParams.delete('endDate');
-        }
+    // Construct the new URL with query parameters
+    const url = new URL(window.location.href);
+    url.searchParams.set('dateFilter', dateFilter);
+    url.searchParams.set('paymentFilter', paymentFilter);
 
-        // Update the URL and reload the page
-        window.location.href = url.toString();
+    // Update the URL and reload the page
+    window.location.href = url.toString();
+}
+function customFiltering(event) {
+    event.preventDefault(); // Prevent the default form submission
+
+    // Get the selected start and end dates
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+
+    // Get the selected payment method
+    const paymentFilter = document.getElementById('paymentFilter').value;
+
+    // Construct the URL with query parameters
+    const url = `/admin/sales/report?dateFilter=custom&startDate=${startDate}&endDate=${endDate}` + 
+                (paymentFilter ? `&paymentFilter=${paymentFilter}` : '');
+
+    // Redirect to the URL
+    window.location.href = url;
+}
+
+
+</script>
+<script>
+    function downloadPDF() {
+        const url = '/admin/sales/report?download=pdf'; 
+        window.open(url, '_blank');
     }
+
+    function downloadExcel() {
+        const url = '/admin/sales/report?download=excel'; 
+        window.open(url, '_blank');
+    }
+</script>
+
+
 </script>
 </body>
 </html>
