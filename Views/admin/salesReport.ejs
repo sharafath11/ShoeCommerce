@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Summary</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<style> body { background-color: #f0f4f8; font-family: 'Arial', sans-serif; } h2 { font-weight: bold; color: #333; } .card { background-color: #fff; border: none; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); transition: transform 0.2s; } .card:hover { transform: translateY(-5px); } .table th { background-color: #007bff; color: white; } .table th, .table td { vertical-align: middle; font-size: 1rem; } .filter-label { font-weight: bold; color: #555; } .filter-select { border-radius: 0.5rem; } .btn-custom { background-color: #007bff; color: white; transition: background-color 0.3s; } .btn-custom:hover { background-color: #0056b3; } @media (max-width: 768px) { .card { margin-bottom: 1rem; } .table-responsive { overflow-x: auto; } } </style>
+<body>
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Order Summary</h2>
+
+    <div class="d-flex justify-content-between mb-3">
+        <div class="card p-2 col-md-4 text-center">
+            <h5>Total Sales:</h5>
+            <p class="display-6" id="totalSales">$712.50</p>
+        </div>
+        <div class="card p-2 col-md-4 text-center">
+            <h5>Total Discount:</h5>
+            <p class="display-6" id="totalDiscount">$112.50</p>
+        </div>
+    </div>
+
+    <!-- Filter by Date and Payment Method -->
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label for="dateFilter" class="filter-label">Filter by Date</label>
+            <select class="form-select filter-select" id="dateFilter" onchange="applyFilters()">
+                <option value="">All Days</option>
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+                <option value="yearly">Yearly</option>
+                <option value="custom">Custom</option>
+            </select>
+        </div>
+    
+        <div class="col-md-3" id="startDateInput" style="display:none;">
+            <label for="startDate" class="filter-label">Start Date</label>
+            <input type="date" class="form-control" id="startDate">
+        </div>
+        <div class="col-md-3" id="endDateInput" style="display:none;">
+            <label for="endDate" class="filter-label">End Date</label>
+            <input type="date" class="form-control" id="endDate">
+        </div>
+    
+        <div class="col-md-6">
+            <label for="paymentFilter" class="filter-label">Filter by Payment Method</label>
+            <select class="form-select filter-select" id="paymentFilter" onchange="applyFilters()">
+                <option value="">Select payment method</option>
+                <option value="COD">Cash on Delivery</option>
+                <option value="Razorpay">Razorpay</option>
+                <option value="Wallet">Wallet</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Order Table -->
+    <div class="table-responsive">
+        <table class="table table-bordered text-center" id="orderTable">
+            <thead class="table-light">
+                <tr>
+                    <th>Order ID</th>
+                    <th>Customer Name</th>
+                    <th>Order Date</th>
+                    <th>Order Items</th>
+                    <th>Total Amount</th>
+                    <th>Offer Price</th>
+                   
+                    <th>Coupon Discount</th>
+                    <th>Payment Method</th>
+                    <th>Final Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tbody>
+                    <% orders.forEach(order => { %>
+                        <tr>
+                            <td><%= order.orderId %></td>
+                            <td><%= order.user.username %></td>
+                            <td><%= order.orderDate.toDateString() %></td>
+                            <td><%= order.items.length %></td>
+                            <td><%=order.totalAmount%></td>
+                            <td><%= order.offerPrice %></td>
+                            
+                            <td><%= order.couponDiscount %></td>
+                            <td><%= order.paymentMethod %></td>
+                            <td><%= order.finalPrice %></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // Show/Hide date inputs based on selected date filter
+    document.getElementById('dateFilter').addEventListener('change', function() {
+        const selectedValue = this.value;
+        const startDateInput = document.getElementById('startDateInput');
+        const endDateInput = document.getElementById('endDateInput');
+
+        if (selectedValue === 'custom') {
+            startDateInput.style.display = 'block';
+            endDateInput.style.display = 'block';
+        } else {
+            startDateInput.style.display = 'none';
+            endDateInput.style.display = 'none';
+        }
+    });
+
+    function applyFilters() {
+        // Get filter values
+        const dateFilter = document.getElementById('dateFilter').value;
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+        const paymentFilter = document.getElementById('paymentFilter').value;
+
+        // Construct the new URL with query parameters
+        const url = new URL(window.location.href);
+        url.searchParams.set('dateFilter', dateFilter);
+        url.searchParams.set('paymentFilter', paymentFilter);
+        
+        // Only add startDate and endDate if custom is selected
+        if (dateFilter === 'custom') {
+            url.searchParams.set('startDate', startDate);
+            url.searchParams.set('endDate', endDate);
+        } else {
+            // Remove startDate and endDate if not in custom mode
+            url.searchParams.delete('startDate');
+            url.searchParams.delete('endDate');
+        }
+
+        // Update the URL and reload the page
+        window.location.href = url.toString();
+    }
+</script>
+</body>
+</html>

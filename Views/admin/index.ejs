@@ -53,135 +53,146 @@
 
 </style>
 <body>
-  <div class="container-fluid">
-      <div class="row">
-          <!-- Sidebar -->
-          <%- include('partials/sidebar') %>
-
-          <!-- Main Content -->
-          <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-              <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                  <h1 class="h2">Dashboard</h1>
-              </div>
-
-              <!-- Stats Row -->
-              <div class="row">
-                  <div class="col-md-3">
-                      <div class="card text-center">
-                          <div class="card-body">
-                              <h5 class="card-title">Total Revenue       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-dollar-sign h-4 w-4 text-muted-foreground"><line x1="12" x2="12" y1="2" y2="22"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg></h5>
-                              <p class="card-text display-6">$45,231.89</p>
-                              <small>+20.1% from last month</small>
-                          </div>
-                      </div>
-                  </div>
-                  <div class="col-md-3">
-                      <div class="card text-center">
-                          <div class="card-body">
-                              <h5 class="card-title">Sales       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-credit-card h-4 w-4 text-muted-foreground"><rect width="20" height="14" x="2" y="5" rx="2"></rect><line x1="2" x2="22" y1="10" y2="10"></line></svg></h5>
-                              <p class="card-text display-6">+2350</p>
-                              <small>+180.1% from last month</small>
-                          </div>
-                      </div>
-                  </div>
-                  <div class="col-md-3">
-                      <div class="card text-center">
-                          <div class="card-body">
-                              <h5 class="card-title">Active Users      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users h-4 w-4 text-muted-foreground"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></h5>
-                              <p class="card-text display-6">+573</p>
-                              <small>+201 since last hour</small>
-                          </div>
-                      </div>
-                  </div>
-                  <div class="col-md-3">
-                      <div class="card text-center">
-                          <div class="card-body">
-                              <h5 class="card-title">Activity  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-activity h-4 w-4 text-muted-foreground"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"></path></svg></h5>
-                              <p class="card-text display-6">+24%</p>
-                              <small>+4% from last month</small>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-
-
-              <div class="row mt-4">
-                  <div class="col-md-8">
-                      <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">New Users</h5>
-                            <table class="table table-borderless">
-                                <thead>
-                                    <tr>
-                                        <th>SLNO</th>
-                                        <th>Name</th>
-                                        <th>Signup Date</th>
-                                        <th>email</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% newUsers.forEach((user,index) => { %>
-                                        <tr>
-                                            <td><%= index+1%></td>
-                                            <td><%= user.username %></td>
-                                            <td><%= new Date(user.createdAt).toLocaleDateString() %></td>
-                                            <td><%= user.email %></td>
-                                        </tr>
-                                    <% }) %>
-                                </tbody>
-                            </table>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <%- include('partials/sidebar') %>
+    
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Dashboard</h1>
+                   <button class="btn btn-dark"> <a href="/admin/sales/report">Sales  Report</a></button>
+                </div>
+    
+                <!-- Stats Row -->
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h5 class="card-title">Total Revenue</h5>
+                                <p class="card-text display-6">₹<%= totalRevenue %></p>
+                            </div>
                         </div>
-                        
-                      </div>
-                  </div>
-                  <div class="col-md-4">
-                      <div class="card">
-                          <div class="card-body">
-                              <h5 class="card-title">Recent order</h5>
-                              <table class="table table-borderless">
-                                  <thead>
-                                      <tr>
-                                          <th>Order</th>
-                                          <th>Status</th>
-                                          <th>Total</th>
-                                      </tr>
-                                  </thead>
-                                  <tbody>
-                                      <tr>
-                                          <td>1</td>
-                                          <td>Completed</td>
-                                          <td>$150.00</td>
-                                      </tr>
-                                      <tr>
-                                          <td>2</td>
-                                          <td>Processing</td>
-                                          <td>$89.99</td>
-                                      </tr>
-                                      <tr>
-                                          <td>3</td>
-                                          <td>Shipped</td>
-                                          <td>$210.50</td>
-                                      </tr>
-                                      <tr>
-                                          <td>4</td>
-                                          <td>Completed</td>
-                                          <td>$75.25</td>
-                                      </tr>
-                                      <tr>
-                                          <td>5</td>
-                                          <td>Processing</td>
-                                          <td>$129.99</td>
-                                      </tr>
-                                  </tbody>
-                              </table>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-          </main>
-      </div>
-  </div>
-
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h5 class="card-title">Sales</h5>
+                                <p class="card-text display-6"><%= totalSalesCount %></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h5 class="card-title">Total Users</h5>
+                                <p class="card-text display-6"><%= totalUsers %></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h5 class="card-title">Total Products</h5>
+                                <p class="card-text display-6"><%= totalProducts %></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- New Users and Recent Orders Row -->
+                <div class="row mt-4">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">New Users</h5>
+                                <table class="table table-borderless">
+                                    <thead>
+                                        <tr>
+                                            <th>SLNO</th>
+                                            <th>Name</th>
+                                            <th>Signup Date</th>
+                                            <th>Email</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% newUsers.forEach((user, index) => { %>
+                                            <tr>
+                                                <td><%= index + 1 %></td>
+                                                <td><%= user.username %></td>
+                                                <td><%= new Date(user.createdAt).toLocaleDateString() %></td>
+                                                <td><%= user.email %></td>
+                                            </tr>
+                                        <% }) %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- Out of Stock Products Row -->
+                <div class="row mt-4">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Out of Stock Products</h5>
+                                <table class="table table-borderless">
+                                    <thead>
+                                        <tr>
+                                            <th>SLNO</th>
+                                            <th>Product Name</th>
+                                            <th>Brand</th>
+                                            <th>Price</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% outOfStockProducts.forEach((product, index) => { %>
+                                            <tr>
+                                                <td><%= index + 1 %></td>
+                                                <td><%= product.name %></td>
+                                                <td><%= product.brand %></td>
+                                                <td>₹<%= product.price %></td>
+                                            </tr>
+                                        <% }) %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                    </div>
+                    
+                    <div class="col-md-4 ms-auto">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Recent Orders</h5>
+                                <table class="table table-borderless">
+                                    <thead>
+                                        <tr>
+                                            <th>OrderId</th>
+                                            <th>Status</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% newOrders.forEach((order) => { %>
+                                            <tr>
+                                                <td><%= order.orderId %></td>
+                                                <td><%= order.status %></td>
+                                                <td>₹<%= order.totalAmount %></td>
+                                            </tr>
+                                        <% }) %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                
+            </main>
+        </div>
+    </div>
+    
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

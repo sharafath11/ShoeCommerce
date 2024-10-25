@@ -13,6 +13,7 @@ import { reviewBlockController, reviewRender } from "../controller/adminControll
 import { addCoupen, coupenRender, coupenUpdate } from "../controller/adminController/coupen.js";
 import { addCoffers, editCoffers, renderOffersPage } from "../controller/adminController/offers.js";
 import { orderReturnAccept, orderReturnReject, } from "../controller/adminController/walletController..js";
+import { saleReport } from "../controller/adminController/salesReport.js";
 
 const router=express.Router();
 const storage = multer.diskStorage({
@@ -62,5 +63,6 @@ router.post("/editCoffers/:id",verifyToken,editCoffers)
 router.get("/orders/return",returnOrders)
 router.post("/accept-return",orderReturnAccept)
 router.post("/reject-return",orderReturnReject)
+router.get("/sales/report",saleReport)
 
 export default router
