@@ -14,7 +14,7 @@ export const getSingleProdect = async (req, res) => {
       .populate('categoryId')
       .exec();
     if (!product) {
-      return res.status(404).render('user/error', {
+      return res.render('user/error', {
         message: 'Product not found',
         user,
         WishlistQty,

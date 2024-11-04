@@ -29,7 +29,7 @@ export const addCoupen = async (req, res) => {
             minimumPrice
         });
         await newCoupon.save();
-        res.status(201).json({ msg: "Coupon added successfully", ok: true, coupon: newCoupon });
+        res.json({ msg: "Coupon added successfully", ok: true, coupon: newCoupon });
     } catch (error) {
         res.status(500).json({ ok: false, msg: "Error adding coupon", error: error.message });
     }

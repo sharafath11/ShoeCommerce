@@ -4,6 +4,7 @@ import OrderModel from "../../models/orderModel.js";
 import ProductModel from "../../models/prodectsModel.js";
 import CartModel from "../../models/cartModel.js";
 import mongoose from "mongoose";
+import CouponModel from "../../models/coupenModel.js";
 
 
 const razorpayI = new Razorpay({
@@ -14,7 +15,7 @@ const razorpayI = new Razorpay({
 
 export const createOrder = async (req, res) => {
   try {
-    const { amount, currency = 'INR', receipt, selectedAddresses, cartItems, couponId } = req.body;
+    const { amount, currency = 'INR', receipt, selectedAddresses, cartItems,  coupenId } = req.body;
     const userId = req.session.user._id;
     const selectedAddress = selectedAddresses[0];
 
@@ -34,14 +35,12 @@ export const createOrder = async (req, res) => {
  
     let coupon = null;
     let couponValue = 0;
+ 
 
-    if (couponId && mongoose.Types.ObjectId.isValid(couponId)) {
-      coupon = await CouponModel.findById(couponId);
-      if (!coupon || !coupon.isActive) {
-        return res.status(400).json({ ok: false, msg: "Invalid or inactive coupon." });
-      }
+    if (coupenId && mongoose.Types.ObjectId.isValid(coupenId)) {
+      coupon = await CouponModel.findById(coupenId);
       if (finalAmount < coupon.minimumAmount) {
-        return res.status(400).json({ msg: `Coupon cannot be applied. Minimum order total should be ₹${coupon.minimumAmount}.` });
+        return res.json({ msg: `Coupon cannot be applied. Minimum order total should be ₹${coupon.minimumAmount}.` });
       }
       if (coupon.discountType === "fixed") {
         finalAmount -= coupon.discountValue;
@@ -148,7 +147,7 @@ export const createOrder = async (req, res) => {
   
         const order = await OrderModel.findOne({ razorpayOrderId: orderId }).populate('couponId');
         if (!order) {
-          return res.status(404).json({ ok: false, msg: 'Order not found' });
+          return res.json({ ok: false, msg: 'Order not found' });
         }
         for (const item of order.items) {
           const product = await ProductModel.findById(item.productId);
@@ -209,7 +208,7 @@ export const createOrder = async (req, res) => {
 
       const order = await OrderModel.findById(orderId);
       if (!order) {
-        return res.status(404).json({ message: 'Order not found' });
+        return res.json({ message: 'Order not found' });
       }
 
       const paymentDetails = {
@@ -237,12 +236,12 @@ export const createOrder = async (req, res) => {
       const { paymentId, orderId, signature, id } = req.body;
 
       if (!paymentId || !orderId || !signature || !id) {
-        return res.status(400).json({ ok: false, msg: 'Missing required fields' });
+        return res.json({ ok: false, msg: 'Missing required fields' });
       }
 
       const order = await OrderModel.findOne({ _id: id });
       if (!order) {
-        return res.status(404).json({ ok: false, msg: 'Order not found' });
+        return res.json({ ok: false, msg: 'Order not found' });
       }
   
       const hmac = crypto.createHmac('sha256', process.env.RKEY_SECRET);
@@ -274,7 +273,7 @@ export const createOrder = async (req, res) => {
         );
   
         if (!updatedOrder) {
-          return res.status(404).json({ ok: false, msg: 'Order update failed' });
+          return res.json({ ok: false, msg: 'Order update failed' });
         }
   
         return res.status(200).json({
@@ -290,7 +289,7 @@ export const createOrder = async (req, res) => {
           { paymentStatus: 'Failed' }
         );
   
-        return res.status(400).json({
+        return res.json({
           ok: false,
           msg: 'Payment verification failed. Order status updated to "Failed".',
         });

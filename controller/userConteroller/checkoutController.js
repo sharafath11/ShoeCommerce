@@ -44,9 +44,6 @@ export const getCheckout = async (req, res) => {
     return res.render("user/error");
   }
 };
-
-
-
 export const checkoutFn = async (req, res) => {
   try {
     const { cartItems, selectedAddresses, coupenId, paymentMethod } = req.body;
@@ -87,11 +84,11 @@ export const checkoutFn = async (req, res) => {
     if (coupenId && mongoose.Types.ObjectId.isValid(coupenId)) {
       coupon = await CouponModel.findById(coupenId);
       if (!coupon || !coupon.isActive) {
-        return res.status(400).json({ ok: false, msg: "Invalid or inactive coupon.", red: "/cart" });
+        return res.json({ ok: false, msg: "Invalid or inactive coupon.", red: "/cart" });
       }
       if (finalAmount < coupon.minimumAmount) {
-        return res.status(400).json({
-          message: `Coupon cannot be applied. Minimum order total should be ₹${coupon.minimumPrice}.`
+        return res.json({
+          msg: `Coupon cannot be applied. Minimum order total should be ₹${coupon.minimumPrice}.`
         });
       }
       if (coupon.discountType === "fixed") {
@@ -156,7 +153,7 @@ export const checkoutFn = async (req, res) => {
     await newOrder.save();
     await CartModel.deleteOne({ userId: userId });
 
-    return res.status(201).json({ ok: true, msg: "Order placed successfully!", red: "/orders" });
+    return res.json({ ok: true, msg: "Order placed successfully!", red: "/orders" });
   } catch (error) {
     console.error("Error processing checkout:", error);
     return res.render("user/error");

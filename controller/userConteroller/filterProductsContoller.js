@@ -1,6 +1,5 @@
 import { categoryModel } from "../../models/category.js";
 import ProductModel from "../../models/prodectsModel.js";
-import userModel from "../../models/userModel.js";
 import Wishlist from "../../models/whislistModel.js";
 export const filteredProducts = async (req, res) => {
   try {
@@ -13,12 +12,16 @@ export const filteredProducts = async (req, res) => {
     if (category) query.categoryId = category;
 
     if (search) {
-      const searchRegex = new RegExp(search, "i");
-      query.$or = [
-        { name: searchRegex },
-        { description: searchRegex }
-      ];
+      const searchWords = search.split(" ").map(word => new RegExp(word, "i")); 
+      query.$and = searchWords.map(wordRegex => ({
+        $or: [
+          { name: wordRegex },
+          { description: wordRegex }
+        ]
+      }));
     }
+    
+    
 
     const totalProducts = await ProductModel.countDocuments(query);
 
@@ -30,16 +33,16 @@ export const filteredProducts = async (req, res) => {
 
     
     if (sort === "2") { 
-      // Low to High
+
       products.sort((a, b) => a.price - b.price);
     } else if (sort === "3") { 
-      // High to Low
+
       products.sort((a, b) => b.price - a.price);
     } else if (sort === "AZ") { 
-      // A to Z
+
       products.sort((a, b) => a.name.localeCompare(b.name));
     } else if (sort === "ZA") { 
-      // Z to A
+
       products.sort((a, b) => b.name.localeCompare(a.name));
     }
 

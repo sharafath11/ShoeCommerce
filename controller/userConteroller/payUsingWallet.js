@@ -1,7 +1,9 @@
+import mongoose from "mongoose";
 import CartModel from "../../models/cartModel.js";
 import OrderModel from "../../models/orderModel.js";
 import ProductModel from "../../models/prodectsModel.js";
 import WalletModel from "../../models/wallet.js";
+import CouponModel from "../../models/coupenModel.js";
 
 
 export const payWithWallet = async (req, res) => {
@@ -33,17 +35,17 @@ export const payWithWallet = async (req, res) => {
 
     let totalOriginalPrice = 0;
     let categoryDiscountValue = 0;
-    let finalAmount = Number(amount) + 50;
+    let finalAmount = Number(amount);
     let couponDiscount = 0;
 
     let isValidCoupon = coupenId && mongoose.Types.ObjectId.isValid(coupenId);
     if (isValidCoupon) {
       const coupon = await CouponModel.findById(coupenId);
       if (!coupon || !coupon.isActive) {
-        return res.status(400).json({ ok: false, msg: 'Invalid or inactive coupon.', red: '/cart' });
+        return res.json({ ok: false, msg: 'Invalid or inactive coupon.', red: '/cart' });
       }
       if (finalAmount < coupon.minimumAmount) {
-        return res.status(400).json({
+        return res.json({
           message: `Coupon requires a minimum total of ₹${coupon.minimumAmount}.`
         });
       }

@@ -14,6 +14,8 @@ import { addCoupen, coupenRender, coupenUpdate } from "../controller/adminContro
 import { addCoffers, editCoffers, renderOffersPage } from "../controller/adminController/offers.js";
 import { orderReturnAccept, orderReturnReject, } from "../controller/adminController/walletController..js";
 import { saleReport } from "../controller/adminController/salesReport.js";
+import { productOfferPageRender } from "../controller/adminController/productOffers.js";
+import { addProductOFfersRenderPage,addOfferSearch, addproductOffers, editPrductOffers } from "../controller/adminController/addProductOffersController.js";
 
 const router=express.Router();
 const storage = multer.diskStorage({
@@ -60,9 +62,14 @@ router.put("/coupons/update",verifyToken,coupenUpdate)
 router.get("/offers",verifyToken,renderOffersPage)
 router.post("/addCoffers",verifyToken,addCoffers)
 router.post("/editCoffers/:id",verifyToken,editCoffers)
-router.get("/orders/return",returnOrders)
-router.post("/accept-return",orderReturnAccept)
-router.post("/reject-return",orderReturnReject)
-router.get("/sales/report",saleReport)
+router.get("/product-offers",verifyToken,productOfferPageRender);
+router.get("/add/product/offer",addProductOFfersRenderPage);
+router.post("/add/products/offer/search",addOfferSearch)
+router.post("/add/product-offers",addproductOffers);
+router.put("/product/edit/offers:offerId",editPrductOffers)
+router.get("/orders/return",verifyToken,returnOrders)
+router.post("/accept-return",verifyToken,orderReturnAccept)
+router.post("/reject-return",verifyToken,orderReturnReject)
+router.get("/sales/report",verifyToken,saleReport)
 
 export default router

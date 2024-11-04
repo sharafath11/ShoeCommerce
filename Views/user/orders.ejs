@@ -403,9 +403,9 @@
                     const returnEndDate = new Date(order.returnEndDate); 
                   %>
             
-                  <!-- Check if the return period has not ended -->
+
                   <% if (currentDate <= returnEndDate) { %>
-                    <!-- Only show the "Return Item" button if the order is delivered -->
+                   
                     <% if (order.status === 'Delivered' && !item.isCanceled && !item.isReturned) { %>
                       <button class="btn btn-dark btn-sm ms-3" onclick="returnHandler('<%= order._id %>', '<%= item.productId %>', '<%= item.size %>',' <%= item.quantity %>')">
                         <i class="fas fa-undo-alt"></i> Return Item
@@ -423,8 +423,7 @@
                         <span class="text-danger">Our team will contact you.</span>
                     <% } %>
                    
-                  <% } else if (order.status !== 'Delivered' && order.paymentStatus !== "Paid") { %>
-                    <!-- Show "Delete" button only if the order is not delivered -->
+                  <% } else if (order.status !== 'Delivered') { %>
                     <button 
                       class="btn btn-link text-danger" 
                       onclick="deleteOrderItem('<%= order._id %>', '<%= item.productId %>', '<%= item.size %>')">

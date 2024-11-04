@@ -9,7 +9,6 @@ export const billContoller=async(req,res)=>{
         if (!order) {
           return res.status(404).send("Order not found");
         }
-    
         res.render('user/bill', { order });
       } catch (error) {
         console.error("Error fetching shop details:", error);

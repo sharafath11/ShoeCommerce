@@ -7,7 +7,7 @@ import passport from "passport";
 import mongoose from "mongoose";
 import session from 'express-session'
 import MongoStore from 'connect-mongo';
-import { disableCatOffer, disableExpiredCoupons } from "./middleware/expireCoupen.js";
+import { activateCategoryOffers, couponActiveWithDate, disableCatOffer, disableExpiredCoupons, productOfferEnabeDisable } from "./middleware/expireCoupen.js";
 
 
 dotenv.config();
@@ -43,10 +43,12 @@ app.use(express.static("views/admin"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 disableExpiredCoupons();
+couponActiveWithDate();
+activateCategoryOffers();
+productOfferEnabeDisable()
 disableCatOffer();
 app.use("/", userRoutes);
 app.use("/admin", adminRoutes);
 app.listen(PORT, () => {
  console.log(`Server is running on port ${PORT}`);
 });
-3

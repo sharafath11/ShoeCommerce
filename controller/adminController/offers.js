@@ -2,134 +2,155 @@ import { categoryModel } from "../../models/category.js";
 import { CategoryOffer } from "../../models/categriesOffersModel.js";
 import ProductModel from "../../models/prodectsModel.js";
 
-
 export const renderOffersPage = async (req, res) => {
   try {
-      const categories = await categoryModel.find();
-      
-      // Get category and isActive from query parameters
-      const { category, isActive } = req.query;
+    const categories = await categoryModel.find();
 
-      // Prepare filter for offers based on the category and isActive status
-      const filter = {};
+    const { category, isActive } = req.query;
 
-      if (category) {
-          filter.categoryId = category;
-      }
+    const filter = {};
 
-      if (isActive) {
-          filter.isActive = isActive === 'true'; // Convert to boolean
-      }
+    if (category) {
+      filter.categoryId = category;
+    }
 
-      // Find offers based on the filter
-      const offers = await CategoryOffer.find(filter).populate("categoryId");
+    if (isActive) {
+      filter.isActive = isActive === "true";
+    }
+    const offers = await CategoryOffer.find(filter).populate("categoryId");
 
-      res.render("admin/offers", {
-          categories,
-          offers,
-          selectedCategory: category || "",
-          selectedIsActive: isActive || ""
-      });
+    res.render("admin/offers", {
+      categories,
+      offers,
+      selectedCategory: category || "",
+      selectedIsActive: isActive || "",
+    });
   } catch (error) {
-      console.error("Error fetching offers or categories:", error);
-      res.status(500).send("Internal Server Error");
+    console.error("Error fetching offers or categories:", error);
+    res.status(500).send("Internal Server Error");
   }
 };
 
-
-
 export const addCoffers = async (req, res) => {
-  const { title, description, discount, category, startDate, endDate, isActive } = req.body;
+  const {
+    title,
+    description,
+    discount,
+    category,
+    startDate,
+    endDate,
+    isActive,
+  } = req.body;
 
-  if (!title || !description || discount === undefined || !category || !startDate || !endDate) {
-      return res.json({ ok: false, msg: 'All fields are required.' });
+  if (
+    !title ||
+    !description ||
+    discount === undefined ||
+    !category ||
+    !startDate ||
+    !endDate
+  ) {
+    return res.json({ ok: false, msg: "All fields are required." });
   }
 
   const startDateObj = new Date(startDate);
   const endDateObj = new Date(endDate);
   const currentDate = new Date();
 
-  if (startDateObj < currentDate) {
-      return res.json({ ok: false, msg: 'Start date must be in the future.' });
-  }
-
-  if (startDateObj >= endDateObj) {
-      return res.json({ ok: false, msg: 'End date must be after start date.' });
+  if (startDateObj < currentDate || startDateObj >= endDateObj) {
+    return res.json({
+      ok: false,
+      msg:
+        startDateObj < currentDate
+          ? "Start date must be in the future."
+          : "End date must be after start date.",
+    });
   }
 
   try {
-      const existingOffer = await CategoryOffer.findOne({ title });
-      if (existingOffer) {
-          return res.json({ ok: false, msg: 'An offer with this title already exists.' });
+    if (isActive && category !== "All Categories") {
+      const activeOfferInCategory = await CategoryOffer.findOne({
+        categoryId: category,
+        isActive: true,
+      });
+      if (activeOfferInCategory) {
+        return res.json({
+          ok: false,
+          msg: "An active offer already exists in this category. Please turn off the active offer before adding a new one.",
+        });
       }
+    }
 
-      // Prepare the new offer object
+    const existingOffer = await CategoryOffer.findOne({ title });
+    if (existingOffer) {
+      return res.json({
+        ok: false,
+        msg: "An offer with this title already exists.",
+      });
+    }
+
       const newOfferData = {
-          title,
-          description,
-          discount,
-          startDate: startDateObj,
-          expireDate: endDateObj,
-          isActive,
+        title,
+        description,
+        discount,
+        startDate: startDateObj,
+        expireDate: endDateObj,
+        isActive,
+        ...(category !== "All Categories" && { categoryId: category }),
       };
 
-      // Only add categoryId if it is not "All Categories"
-      if (category !== "All Categories") {
-          newOfferData.categoryId = category; // Only add categoryId if it's not "All Categories"
-      }
+    const newOffer = new CategoryOffer(newOfferData);
+    await newOffer.save();
 
-      const newOffer = new CategoryOffer(newOfferData);
-      await newOffer.save();
+    const filter =
+      category === "All Categories" ? {} : { categoryId: category };
+    const products = await ProductModel.find(filter);
 
-      // Check if the category is for all categories
-      const filter = category === "All Categories" ? {} : { categoryId: category };
-      const products = await ProductModel.find(filter);
-
-      if (!products.length) {
-          return res.json({ ok: true, msg: 'Offer added, but no products found in the selected category.' });
-      }
-
-      const updates = products.map(product => {
-          if (isActive) {
-              const originalPrice = product.originalPrice || product.price;
-              const discountedPrice = Math.round(originalPrice - originalPrice * (discount / 100));
-
-              return ProductModel.updateOne(
-                  { _id: product._id },
-                  {
-                      price: discountedPrice,
-                      originalPrice,
-                      discountApplied: discount
-                  }
-              );
-          } else {
-              return ProductModel.updateOne(
-                  { _id: product._id },
-                  {
-                      discountApplied: 0
-                  }
-              );
-          }
+    if (!products.length) {
+      return res.json({
+        ok: true,
+        msg: "Offer added, but no products found in the selected category.",
       });
+    }
 
-      await Promise.all(updates);
+    const bulkUpdates = products.map((product) => {
+      const originalPrice = product.originalPrice || product.price;
+      const updatedData = isActive
+        ? {
+            price: Math.round(originalPrice - originalPrice * (discount / 100)),
+            originalPrice,
+            discountApplied: discount,
+          }
+        : { discountApplied: 0 };
+      return {
+        updateOne: { filter: { _id: product._id }, update: updatedData },
+      };
+    });
 
-      const message = isActive
-          ? 'Offer added and products updated with discounts successfully!'
-          : 'Offer added but is not active, discounts removed from products.';
+    await ProductModel.bulkWrite(bulkUpdates);
 
-      res.status(201).json({ ok: true, msg: message, offer: newOffer });
+    const message = isActive
+      ? "Offer added and products updated with discounts successfully!"
+      : "Offer added but is not active, discounts removed from products.";
+
+    res.json({ ok: true, msg: message, offer: newOffer });
   } catch (error) {
-      console.error("Error adding offer:", error);
-      res.status(500).json({ msg: 'Server error. Please try again later.' });
+    console.error("Error adding offer:", error);
+    res.status(500).json({ msg: "Server error. Please try again later." });
   }
 };
 
-
-
 export const editCoffers = async (req, res) => {
   const offerId = req.params.id;
-  const { title, description, discount, category, startDate, endDate, isActive } = req.body;
+  const {
+    title,
+    description,
+    discount,
+    category,
+    startDate,
+    endDate,
+    isActive,
+  } = req.body;
 
   const startDateObj = new Date(startDate);
   const endDateObj = new Date(endDate);
@@ -139,9 +160,28 @@ export const editCoffers = async (req, res) => {
   }
 
   try {
-    const existingOffer = await CategoryOffer.findOne({ title, _id: { $ne: offerId } });
+    const existingOffer = await CategoryOffer.findOne({
+      title,
+      _id: { $ne: offerId },
+    });
     if (existingOffer) {
-      return res.json({ ok: false, msg: "An offer with the same title already exists." });
+      return res.json({
+        ok: false,
+        msg: "An offer with the same title already exists.",
+      });
+    }
+
+    if (isActive && category !== "All Categories") {
+      const activeOfferInCategory = await CategoryOffer.findOne({
+        categoryId: category,
+        isActive: true,
+      });
+      if (activeOfferInCategory) {
+        return res.json({
+          ok: false,
+          msg: "An active offer already exists in this category. Please turn off the active offer before adding a new one.",
+        });
+      }
     }
 
     const updatedOffer = await CategoryOffer.findByIdAndUpdate(
@@ -161,24 +201,31 @@ export const editCoffers = async (req, res) => {
     const products = await ProductModel.find({ categoryId: category });
 
     if (!products.length) {
-      return res.json({ ok: true, msg: "Offer updated, but no products found in the category." });
+      return res.json({
+        ok: true,
+        msg: "Offer updated, but no products found in the category.",
+      });
     }
 
-    const updates = products.map((product) => {
+    const bulkUpdates = products.map((product) => {
       const originalPrice = product.originalPrice || product.price;
-      const discountedPrice = isActive ? Math.round(originalPrice - originalPrice * (discount / 100)) : originalPrice;
+      const discountedPrice = isActive
+        ? Math.round(originalPrice - originalPrice * (discount / 100))
+        : originalPrice;
 
-      return ProductModel.updateOne(
-        { _id: product._id },
-        {
-          price: parseInt(discountedPrice),
-          originalPrice,
-          discountApplied: isActive ? discount : 0,
-        }
-      );
+      return {
+        updateOne: {
+          filter: { _id: product._id },
+          update: {
+            price: parseInt(discountedPrice),
+            originalPrice,
+            discountApplied: isActive ? discount : 0,
+          },
+        },
+      };
     });
 
-    await Promise.all(updates);
+    await ProductModel.bulkWrite(bulkUpdates);
 
     const message = isActive
       ? "Offer updated and discounts applied to products."
@@ -190,4 +237,3 @@ export const editCoffers = async (req, res) => {
     res.status(500).json({ ok: false, msg: "Error updating offer" });
   }
 };
-

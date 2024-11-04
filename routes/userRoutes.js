@@ -25,7 +25,7 @@ import { filteredProducts } from "../controller/userConteroller/filterProductsCo
 import { billContoller } from "../controller/userConteroller/billController.js";
 import { applyCoupen } from "../controller/userConteroller/coupenController.js";
 import { createOrder, retryPayment, verifyRazorpay, verifyRetryPayment, } from "../controller/userConteroller/razorpay.js";
-import { walletRender } from "../controller/userConteroller/wallet.js";
+import { addMoneyWallet, createAddmoneyWallet, walletRender } from "../controller/userConteroller/wallet.js";
 import { returnOrders } from "../controller/userConteroller/ordersReturn.js";
 import { payWithWallet } from "../controller/userConteroller/payUsingWallet.js";
 const storage = multer.diskStorage({
@@ -61,11 +61,11 @@ router.post("/auth/google/login")
 router.get("/singleprodect/:id",getSingleProdect)
 router.post("/whislistAdd/:id",protectedHand,whislistFn)
 router.get('/wishlist', protectedHand,renderWishlistPage)
-router.get("/remove-from-wishlist/:id",removeWhislist)
+router.get("/remove-from-wishlist/:id",protectedHand,removeWhislist)
 router.post("/addToCart/:id",protectedHand,addToCart)
 router.get("/cart",protectedHand,cartRenderPage)
-router.delete("/cart/remove/:id",removeCart)
-router.post('/cart/update-quantity',qtyHandler );
+router.delete("/cart/remove/:id",protectedHand,removeCart)
+router.post('/cart/update-quantity',protectedHand,qtyHandler );
 // router.get("/shopDetials",shopDetialsRender);
 router.get("/profile",profileRender)
 router.post("/update-profile/:id",protectedHand,updateProfile);
@@ -81,17 +81,19 @@ router.get("/forgot-password",forgetPasswordRender )
 router.post("/forgot-password",forgetPassword )
 router.get('/reset-password/:token', renderResetPasswordPage);
 router.post('/reset-password', resetPassword);
-router.get("/settings",renderSettings);
-router.post("/changepassword",protectedHand,changePassword)
+router.get("/settings",protectedHand,renderSettings);
+router.post("/changepassword",protectedHand,protectedHand,changePassword)
 router.post("/product/reviews", upload.single('reviewImage'),reviewHandler)
 router.get("/product/reviews",reviewPagenation);
 router.get("/shop",filteredProducts)
-router.post("/coupons/apply",protectedHand,applyCoupen);
-router.post('/payment/create-order',createOrder)
-router.post('/payment/verify',verifyRazorpay)
-router.post("/payment/retry-payment",retryPayment)
-router.post("/payment/retry-veryfy-payment",verifyRetryPayment)
-router.get("/wallet",walletRender)
-router.post("/orders/return",returnOrders)
-router.post("/checkout/wallet/pay",payWithWallet)
+router.post("/coupons/apply",protectedHand,protectedHand,applyCoupen);
+router.post('/payment/create-order',protectedHand,createOrder)
+router.post('/payment/verify',protectedHand,verifyRazorpay)
+router.post("/payment/retry-payment",protectedHand,retryPayment)
+router.post("/payment/retry-veryfy-payment",protectedHand,verifyRetryPayment)
+router.get("/wallet",protectedHand,walletRender)
+router.post("/orders/return",protectedHand,returnOrders)
+router.post("/checkout/wallet/pay",protectedHand,payWithWallet);
+router.post("/wallet/create-order",protectedHand,createAddmoneyWallet)
+router.post("/wallet/add/money",protectedHand,addMoneyWallet)
 export default router

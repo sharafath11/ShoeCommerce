@@ -130,9 +130,7 @@
         </div>
       </div>
     </section>
-    <!-- End Banner Area -->
-
-    <!--================Checkout Area =================-->
+ 
     <section class="checkout_area section_gap">
       <div class="container">
         <div class="cupon_area">
@@ -150,6 +148,9 @@
               <button class="tp_btn btn dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Available Coupons
               </button>
+              <button class="tp_btn btn " type="button" onclick="removeCoupenHandler()">
+                Remove coupen
+              </button>
               <div class="dropdown-menu p-3 shadow-lg rounded">
                 <% if (coupens.length > 0) { %>
                   <% coupens.forEach((coupen) => { %>
@@ -158,14 +159,18 @@
                         <strong><%= coupen.name %></strong>
                         <br>
                         <small class="text-muted">Expires on: <%= coupen.endingDate.toDateString() %></small>
+                       
                       </div>
-                      <!-- <span class="badge badge-success ml-3">Available</span> -->
+                      
                     </div>
+                    <br>
+                    <span><%= coupen.code %></span>
                   <% }) %>
                 <% } else { %>
                   <div class="dropdown-item text-muted">No available coupons</div>
                 <% } %>
               </div>
+              
             </div>
             
             
@@ -529,7 +534,8 @@
 
   </body>
   <script>
-    let coupenId
+    let coupenId;
+    let coupenDiscount=0
     function checkoutHandler(e) {
       
       const selectedCheckboxes = document.querySelectorAll(
@@ -727,15 +733,14 @@
         }
       );
     }
-
-    /// coupennnnnnnnnnnnnnnnnnnnnnn
-
+    let tempTotal=0
     async function applyCouponCode() {
   const couponCode = document.getElementById("couponCode").value.trim();
   const messageDiv = document.getElementById("couponMessage");
   const totalAmountSpan = document.getElementById("totalAmount");
   const totalAmount = totalAmountSpan.innerText;
   const orderTotal = parseFloat(totalAmount.replace(/[₹,]/g, '').trim());
+  tempTotal=orderTotal
 
   if (!couponCode) {
     messageDiv.innerText = "Please enter a coupon code.";
@@ -774,7 +779,7 @@
   </script>
 <script>
   function proceedToPayment() {
-  // Gather selected addresses
+
   const selectedCheckboxes = document.querySelectorAll(
     'input[name="selectedAddresses"]:checked'
   );
@@ -798,20 +803,17 @@
     }
   );
 
-  // Validate that an address is selected
   if (selectedAddresses.length === 0) {
     showToast("Please select an address");
     return;
   }
 
-  // Validate that each address has a valid pincode
   const invalidPincode = addAddress.some(address => !isValidPincode(address.zip));
   if (invalidPincode) {
     showToast("Please enter a valid 6-digit pincode");
     return;
   }
 
-  // Gather order items
   const orderItems = gatherOrderData();
   if (orderItems.length === 0) {
     showToast("Please add some products to your cart");
@@ -821,15 +823,13 @@
   const totalAmount = totalAmountSpan.innerText;
   const orderTotal = parseFloat(totalAmount.replace(/[₹,]/g, '').trim());
   const totalAmountInPaise = orderTotal * 100
-
-
   const orderDetails = {
     amount: totalAmountInPaise,  
     currency: "INR",
     receipt: "receipt#1",
     selectedAddresses: addAddress,
     cartItems: orderItems,
-    coupenId: coupenId || "" 
+    coupenId: coupenId
   };
 
   confirmAction("Are you sure?", "Proceed with online payment?", "Yes, Pay Now!")
@@ -851,6 +851,7 @@
                 showToast("Payment Successful: " + responseV.razorpay_payment_id);
                 axios.post('/payment/verify', {
                   _id:order._id,
+                  
                   paymentId: responseV.razorpay_payment_id,
                   orderId: responseV.razorpay_order_id,
                   signature: responseV.razorpay_signature
@@ -904,21 +905,15 @@ function walletPayHandler() {
       return address;
     }
   );
-
-  // Validate that an address is selected
   if (selectedAddresses.length === 0) {
     showToast("Please select an address");
     return;
   }
-
-  // Validate that each address has a valid pincode
   const invalidPincode = addAddress.some(address => !isValidPincode(address.zip));
   if (invalidPincode) {
     showToast("Please enter a valid 6-digit pincode");
     return;
   }
-
-  // Gather order items
   const orderItems = gatherOrderData();
   if (orderItems.length === 0) {
     showToast("Please add some products to your cart");
@@ -943,7 +938,6 @@ function walletPayHandler() {
     cancelButtonText: 'No, cancel!',
   }).then((result) => {
     if (result.isConfirmed) {
-      // Proceed with payment
       try {
         axios.post("/checkout/wallet/pay", { orderDetails })
           .then((response) => {
@@ -969,6 +963,21 @@ function walletPayHandler() {
     }
   });
 }
+function removeCoupenHandler(){
+  if(!tempTotal || tempTotal===0){
+    return showToast("Please applay coupen ")
+  }
+   let total=Number(tempTotal)
+   document.getElementById("discount").innerText = `${0}%`;
+   document.getElementById("coupen-btn").disabled=false;
+   const messageDiv = document.getElementById("couponMessage");
+   messageDiv.innerText = `Coupen removed`;
+   document.getElementById("couponCode").value=""
+   const totalAmountSpan = document.getElementById("totalAmount");
+    totalAmountSpan.innerText=`₹ ${total}`;
+    coupenId=null
+}
+
 
 
 

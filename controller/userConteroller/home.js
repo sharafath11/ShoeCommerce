@@ -16,7 +16,9 @@ export const homeRender = async (req, res) => {
     } else {
       req.session.cartQty = 0;
     }
-    const productsN = await ProductModel.find().populate('categoryId').exec();
+    const productsN = await ProductModel.find().populate('categoryId')
+    //    const productsN = await ProductModel.find().populate('categoryId').exec();
+
     const products = productsN.filter((item, index) => !item.blocked && !item.categoryId.blocked);
     if (!user || !user._id) {
       return res.render("user/index", {
@@ -44,7 +46,7 @@ export const homeRender = async (req, res) => {
       products: products || [],
       WishlistQty,
       message: toastMessage,
-      cartQty: req.session.cartQty,
+      cartQty: req.session.cartQty||0,
     });
   } catch (error) {
     console.error(error);

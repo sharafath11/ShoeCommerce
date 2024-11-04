@@ -309,35 +309,55 @@
           <section style="    margin-top: 20px;
           display: flex;
           flex-wrap: wrap;">
-            <% products.forEach(function(product) { %>
-              <div class="col-lg-4 col-md-6">
-                  <div class="single-product">
-                      <a href="/singleprodect/<%= product._id %>">
-                          <img class="img-fluid"
-                               src="<%= product.images[0].replace('public', '') %>"
-                               alt="<%= product.name %>" />
-                      </a>
-                      <div class="product-details">
-                          <h6><%= product.name %></h6>
-                          <div class="price">
-                              <h6>₹<%= product.price %></h6>
-                          </div>
-          
-                          <div class="prd-bottom">
-                              <div class="social-info" onclick="addToWishList('<%= product._id %>')">
-                                  <span class="lnr lnr-heart"></span>
-                                  <p class="hover-text">Wishlist</p>
-                              </div>
-          
-                              <% const availableSizes = product.availableSize.filter(sizeObj => sizeObj.stock > 0); %>
-                              <% if (availableSizes.length === 0) { %>
-                                  <p class="text-danger">Out of Stock</p>
-                              <% } %>
-                          </div>
+            <% products.forEach(product => { %>
+              <div class="col-lg-3 col-md-6">
+                <div class="single-product">
+                  <a href="/singleprodect/<%= product._id %>">
+                    <img class="img-fluid" src="<%= product.images[0].replace('public', '') %>" alt="<%= product.name %>" />
+                  </a>
+                  <div class="product-details">
+                    <h6><%= product.name %></h6>
+                    <h6><%= product.description %></h6>
+                    <div class="price">
+                      <h6>₹<%= product.price %></h6>
+                  
+                      <% if (product.originalPrice!==product.price) { %>
+                          <h6 class="l-through" style="color: #efcf12; text-decoration: line-through;">₹<%= product.originalPrice %></h6>
+                      <% } %> 
+                  
+                      <% if (product.discountApplied > 0) { %>
+                          <h6 class="discount-badge" style="color: #ff4d4d; background-color: #f9e7e7; padding: 5px; border-radius: 5px;">
+                              <%= product.discountApplied %>% OFF
+                          </h6>
+                      <% } %>
+                  </div>              
+                    <% if (product.availableSize && product.availableSize.length > 0) { %>
+                      <div class="available-sizes d-flex justify-content-around">
+                       
+                        <% 
+                          const allOutOfStock = product.availableSize.every(size => size.stock === 0); 
+                        %>
+                        
+                        <% if (allOutOfStock) { %>
+                          <strong class="text-danger">Out of Stock</strong>
+                       
+                        <% } %> 
                       </div>
+                    <% } %>
+                    
+                    <div class="prd-bottom">
+                     
+                      <span class="social-info" id="wishlistbtn" data-id="<%= product._id %>" onclick="addToWishList('<%= product._id %>')">
+                        <span class="lnr lnr-heart"></span>
+                        <p class="hover-text">Wishlist</p>
+                      </span>
+                      
+                      
+                    </div>
                   </div>
+                </div>
               </div>
-          <% }); %>
+            <% }) %>
           
           </section>
          

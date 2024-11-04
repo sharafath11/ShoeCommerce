@@ -5,6 +5,7 @@ import CartModel from "../../models/cartModel.js";
 import OrderModel from "../../models/orderModel.js";
 import ProductModel from "../../models/prodectsModel.js";
 import CouponModel from "../../models/coupenModel.js";
+import WalletModel from "../../models/wallet.js";
 
 export const profileRender = async (req, res) => {
   try {
@@ -34,7 +35,7 @@ export const updateProfile = async (req, res) => {
       { new: true }
     );
 
-    if (!user) return res.status(404).json({ ok: false, msg: "User not found" });
+    if (!user) return res.json({ ok: false, msg: "User not found" });
 
     req.session.user.username = username;
     res.status(200).json({ ok: true, msg: "Profile updated successfully" });
@@ -71,7 +72,7 @@ export const addAddress = async (req, res) => {
 
   try {
     await new AddressModel({ userId, name, type, streetAddress, city, state, postalCode, country }).save();
-    res.status(201).json({ ok: true, msg: "Address added successfully" });
+    res.json({ ok: true, msg: "Address added successfully" });
   } catch (error) {
     res.render("user/error");
   }
@@ -82,7 +83,7 @@ export const removeAddress = async (req, res) => {
     const result = await AddressModel.findByIdAndDelete(req.params.id);
 
     if (!result) {
-      return res.status(404).json({ ok: false, msg: "Address not found." });
+      return res.json({ ok: false, msg: "Address not found." });
     }
 
     res.json({ ok: true, msg: "Address removed successfully." });
@@ -155,20 +156,20 @@ export const removeOrders = async (req, res) => {
   }
 };
 
-
 export const deletePerItemInOrder = async (req, res) => {
   const { orderId, productId } = req.params;
   const { size } = req.body;
-
+ console.log('====================================');
+ console.log('fhghfbc');
+ console.log('====================================');
   try {
     const order = await OrderModel.findById(orderId);
-    if (!order) return res.status(404).json({ msg: 'Order not found' });
+    if (!order) return res.json({ msg: 'Order not found' });
 
     const itemIndex = order.items.findIndex(i => i.productId.toString() === productId && i.size === parseInt(size));
-    if (itemIndex === -1) return res.status(404).json({ message: 'Item not found in the order.' });
+    if (itemIndex === -1) return res.json({ msg: 'Item not found in the order.' });
 
     const item = order.items[itemIndex];
-  
 
     const product = await ProductModel.findById(productId);
     if (product) {
@@ -176,40 +177,62 @@ export const deletePerItemInOrder = async (req, res) => {
       if (sizeUpdate) sizeUpdate.stock += item.quantity;
       await product.save();
     }
-    order.totalAmount -= item.price * item.quantity;
+    const itemTotal = item.price * item.quantity;
+    order.totalAmount -= itemTotal;
     item.isCanceld = true;
+    item.isReturned = true;
     if (order.items.every(i => i.isCanceld)) {
       order.isCanceld = true;
       order.totalAmount = 0;
     }
+    let couponDiscountAmount = 0;
     if (order.couponId) {
       const coupon = await CouponModel.findById(order.couponId);
-      if (coupon && order.totalAmount < coupon.minimumPrice) {
-        return res.json({
-          ok:false,
-          msg: `After cancellation, the order total is below the coupon's minimum required amount of ₹${coupon.minimumPrice}. Coupon cannot be applied. do you want delete please delete the order`,
-          totalAmount: order.totalAmount,
-          couponMinimumPrice: coupon.minimumPrice
-        });
+      if (coupon) {
+        console.log("jfnbjfn");
+        
+        couponDiscountAmount = (order.totalAmount + itemTotal) * (coupon.discountValue / 100);
       }
+    }
+     console.log(couponDiscountAmount)
+    const refundAmount = itemTotal - (couponDiscountAmount * (itemTotal / (order.totalAmount + itemTotal)));
+
+    // Refund to wallet if paymentStatus is "Paid" only
+    if (order.paymentStatus === "Paid") {
+      const userId = order.user;
+      let wallet = await WalletModel.findOne({ user: userId });
+
+      if (!wallet) {
+        wallet = new WalletModel({ user: userId, balance: 0 });
+      }
+
+      // Update wallet balance and add a transaction
+      wallet.balance += refundAmount; // Add the calculated refund amount
+      wallet.transactions.push({
+        amount: refundAmount,
+        transactionType: 'credit',
+        description: `Refund for returned item in order ${orderId}`,
+        size: item.size,
+        qty: item.quantity,
+        productId: item.productId,
+        reason: 'Item return',
+      });
+
+      await wallet.save();
     }
 
     await order.save();
-  
-    return res.status(200).json({
-      msg: 'Item canceled successfully ',
-      totalAmount: order.totalAmount,
-      allCanceled: order.items.every(i => i.isCanceld)
-    });
-  } catch (error) {
-    console.log(error);
-    
-    return res.render("user/error");
 
+    res.status(200).json({
+      msg: 'Item returned successfully, amount credited to wallet',
+      totalAmount: order.totalAmount,
+      allCanceled: order.items.every(i => i.isCanceld),
+    });
+
+    return true; // Return true to indicate successful execution
+  } catch (error) {
+    console.error(error);
+    res.render("user/error");
+    return false; // Return false in case of an error
   }
 };
-
-
-
-
-

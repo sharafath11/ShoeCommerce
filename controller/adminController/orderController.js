@@ -84,27 +84,24 @@ export const returnOrders = async (req, res) => {
 
     let query = { "items.isReturned": true };
 
-    // If orderId is provided, prioritize searching by the custom orderId field
+
     if (orderId) {
-      query = { ...query, orderId: orderId }; // Assuming orderId is the custom field in your schema
+      query = { ...query, orderId: orderId }; 
     }
 
-    // Fetch all orders with the specified query
     const ordersWithReturns = await OrderModel.find(query)
       .populate('user', 'username')
       .lean();
 
     console.log("Orders with Returns:", ordersWithReturns);
 
-    // Filter and map the returned products
     const returnedProducts = ordersWithReturns
       .map(order => {
-        // Start by filtering for returned items
+
         let returnedItems = order.items.filter(item => item.isReturned);
 
-        // If a status is provided, further filter the returned items
         if (status) {
-          returnedItems = returnedItems.filter(item => item.status === status.charAt(0).toUpperCase() + status.slice(1)); // Capitalize first letter
+          returnedItems = returnedItems.filter(item => item.status === status.charAt(0).toUpperCase() + status.slice(1)); 
         }
 
         return {
@@ -113,11 +110,9 @@ export const returnOrders = async (req, res) => {
           userName: order.user ? order.user.username : null,
         };
       })
-      .filter(order => order.items.length > 0); // Keep orders with returned items
-
+      .filter(order => order.items.length > 0);
     console.log("Returned Products After Mapping:", returnedProducts);
 
-    // Apply date filtering if orderId is not provided
     let filteredProducts = returnedProducts;
     if (!orderId) {
       filteredProducts = returnedProducts.filter(order => {
@@ -138,14 +133,13 @@ export const returnOrders = async (req, res) => {
           case 'this-year':
             return orderDate.getFullYear() === new Date().getFullYear();
           default:
-            return true; // No date filter
+            return true; 
         }
       });
     }
 
     console.log("Filtered Products After Date Filtering:", filteredProducts);
 
-    // Sort products based on priceSort
     if (priceSort === 'low-to-high') {
       filteredProducts.sort((a, b) => a.items[0].price - b.items[0].price);
     } else if (priceSort === 'high-to-low') {

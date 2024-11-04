@@ -78,14 +78,14 @@ export const getEditCategory = async (req, res) => {
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     console.error("Invalid Category ID:", id);
-    return res.status(400).send("Invalid Category ID");
+    return res.send("Invalid Category ID");
   }
 
   try {
     const categorie = await categoryModel.findOne({ _id: id });
 
     if (!categorie) {
-      return res.status(404).send("Category not found");
+      return res.send("Category not found");
     }
 
     console.log("Categoie found:", categorie);
@@ -101,14 +101,14 @@ export const editCategory = async (req, res) => {
   let { name, description } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).json({ ok: false, msg: "Invalid Category ID" });
+    return res.json({ ok: false, msg: "Invalid Category ID" });
   }
 
   try {
     const category = await categoryModel.findOne({ _id: id }).sort({ createdAt: -1 });
 
     if (!category) {
-      return res.status(404).json({ ok: false, msg: "Category not found" });
+      return res.json({ ok: false, msg: "Category not found" });
     }
 
     const toTitleCase = (str) => {
@@ -121,7 +121,6 @@ export const editCategory = async (req, res) => {
 
     if (!name || !description) {
       return res
-        .status(400)
         .json({ ok: false, msg: "Name and Description are required" });
     }
 
@@ -149,7 +148,6 @@ export const categorieBlock = async (req, res) => {
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res
-      .status(400)
       .json({ success: false, message: "Invalid Category ID" });
   }
 
@@ -158,7 +156,6 @@ export const categorieBlock = async (req, res) => {
 
     if (!category) {
       return res
-        .status(404)
         .json({ success: false, message: "Category not found" });
     }
 
@@ -176,7 +173,6 @@ export const categorieBlock = async (req, res) => {
   } catch (error) {
     console.error("Error toggling category blocked status:", error);
     return res
-      .status(500)
       .json({ success: false, message: "Internal Server Error" });
   }
 };

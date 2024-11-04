@@ -77,9 +77,8 @@ export const orderReturnReject = async (req, res) => {
             return res.status(404).json({ message: 'Returned item not found in the order.' });
         }
 
-        item.status = 'Rejected'; // Update item status to "Rejected"
-
-        await order.save(); // Save the updated order
+        item.status = 'Rejected';
+        await order.save(); 
 
         return res.status(200).json({ message: 'Return rejected and item status updated.' });
 

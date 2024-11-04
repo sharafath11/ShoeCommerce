@@ -9,7 +9,6 @@ export const whislistFn = async (req, res) => {
 
     if (!userId) {
       return res
-        .status(400)
         .json({
           message: "User not logged in or session expired",
           success: false,
@@ -19,7 +18,7 @@ export const whislistFn = async (req, res) => {
     const product = await ProductModel.findById(productId);
     if (!product) {
       return res
-        .status(404)
+
         .json({ message: "Product not found", success: false });
     }
 
@@ -73,7 +72,7 @@ export const renderWishlistPage = async (req, res) => {
   const WishlistQty = uniqueProducts.length;
     const cartQty = req.session.cartQty;
     if (!wishlist || !wishlist.products) {
-      return res.render("user/wishlist", { wishlist: [], cartQty });
+      return res.render("user/wishlist", { wishlist: [], cartQty,WishlistQty:0,user });
     }
     res.render("user/wishlist", {
       wishlist: wishlist.products,

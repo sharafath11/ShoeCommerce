@@ -6,18 +6,14 @@ export const cartRenderPage = async (req, res) => {
     const WishlistQty = req.session.WishlistQty;
     const toastMessage = req.session.toast;
     delete req.session.toast;
-
     if (!user || !user._id) {
       return res.redirect("/login");
     }
-
-    // Fetch the cart for the user and populate product details
     const cart = await CartModel.findOne({ userId: user._id }).populate({
       path: "products.productId",
       select: "name price images availableSize",
     });
 
-    // Check if the cart exists
     if (!cart) {
       return res.render("user/cart", {
         cartQty: 0,
@@ -27,11 +23,9 @@ export const cartRenderPage = async (req, res) => {
         cartProducts: [],
       });
     }
-
-    // Iterate over products to check size availability and update stock
     await Promise.all(
       cart.products.map(async (item) => {
-        const product = item.productId; // The populated product document
+        const product = item.productId; 
 
         if (product) {
           const sizeDetails = product.availableSize.find(
@@ -67,10 +61,10 @@ export const cartRenderPage = async (req, res) => {
 export const removeCart = async (req, res) => {
   try {
     const productId = req.params.id;
-    const size = req.query.size;  // Get the size from query parameters
+    const size = req.query.size;  
     const user = req.session.user;
 
-    // Update the cart by removing the product with the specific size
+   
     await CartModel.updateOne(
       { userId: user._id },
       { $pull: { products: { productId: productId, size: size } } }
@@ -136,12 +130,11 @@ export const addToCart = async (req, res) => {
     const userId = req.session.user ? req.session.user._id : null;
     if (!userId) {
       return res
-        .status(400)
         .json({ message: "User not logged in or session expired" });
     }
     const product = await ProductModel.findById(productId);
     if (!product) {
-      return res.status(404).json({ message: "Product not found" });
+      return res.json({ message: "Product not found" });
     }
     let cart = await CartModel.findOne({ userId });
 
@@ -156,7 +149,7 @@ export const addToCart = async (req, res) => {
       );
 
       if (productInCart) {
-        return res.status(200).json({
+        return res.json({
           message: "Product with the same size already in cart",
           success: false,
         });
