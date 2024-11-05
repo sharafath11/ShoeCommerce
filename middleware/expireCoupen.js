@@ -119,11 +119,10 @@ export const productOfferEnabeDisable = async () => {
   
       for (const offer of offers) {
         const isActive = currentDate >= offer.startDate && currentDate <= offer.endDate;
-  
         await productOfferModel.findByIdAndUpdate(offer._id, { isActive }, { new: true });
   
         const product = await ProductModel.findById(offer.products);
-        const originalPrice = product.originalPrice || product.price;
+        const originalPrice = Number(product.originalPrice || product.price);  
   
         if (isActive) {
           const discountedPrice = originalPrice - (originalPrice * (offer.discountPercentage / 100));
@@ -132,9 +131,8 @@ export const productOfferEnabeDisable = async () => {
             discountApplied: offer.discountPercentage,
           });
         } else {
-          const adjustedPrice = Math.ceil(originalPrice + (originalPrice * (offer.discountPercentage / 100)));
           await ProductModel.findByIdAndUpdate(offer.products, {
-            price: adjustedPrice,
+            price: originalPrice, 
             discountApplied: 0,
           });
         }

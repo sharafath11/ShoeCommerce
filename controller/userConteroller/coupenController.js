@@ -46,7 +46,8 @@ console.log('New Total:', newTotal);
         coupon
       });
     } catch (error) {
-      return res.status(500).json({ message: 'Server error. Please try again later.' });
+      console.error("Error fetching shop details:", error);
+        return res.render("user/error");
     }
   };
   

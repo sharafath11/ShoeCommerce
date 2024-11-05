@@ -10,11 +10,8 @@ export const protectedHand = async (req, res, next) => {
   }
   
   const user = await userModel.findById(userLogged._id);
-
-  console.log(user.block);
-
   if (!token || user.block) {
-    return res.redirect("/");
+    return res.render("user/userBlock");
   }
 
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {

@@ -541,7 +541,9 @@
       const selectedCheckboxes = document.querySelectorAll(
         'input[name="selectedAddresses"]:checked'
       );
-
+      const totalAmountSpan = document.getElementById("totalAmount");
+      const totalAmount = totalAmountSpan.innerText;
+      const orderTotal = parseFloat(totalAmount.replace(/[₹,]/g, '').trim());
       const addAddress = [];
       const selectedAddresses = Array.from(selectedCheckboxes).map(
         (checkbox) => {
@@ -572,12 +574,19 @@
         selectedAddresses: addAddress,
         cartItems: orderItems,
         coupenId:coupenId||"",
-        paymentMethod:"COD"
+        paymentMethod:"COD",
+        
       };
       let ok = false;
+      
       if (selectedAddresses.length == 0) {
         showToast("Please select a addres");
         ok = true;
+      }
+      console.log(orderTotal)
+      if(Number(orderTotal)>2500){
+        showToast("only availble cash on delivery in under 2500")
+        return 
       }
       if (ok) return;
       confirmAction(
@@ -589,6 +598,9 @@
           axios
             .post("/checkout/cod", datas)
             .then((response) => {
+              console.log('====================================');
+              console.log(response.data);
+              console.log('====================================');
               if (response.data.ok) {
                 showToast(response.data.msg);
                 setTimeout(() => {

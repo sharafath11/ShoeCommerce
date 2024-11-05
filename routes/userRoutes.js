@@ -67,7 +67,7 @@ router.get("/cart",protectedHand,cartRenderPage)
 router.delete("/cart/remove/:id",protectedHand,removeCart)
 router.post('/cart/update-quantity',protectedHand,qtyHandler );
 // router.get("/shopDetials",shopDetialsRender);
-router.get("/profile",profileRender)
+router.get("/profile",protectedHand,profileRender)
 router.post("/update-profile/:id",protectedHand,updateProfile);
 router.get("/address",protectedHand,renderAddressPage)
 router.post("/addAddress",protectedHand,addAddress);

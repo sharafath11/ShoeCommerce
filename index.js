@@ -32,7 +32,9 @@ mongoose
   .catch((error) => {
     console.log(error);
   });
- 
+
+
+
 app.set("view engine", "ejs");
 app.set("views", "./Views");
 app.use(bodyParser.json());
@@ -49,6 +51,9 @@ productOfferEnabeDisable()
 disableCatOffer();
 app.use("/", userRoutes);
 app.use("/admin", adminRoutes);
+app.use((req, res, next) => {
+  res.status(404).render('user/404');
+});
 app.listen(PORT, () => {
  console.log(`Server is running on port ${PORT}`);
 });

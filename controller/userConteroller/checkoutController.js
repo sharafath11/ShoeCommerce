@@ -48,6 +48,8 @@ export const checkoutFn = async (req, res) => {
   try {
     const { cartItems, selectedAddresses, coupenId, paymentMethod } = req.body;
 
+  
+
     const orderItems = cartItems.map(item => ({
       productId: item.productId,
       name: item.name,

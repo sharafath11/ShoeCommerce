@@ -61,8 +61,8 @@ export const forgetPassword = async (req, res) => {
 
     return res.status(200).json({ success: true, msg: "Please check your email for the reset link." });
   } catch (error) {
-    console.error("Error during forgetPassword process:", error);
-    return res.status(500).json({ success: false, msg: "Something went wrong. Please try again later." });
+    console.error("Error fetching shop details:", error);
+        return res.render("user/error");
   }
 };
 
@@ -97,8 +97,8 @@ export const resetPassword = async (req, res) => {
 
     return res.status(200).json({ ok: true, msg: "Password has been reset", red: "/login" });
   } catch (error) {
-    console.error("Error during resetPassword process:", error);
-    return res.status(500).json({ ok: false, msg: "Something went wrong. Please try again later." });
+    console.error("Error fetching shop details:", error);
+        return res.render("user/error");
   }
 };
 
