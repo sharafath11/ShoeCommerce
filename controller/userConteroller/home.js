@@ -15,7 +15,7 @@ export const homeRender = async (req, res) => {
     couponActiveWithDate();
     activateCategoryOffers();
     productOfferEnabeDisable();
-    disableCatOffer();
+    disableCatOffer();  
     const user = req.session.user;
     const toastMessage = req.session.toast;
     delete req.session.toast;
