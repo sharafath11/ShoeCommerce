@@ -52,17 +52,9 @@
                   <div class="banner-content">
                     <h1>Nike New <br />Collection!</h1>
                     <p>
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit,
-                      sed do eiusmod tempor incididunt ut labore et dolore magna
-                      aliqua. Ut enim ad minim veniam, quis nostrud
-                      exercitation.
+                      Discover premium branded shoes tailored for style and comfort. Our collection features top brands and the latest trends, ensuring quality and style in every step. Shop now for the perfect pair!
                     </p>
-                    <div class="add-bag d-flex align-items-center">
-                      <a class="add-btn" href=""
-                        ><span class="lnr lnr-cross"></span
-                      ></a>
-                      <span class="add-text text-uppercase">Add to Bag</span>
-                    </div>
+                   
                   </div>
                 </div>
                 <div class="col-lg-7">
@@ -81,16 +73,14 @@
                   <div class="banner-content">
                     <h1>Nike New <br />Collection!</h1>
                     <p>
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit,
-                      sed do eiusmod tempor incididunt ut labore et dolore magna
-                      aliqua. Ut enim ad minim veniam, quis nostrud
-                      exercitation.
+                      Step up your game with Nike's latest collection! Engineered for comfort and style, these shoes are designed to elevate your performance and keep you moving in style.
                     </p>
+                    
                     <div class="add-bag d-flex align-items-center">
                       <a class="add-btn" href=""
                         ><span class="lnr lnr-cross"></span
                       ></a>
-                      <span class="add-text text-uppercase">Add to Bag</span>
+                      <!-- <span class="add-text text-uppercase">Add to Bag</span> -->
                     </div>
                   </div>
                 </div>
@@ -121,8 +111,9 @@
               <div class="f-icon">
                 <img src="img/features/f-icon1.png" alt="" />
               </div>
-              <h6>Free Delivery</h6>
-              <p>Free Shipping on all order</p>
+              <h6>Delivery Charge: Only ₹50</h6>
+              <p>Free shipping available across Kozhikode.</p>
+              
             </div>
           </div>
           <!-- single features -->
@@ -132,7 +123,7 @@
                 <img src="img/features/f-icon2.png" alt="" />
               </div>
               <h6>Return Policy</h6>
-              <p>Free Shipping on all order</p>
+              <p>All order return option</p>
             </div>
           </div>
           <!-- single features -->
@@ -142,7 +133,8 @@
                 <img src="img/features/f-icon3.png" alt="" />
               </div>
               <h6>24/7 Support</h6>
-              <p>Free Shipping on all order</p>
+<p>We're here to help anytime.</p>
+
             </div>
           </div>
           <!-- single features -->
@@ -152,7 +144,8 @@
                 <img src="img/features/f-icon4.png" alt="" />
               </div>
               <h6>Secure Payment</h6>
-              <p>Free Shipping on all order</p>
+<p>Safe and encrypted transactions.</p>
+
             </div>
           </div>
         </div>
@@ -270,8 +263,7 @@
           <div class="section-title">
             <h1>Latest Products</h1>
             <p>
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed
-              do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              Explore our latest arrivals! Find fresh styles and the <br> newest designs from top brands, crafted for comfort and <br> modern trends. Step up your style with our latest collection!.
             </p>
           </div>
         </div>
@@ -286,7 +278,7 @@
               </a>
               <div class="product-details">
                 <h6><%= product.name %></h6>
-                <h6><%= product.description %></h6>
+               
                 <div class="price">
                   <h6>₹<%= product.price %></h6>
               
@@ -295,7 +287,7 @@
                   <% } %> 
               
                   <% if (product.discountApplied > 0) { %>
-                      <h6 class="discount-badge" style="color: #ff4d4d; background-color: #f9e7e7; padding: 5px; border-radius: 5px;">
+                      <h6 class="discount-badge" style="color: #ffffff; background-color: #00ad1d; padding: 5px; border-radius: 5px;">
                           <%= product.discountApplied %>% OFF
                       </h6>
                   <% } %>
@@ -353,7 +345,7 @@
               <img class="img-fluid" src="<%= product.images[0].replace('public', '') %>" alt="<%= product.name %>" />
               <div class="product-details">
                 <h6><%= product.name %></h6>
-				<h6><%= product.description %></h6>
+			        
                 <div class="price">
                   <h6>₹<%= product.price %></h6>
                   <% if (product.originalPrice) { %>
@@ -361,10 +353,10 @@
                   <% } %>
                 </div>
                 <div class="prd-bottom">
-                  <a href="#" class="social-info">
+                  <!-- <a href="#" class="social-info">
                     <span class="ti-bag"></span>
                     <p class="hover-text">add to bag</p>
-                  </a>
+                  </a> -->
                   <a href="#" class="social-info">
                     <span class="lnr lnr-heart"></span>
                     <p class="hover-text">Wishlist</p>
@@ -413,7 +405,7 @@
                 </div>
               </div>
             </div>
-            <a href="" class="primary-btn">Shop Now</a>
+            <a href="/shop" class="primary-btn">Shop Now</a>
           </div>
           <div class="col-lg-6 no-padding exclusive-right">
             <div class="active-exclusive-product-slider">
@@ -429,8 +421,7 @@
                   <div
                     class="add-bag d-flex align-items-center justify-content-center"
                   >
-                    <a class="add-btn" href=""><span class="ti-bag"></span></a>
-                    <span class="add-text text-uppercase">Add to Bag</span>
+                    
                   </div>
                 </div>
               </div>
@@ -447,7 +438,7 @@
                     class="add-bag d-flex align-items-center justify-content-center"
                   >
                     <a class="add-btn" href=""><span class="ti-bag"></span></a>
-                    <span class="add-text text-uppercase">Add to Bag</span>
+                    <!-- <span class="add-text text-uppercase">Add to Bag</span> -->
                   </div>
                 </div>
               </div>

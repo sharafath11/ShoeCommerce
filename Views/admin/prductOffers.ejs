@@ -111,7 +111,7 @@
               </div>
               <div class="mb-3">
                 <label for="editOfferDiscount" class="form-label">Discount</label>
-                <input type="number" class="form-control" id="editOfferDiscount" min="0" required />
+                <input type="number" class="form-control" id="editOfferDiscount" min="0" max="99" required />
               </div>
               <div class="mb-3">
                 <label for="editOfferCategory" class="form-label">Product Name</label>
@@ -186,7 +186,7 @@
   // Get input values
   const offerName = document.getElementById('editOfferTitle').value.trim();
   const description = document.getElementById('editOfferDescription').value.trim();
-  const discountPercentage = document.getElementById('editOfferDiscount').value;
+  const discountPercentage = document.getElementById('editOfferDiscount').value.trim();
   const isActive = document.getElementById('isActiveTrue').checked;
   const startDate = document.getElementById('editOfferStartDate').value;
   const endDate = document.getElementById('editOfferEndDate').value;

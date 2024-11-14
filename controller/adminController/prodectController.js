@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { categoryModel } from "../../models/category.js";
 import ProductModel from "../../models/prodectsModel.js";
 import OrderModel from "../../models/orderModel.js";
+import CartModel from "../../models/cartModel.js";
 
 export const renderProductsPage = async (req, res) => {
   let page = parseInt(req.query.page) || 1;
@@ -130,11 +131,17 @@ export const productListUnlist = async (req, res) => {
 
     product.blocked = !product.blocked;
     await product.save();
+    if (product.blocked) {
+      await CartModel.updateMany(
+        { "products.productId": id }, 
+        { $pull: { products: { productId: id } } }
+      );
+    }
 
     return res.status(200).json({
       success: true,
       message: product.blocked
-        ? "Product unlisted successfully."
+        ? "Product unlisted successfully and removed from all carts."
         : "Product listed successfully.",
     });
   } catch (error) {

@@ -21,7 +21,9 @@ export const walletRender = async (req, res) => {
       return res.redirect("/");
     }
 
-    const wallet = await WalletModel.findOne({ user: id }).populate('transactions.productId');
+    const wallet = await WalletModel.findOne({ user: id })
+    .populate('transactions.productId')  
+    .sort({ 'transactions.date': -1 });
     if (!wallet) {
       console.log('No wallet found for the user.');
       return res.render("user/error");

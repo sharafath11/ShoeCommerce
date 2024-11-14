@@ -161,7 +161,7 @@ export const addToCart = async (req, res) => {
     const cartItem = await CartModel.findOne({ userId }).populate(
       "products.productId"
     );
-    req.session.cartQty = cartItem.products.length;
+    req.session.cartQty = cartItem.products.length||0;
     req.session.toast = "Cart added successfully :)";
     return res
       .status(200)

@@ -6,7 +6,7 @@ export const saleReport = async (req, res) => {
   try {
     const { dateFilter, paymentFilter, startDate, endDate, download } =
       req.query;
-    let filter = { paymentStatus: "Paid",totalAmount: { $ne: 50 }, };
+    let filter = { paymentStatus: "Paid",totalAmount: { $ne: 50 },isCanceld:false };
     if (paymentFilter) {
       filter.paymentMethod = paymentFilter;
     }

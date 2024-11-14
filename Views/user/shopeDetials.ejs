@@ -5,6 +5,7 @@
     name="viewport"
     content="width=device-width, initial-scale=1, shrink-to-fit=no"
   />
+  <link rel="shortcut icon" href="logo.png" />
 
   <!-- <link rel="shortcut icon" href="logo.png" /> -->
 
@@ -94,7 +95,7 @@
                       </ul>
                       <ul class="nav navbar-nav navbar-right">
                       </li>
-                      <% if (WishlistQty > 0 ) { %>
+                      <!--  -->
                           <li class="nav-item">
                               <a href="/wishlist" class="cart">
                                   <div class="cart-container">
@@ -103,7 +104,7 @@
                                   </div>
                               </a>
                           </li>
-                      <% } %>
+                     
                       
                       <li class="nav-item">
                           <a href="/cart" class="cart">
@@ -186,12 +187,12 @@
           class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end "
         >
           <div class="col-first">
-            <h1>Shop Category page</h1>
+            <h1>Shop </h1>
             <nav class="d-flex align-items-center">
               <a href="/"
                 >Home<span class="lnr lnr-arrow-right"></span
               ></a>
-              <a href="/shop">Shop Details</a>
+              <a href="/shop">Shop </a>
              
             </nav>
           </div>
@@ -309,55 +310,62 @@
           <section style="    margin-top: 20px;
           display: flex;
           flex-wrap: wrap;">
-            <% products.forEach(product => { %>
-              <div class="col-lg-3 col-md-6">
-                <div class="single-product">
-                  <a href="/singleprodect/<%= product._id %>">
-                    <img class="img-fluid" src="<%= product.images[0].replace('public', '') %>" alt="<%= product.name %>" />
-                  </a>
-                  <div class="product-details">
-                    <h6><%= product.name %></h6>
-                    <h6><%= product.description %></h6>
-                    <div class="price">
-                      <h6>₹<%= product.price %></h6>
-                  
-                      <% if (product.originalPrice!==product.price) { %>
-                          <h6 class="l-through" style="color: #efcf12; text-decoration: line-through;">₹<%= product.originalPrice %></h6>
-                      <% } %> 
-                  
-                      <% if (product.discountApplied > 0) { %>
-                          <h6 class="discount-badge" style="color: #ff4d4d; background-color: #f9e7e7; padding: 5px; border-radius: 5px;">
-                              <%= product.discountApplied %>% OFF
-                          </h6>
-                      <% } %>
-                  </div>              
-                    <% if (product.availableSize && product.availableSize.length > 0) { %>
-                      <div class="available-sizes d-flex justify-content-around">
-                       
-                        <% 
-                          const allOutOfStock = product.availableSize.every(size => size.stock === 0); 
-                        %>
+            <% if (products.length === 0) { %>
+              <div class="col-12 text-center">
+                <h4>No products available</h4>
+              </div>
+            <% } else { %>
+              <% products.forEach(product => { %>
+                <div class="col-lg-3 col-md-6 mb-4">
+                  <div class="single-product">
+                    <a href="/singleprodect/<%= product._id %>">
+                      <div class="image-container position-relative">
+                        <img class="img-fluid w-100" src="<%= product.images[0].replace('public', '') %>" alt="<%= product.name %>" />
                         
-                        <% if (allOutOfStock) { %>
-                          <strong class="text-danger">Out of Stock</strong>
-                       
-                        <% } %> 
+                        <!-- Discount Badge with rounded corners and space -->
+                        <% if (product.discountApplied > 0) { %>
+                          <span class="discount-badge position-absolute top-0 start-0 ms-3 mt-3 px-3 py-1" style="color: #ffffff; background-color: #00ad1d; border-radius: 10px; font-size: 14px; font-weight: bold; left: 20px;">
+                            <%= product.discountApplied %>% OFF
+                          </span>
+                        <% } %>
                       </div>
-                    <% } %>
-                    
-                    <div class="prd-bottom">
-                     
-                      <span class="social-info" id="wishlistbtn" data-id="<%= product._id %>" onclick="addToWishList('<%= product._id %>')">
-                        <span class="lnr lnr-heart"></span>
-                        <p class="hover-text">Wishlist</p>
-                      </span>
-                      
-                      
+                    </a>
+                    <div class="product-details p-3">
+                      <h6 class="product-name"><%= product.name %></h6>
+              
+                      <!-- Price and Offer inline -->
+                      <div class="price d-flex align-items-center">
+                        <h6 class="current-price mb-0">₹<%= product.price %></h6>
+                        <% if (product.originalPrice !== product.price) { %>
+                          <h6 class="original-price mb-0 ms-2 text-decoration-line-through" style="color: #efcf12;">₹<%= product.originalPrice %></h6>
+                        <% } %>
+                      </div>
+              
+                      <!-- Available Sizes Section -->
+                      <% if (product.availableSize && product.availableSize.length > 0) { %>
+                        <div class="available-sizes d-flex justify-content-start mt-2">
+                          <% const allOutOfStock = product.availableSize.every(size => size.stock === 0); %>
+                          <% if (allOutOfStock) { %>
+                            <strong class="text-danger">Out of Stock</strong>
+                          <% } %>
+                        </div>
+                      <% } %>
+              
+                      <!-- Wishlist Button -->
+                      <div class="prd-bottom mt-3">
+                        <span class="social-info" id="wishlistbtn" data-id="<%= product._id %>" onclick="addToWishList('<%= product._id %>')">
+                          <span class="lnr lnr-heart"></span>
+                          <p class="hover-text mb-0">Wishlist</p>
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            <% }) %>
+              <% }) %>
+              
+              
+            <% } %>
+            
           
           </section>
          

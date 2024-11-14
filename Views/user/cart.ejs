@@ -141,8 +141,26 @@
                   <td>
                     <h5>₹<%= product.productId.price %></h5>
                   </td>
-                  <td>
-                    <div class="product_count">
+                  
+
+
+
+
+
+
+                  <td style="max-width: 200px;">
+                    <div class=" d-flex align-items-center justify-content-center">
+                      <!-- Decrease Button -->
+                      <button
+                        onclick="updateQuantity('<%= product.productId._id %>', 'decrease', '<%=index%>')"
+                        class="btn btn-outline-secondary btn-sm quantity-btn decrease"
+                        type="button"
+                        aria-label="Decrease Quantity"
+                      >
+                        <i class="lnr lnr-chevron-left"></i>
+                      </button>
+                  
+                      <!-- Quantity Input -->
                       <input
                         type="text"
                         name="qty"
@@ -150,30 +168,31 @@
                         maxlength="12"
                         value="<%= product.quantity %>"
                         title="Quantity:"
-                        class="input-text qty"
+                        class="input-text qty form-control text-center mx-2"
                         readonly
                         data-price-per-unit="<%= product.productId.price %>"
+                        style="max-width: 60px;"
                       />
+                  
+                      <!-- Increase Button -->
                       <button
                         onclick="updateQuantity('<%= product.productId._id %>', 'increase', '<%=index%>')"
                         class="btn btn-outline-primary btn-sm quantity-btn increase"
                         type="button"
                         aria-label="Increase Quantity"
-                        style="top: 25px"
                       >
-                        <i class="lnr lnr-chevron-up"></i>
-                      </button>
-                      <button
-                        onclick="updateQuantity('<%= product.productId._id %>', 'decrease', '<%=index%>')"
-                        class="btn btn-outline-secondary btn-sm quantity-btn decrease"
-                        type="button"
-                        aria-label="Decrease Quantity"
-                        style="top: -45px"
-                      >
-                        <i class="lnr lnr-chevron-down"></i>
+                        <i class="lnr lnr-chevron-right"></i>
                       </button>
                     </div>
                   </td>
+                  
+                  
+                  
+
+
+
+
+
                   <td class="total-price">
                     ₹<%= product.productId.price * product.quantity %>
                   </td>
@@ -198,7 +217,7 @@
 
                 <tr class="bottom_button">
                   <td>
-                    <a class="gray_btn" href="#">Update Cart</a>
+                    <a class="gray_btn" href="/shop">Update Cart</a>
                   </td>
                   <td></td>
                   <td></td>

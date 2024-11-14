@@ -4,7 +4,7 @@ import Wishlist from "../../models/whislistModel.js";
 export const filteredProducts = async (req, res) => {
   try {
     const { brand, color, sort, category, search, page = 1 } = req.query;
-    const productsPerPage = 6;
+    const productsPerPage = 8;
 
     const query = { blocked: false };
     if (brand) query.brand = brand;
@@ -25,12 +25,13 @@ export const filteredProducts = async (req, res) => {
 
     const totalProducts = await ProductModel.countDocuments(query);
 
-    let products = await ProductModel.find(query)
-      .populate("categoryId")
-      .skip((page - 1) * productsPerPage)
-      .limit(productsPerPage)
-      .lean();
-
+    let productsN = await ProductModel.find(query)
+    .populate("categoryId")
+    .skip((page - 1) * productsPerPage)
+    .limit(productsPerPage)
+    .sort({ createdAt: -1 })
+    .lean();
+    const products = productsN.filter((item, index) => !item.blocked && !item.categoryId.blocked);
     
     if (sort === "2") { 
 

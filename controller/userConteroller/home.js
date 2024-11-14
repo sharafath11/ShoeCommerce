@@ -1,9 +1,21 @@
+import {
+  activateCategoryOffers,
+  couponActiveWithDate,
+  disableCatOffer,
+  disableExpiredCoupons,
+  productOfferEnabeDisable,
+} from "../../middleware/expireCoupen.js";
 import CartModel from "../../models/cartModel.js";
 import ProductModel from "../../models/prodectsModel.js";
 import Wishlist from "../../models/whislistModel.js";
 
 export const homeRender = async (req, res) => {
   try {
+    disableExpiredCoupons();
+    couponActiveWithDate();
+    activateCategoryOffers();
+    productOfferEnabeDisable();
+    disableCatOffer();
     const user = req.session.user;
     const toastMessage = req.session.toast;
     delete req.session.toast;
@@ -12,14 +24,19 @@ export const homeRender = async (req, res) => {
         "products.productId"
       );
       req.session.cartQty = cartItem?.products?.length;
-     
     } else {
       req.session.cartQty = 0;
     }
-    const productsN = await ProductModel.find().populate('categoryId')
-    //    const productsN = await ProductModel.find().populate('categoryId').exec();
+    const productsN = await ProductModel.find()
+      .populate("categoryId")
+      .sort({ _id: -1 });
 
-    const products = productsN.filter((item, index) => !item.blocked && !item.categoryId.blocked);
+    const filteredProducts = productsN.filter(
+      (item) => !item.blocked && !item.categoryId.blocked
+    );
+
+    const products = filteredProducts.slice(0, 12);
+
     if (!user || !user._id) {
       return res.render("user/index", {
         user: user,
@@ -39,18 +56,17 @@ export const homeRender = async (req, res) => {
     const WishlistQty = uniqueProducts.length;
 
     req.session.WishlistQty = WishlistQty;
-   console.log(products);
-   
+    console.log(products);
+
     res.render("user/index", {
       user: user,
       products: products || [],
       WishlistQty,
       message: toastMessage,
-      cartQty: req.session.cartQty||0,
+      cartQty: req.session.cartQty || 0,
     });
   } catch (error) {
     console.error(error);
     return res.render("user/error");
-   
   }
 };

@@ -296,10 +296,10 @@
           showToast("offer name needed or offername greater than 7");
           return;
         }
-        if (discounted <= originalPriceValue) {
-          showToast("Discounted price must be less than the original price.");
-          return;
-        }
+        // if (discounted <= originalPriceValue) {
+        //   showToast("Discounted price must be less than the original price.");
+        //   return;
+        // }
         if (discounted < categoryDiscount) {
   
           showToast("Discounted price must be greater  than the category discount price ");

@@ -109,11 +109,7 @@
             <i class="bi bi-box mr-2"></i> Orders
           </a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" data-bs-toggle="tab" href="#">
-            <i class="bi bi-credit-card mr-2"></i> Payment
-          </a>
-        </li>
+
         <li class="nav-item">
           <a class="nav-link" href="/settings">
             <i class="bi bi-gear mr-2"></i> Settings
@@ -396,15 +392,17 @@
     <script>
       function addAddress(event, userId) {
         event.preventDefault();
-        const type = document.getElementById("type").value;
-        const streetAddress = document.getElementById("streetAddress").value;
-        const city = document.getElementById("city").value;
-        const state = document.getElementById("state").value;
-        const postalCode = document.getElementById("postalCode").value;
-        const country = document.getElementById("country").value;
-        const name = document.getElementById("name").value;
+        const type = document.getElementById("type").value.trim();
+        const streetAddress = document
+          .getElementById("streetAddress")
+          .value.trim();
+        const city = document.getElementById("city").value.trim();
+        const state = document.getElementById("state").value.trim();
+        const postalCode = document.getElementById("postalCode").value.trim();
+        const country = document.getElementById("country").value.trim();
+        const name = document.getElementById("name").value.trim();
         const formData = {
-          name:name,
+          name: name,
           type: type,
           streetAddress: streetAddress,
           city: city,
@@ -418,30 +416,49 @@
           showToast("Invalid postal code");
           return;
         }
-        if (type.length < 3) {
-          showToast("Type must be at least 3 characters long.");
+
+        if (type.length < 3 || /\s{2,}/.test(type)) {
+          showToast(
+            "Type must be at least 3 characters long and cannot contain consecutive spaces."
+          );
           return;
         }
-        if (streetAddress.length < 5) {
-          showToast("Street address must be at least 5 characters long.");
+
+        if (streetAddress.length < 5 || /\s{2,}/.test(streetAddress)) {
+          showToast(
+            "Street address must be at least 5 characters long and cannot contain consecutive spaces."
+          );
           return;
         }
-        if (!/^[a-zA-Z\s]*$/.test(city)) {
-          showToast("City name should contain only letters.");
+
+        if (!/^[a-zA-Z\s]+$/.test(city) || /\s{2,}/.test(city)) {
+          showToast(
+            "City name should contain only letters and cannot contain consecutive spaces."
+          );
           return;
         }
-        if (!/^[a-zA-Z\s]*$/.test(state)) {
-          showToast("State name should contain only letters.");
+
+        if (!/^[a-zA-Z\s]+$/.test(state) || /\s{2,}/.test(state)) {
+          showToast(
+            "State name should contain only letters and cannot contain consecutive spaces."
+          );
           return;
         }
-        if (!/^[a-zA-Z\s]*$/.test(country)) {
-          showToast("Country name should contain only letters.");
+
+        if (!/^[a-zA-Z\s]+$/.test(country) || /\s{2,}/.test(country)) {
+          showToast(
+            "Country name should contain only letters and cannot contain consecutive spaces."
+          );
           return;
         }
+
+        if (name.length === 0 || /\s{2,}/.test(name)) {
+          showToast("Name cannot be empty or contain consecutive spaces.");
+          return;
+        }
+
         confirmAction("Are you sure?", "Add the address?", "Yes, Add it!").then(
           (result) => {
-            console.log(result);
-
             if (result.isConfirmed) {
               axios
                 .post("/addAddress", formData)
@@ -492,21 +509,19 @@
       }
 
       function UpdateAddress(event, addressId, index) {
-        console.log("====================================");
-        console.log(index);
-        console.log("====================================");
         event.preventDefault();
-        const type = document.getElementById(`type${index}`).value;
+        const type = document.getElementById(`type${index}`).value.trim();
         const streetAddress = document.getElementById(
           `streetAddress${index}`
-        ).value;
-        const city = document.getElementById(`city${index}`).value;
-        const postalCode = document.getElementById(`zip${index}`).value;
-        const state = document.getElementById(`state${index}`).value; // Make sure this field exists
-        const country = document.getElementById(`country${index}`).value; // Make sure this field exists
+        ).value.trim();
+        const city = document.getElementById(`city${index}`).value.trim();
+        const postalCode = document.getElementById(`zip${index}`).value.trim();
+        const state = document.getElementById(`state${index}`).value.trim();
+        const country = document.getElementById(`country${index}`).value.trim();
+        const name=document.getElementById(`name${index}`).value.trim()
 
-       
         const formData = {
+          name,
           type: type,
           streetAddress: streetAddress,
           city: city,
@@ -515,29 +530,48 @@
           country: country,
           addressId: addressId,
         };
-
         if (!isValidPincode(postalCode)) {
-          showToast("Invalid postal cfgvhbode");
+          showToast("Invalid postal code");
           return;
         }
-        if (type.length < 3) {
-          showToast("Type must be at least 3 characters long.");
+
+        if (type.length < 3 || /\s{2,}/.test(type)) {
+          showToast(
+            "Type must be at least 3 characters long and cannot contain consecutive spaces."
+          );
           return;
         }
-        if (streetAddress.length < 5) {
-          showToast("Street address must be at least 5 characters long.");
+
+        if (streetAddress.length < 5 || /\s{2,}/.test(streetAddress)) {
+          showToast(
+            "Street address must be at least 5 characters long and cannot contain consecutive spaces."
+          );
           return;
         }
-        if (!/^[a-zA-Z\s]*$/.test(city)) {
-          showToast("City name should contain only letters.");
+
+        if (!/^[a-zA-Z\s]+$/.test(city) || /\s{2,}/.test(city)) {
+          showToast(
+            "City name should contain only letters and cannot contain consecutive spaces."
+          );
           return;
         }
-        if (!/^[a-zA-Z\s]*$/.test(state)) {
-          showToast("State name should contain only letters.");
+
+        if (!/^[a-zA-Z\s]+$/.test(state) || /\s{2,}/.test(state)) {
+          showToast(
+            "State name should contain only letters and cannot contain consecutive spaces."
+          );
           return;
         }
-        if (!/^[a-zA-Z\s]*$/.test(country)) {
-          showToast("Country name should contain only letters.");
+
+        if (!/^[a-zA-Z\s]+$/.test(country) || /\s{2,}/.test(country)) {
+          showToast(
+            "Country name should contain only letters and cannot contain consecutive spaces."
+          );
+          return;
+        }
+
+        if (name.length === 0 || /\s{2,}/.test(name)) {
+          showToast("Name cannot be empty or contain consecutive spaces.");
           return;
         }
         confirmAction(

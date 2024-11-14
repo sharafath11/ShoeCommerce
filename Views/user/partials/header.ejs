@@ -2,12 +2,10 @@
     <div class="main_menu">
         <nav class="navbar navbar-expand-lg navbar-light main_box">
             <div class="container">
-                <!-- Logo Section -->
                 <a class="navbar-brand logo_h" href="/">
                     <img src="../logo.png" alt="Logo" style="width: 123px; height: 75px;">
                 </a>
 
-                <!-- Navbar Toggle for Mobile -->
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="icon-bar"></span>
@@ -15,7 +13,6 @@
                     <span class="icon-bar"></span>
                 </button>
 
-                <!-- Navbar Links -->
                 <div class="collapse navbar-collapse offset" id="navbarSupportedContent">
                     <ul class="nav navbar-nav menu_nav ml-auto">
                         <li class="nav-item" id="home"><a class="nav-link" href="/">HOME</a></li>
@@ -23,9 +20,8 @@
                         <li class="nav-item" id="checkout"><a class="nav-link" href="/checkout">CHECK OUT</a></li>
                         <li class="nav-item" id="contact"><a class="nav-link" href="/contact">CONTACT</a></li>
 
-                        <!-- Wishlist and Cart Icons with Quantities -->
                         <li class="nav-item">
-                            <a href="/wishlist" class="cart">
+                            <a href="/wishlist" class="cart nav-link">
                                 <div class="cart-container">
                                     <span class="qty" id="w-qty"><%= WishlistQty %></span>
                                     <span class="ti-heart"></span>
@@ -33,15 +29,15 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="/cart" class="cart">
+                            <a href="/cart" class="cart nav-link">
                                 <div class="cart-container">
                                     <span class="qty" id="cart-quantity"><%= cartQty %></span>
                                     <span class="ti-bag"></span>
                                 </div>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a href="/wallet" class="cart">
+                        <li class="nav-item ">
+                            <a href="/wallet" class="cart nav-link">
                                 <div class="cart-container">
                                     <span class="ti-wallet"></span>
                                 </div>
@@ -49,7 +45,6 @@
                         </li>
                     </ul>
 
-                    <!-- User Profile Dropdown -->
                     <ul class="navbar-nav">
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -78,20 +73,13 @@
     </div>
 </header>
 
-<!-- JavaScript to Set Active Class Dynamically -->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        // Get the current path from the URL
         const path = window.location.pathname;
 
-        // Remove 'active' class from all navigation items
         document.querySelectorAll(".nav-item").forEach(item => {
             item.classList.remove("active");
         });
-
-        console.log('====================================');
-        console.log(path);
-        console.log('====================================');
         if (path === "/") {
             document.getElementById("home").classList.add("active");
         } else if (path === "/shop") {

@@ -9,6 +9,8 @@
     
     <!-- Toastify CSS -->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
     <style>
      
@@ -235,46 +237,55 @@
     </script>
 
    
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const buttons = document.querySelectorAll('.btn-toggle-list');
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const buttons = document.querySelectorAll('.btn-toggle-list');
 
-            buttons.forEach(button => {
-                button.addEventListener('click', async function () {
-                    const productId = this.getAttribute('data-id');
-                    const action = this.getAttribute('data-status');
+        buttons.forEach(button => {
+            button.addEventListener('click', async function () {
+    const productId = this.getAttribute('data-id');
+    const action = this.getAttribute('data-status');
 
-                  
-                    const confirmationMessage = action === 'list' 
-                        ? 'Are you sure you want to list this product?' 
-                        : 'Are you sure you want to unlist this product?';
+    const confirmationMessage = action === 'list' 
+        ? 'Are you sure you want to list this product?' 
+        : 'Are you sure you want to unlist this product?';
 
-                    if (confirm(confirmationMessage)) {
-                        try {
-                            const response = await fetch(`/admin/products/${action}/${productId}`, {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                            });
+    // Use SweetAlert for confirmation
+    const result = await Swal.fire({
+        title: 'Confirm Action',
+        text: confirmationMessage,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No',
+    });
 
-                            const data = await response.json();
-
-                            if (data.success) {
-                             
-                                button.textContent = action === 'list' ? 'Unlist' : 'List';
-                                button.setAttribute('data-status', action === 'list' ? 'unlist' : 'list');
-                                showToast(data.message); 
-                            } else {
-                                showToast(data.message); 
-                            }
-                        } catch (error) {
-                            console.error('Error:', error);
-                            showToast('An error occurred. Please try again.');
-                        }
-                    }
-                });
+    if (result.isConfirmed) {
+        try {
+            const response = await fetch(`/admin/products/${action}/${productId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
             });
+
+            const data = await response.json();
+
+            if (data.success) {
+                button.textContent = action === 'list' ? 'Unlist' : 'List';
+                button.setAttribute('data-status', action === 'list' ? 'unlist' : 'list');
+                showToast(data.message); 
+            } else {
+                showToast(data.message); 
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showToast('An error occurred. Please try again.');
+        }
+    }
+});
+
+        });
 
             function showToast(message) {
                 Toastify({

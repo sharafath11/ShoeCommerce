@@ -677,13 +677,13 @@
 
     function addAddress(event, userId) {
       event.preventDefault();
-      const type = document.getElementById("type").value;
-      const streetAddress = document.getElementById("streetAddress").value;
-      const city = document.getElementById("city").value;
-      const state = document.getElementById("state").value;
-      const postalCode = document.getElementById("postalCode").value;
-      const country = document.getElementById("country").value;
-      const name = document.getElementById("name").value;
+      const type = document.getElementById("type").value.trim();
+      const streetAddress = document.getElementById("streetAddress").value.trim();
+      const city = document.getElementById("city").value.trim();
+      const state = document.getElementById("state").value.trim();
+      const postalCode = document.getElementById("postalCode").value.trim();
+      const country = document.getElementById("country").value.trim();
+      const name = document.getElementById("name").value.trim();
       const formData = {
         name: name,
         type: type,
@@ -696,29 +696,49 @@
       };
 
       if (!isValidPincode(postalCode)) {
-        showToast("Invalid postal code");
-        return;
-      }
-      if (type.length < 3) {
-        showToast("Type must be at least 3 characters long.");
-        return;
-      }
-      if (streetAddress.length < 5) {
-        showToast("Street address must be at least 5 characters long.");
-        return;
-      }
-      if (!/^[a-zA-Z\s]*$/.test(city)) {
-        showToast("City name should contain only letters.");
-        return;
-      }
-      if (!/^[a-zA-Z\s]*$/.test(state)) {
-        showToast("State name should contain only letters.");
-        return;
-      }
-      if (!/^[a-zA-Z\s]*$/.test(country)) {
-        showToast("Country name should contain only letters.");
-        return;
-      }
+          showToast("Invalid postal code");
+          return;
+        }
+
+        if (type.length < 3 || /\s{2,}/.test(type)) {
+          showToast(
+            "Type must be at least 3 characters long and cannot contain consecutive spaces."
+          );
+          return;
+        }
+
+        if (streetAddress.length < 5 || /\s{2,}/.test(streetAddress)) {
+          showToast(
+            "Street address must be at least 5 characters long and cannot contain consecutive spaces."
+          );
+          return;
+        }
+
+        if (!/^[a-zA-Z\s]+$/.test(city) || /\s{2,}/.test(city)) {
+          showToast(
+            "City name should contain only letters and cannot contain consecutive spaces."
+          );
+          return;
+        }
+
+        if (!/^[a-zA-Z\s]+$/.test(state) || /\s{2,}/.test(state)) {
+          showToast(
+            "State name should contain only letters and cannot contain consecutive spaces."
+          );
+          return;
+        }
+
+        if (!/^[a-zA-Z\s]+$/.test(country) || /\s{2,}/.test(country)) {
+          showToast(
+            "Country name should contain only letters and cannot contain consecutive spaces."
+          );
+          return;
+        }
+
+        if (name.length === 0 || /\s{2,}/.test(name)) {
+          showToast("Name cannot be empty or contain consecutive spaces.");
+          return;
+        }
       confirmAction("Are you sure?", "Add the address?", "Yes, Add it!").then(
         (result) => {
         

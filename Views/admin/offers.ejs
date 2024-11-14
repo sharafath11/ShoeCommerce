@@ -97,7 +97,7 @@
                     onclick="editOffer('<%= offer._id %>', '<%= offer.title %>', '<%= offer.description %>', <%= offer.discount %>, '<%= offer.categoryId._id %>', <%= offer.isActive %>, '<%= new Date(offer.startDate).toISOString().split('T')[0] %>', '<%= new Date(offer.expireDate).toISOString().split('T')[0] %>')">
                     Edit
                   </button>
-                  <button class="btn btn-danger btn-sm" onclick="deleteOffer('<%= offer._id %>')">Delete</button>
+                 
                 </td>
               </tr>
               <% }) %>
@@ -153,7 +153,8 @@
                     type="number"
                     class="form-control"
                     id="addOfferDiscount"
-                    min="0"
+                    min="1"
+                    max="99"
                     required
                   />
                 </div>
@@ -239,7 +240,7 @@
                 </div>
                 <div class="mb-3">
                   <label for="editOfferDiscount" class="form-label">Discount</label>
-                  <input type="number" class="form-control" id="editOfferDiscount" min="0" required />
+                  <input type="number" class="form-control" id="editOfferDiscount"  required />
                 </div>
                 <div class="mb-3">
                  
@@ -301,6 +302,12 @@
       function validateOfferData(offerData) {
         const { title, description, discount, category, startDate, endDate } = offerData;
         if (!title.trim()) return Swal.fire("Error", "Offer title is required.", "error"), false;
+        if(discount<1){
+          return Swal.fire("discount Minimum 1"),false
+        }
+        if(discount>99){
+          return Swal.fire("discount maximum 99"),false
+        }
         if (!description.trim()) return Swal.fire("Error", "Offer description is required.", "error"), false;
         if (!discount || isNaN(discount) || discount <= 0) return Swal.fire("Error", "Valid discount amount is required.", "error"), false;
         if (!category.trim()) return Swal.fire("Error", "Category must be selected.", "error"), false;

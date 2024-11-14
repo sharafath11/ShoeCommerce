@@ -159,9 +159,7 @@ export const removeOrders = async (req, res) => {
 export const deletePerItemInOrder = async (req, res) => {
   const { orderId, productId } = req.params;
   const { size } = req.body;
- console.log('====================================');
- console.log('fhghfbc');
- console.log('====================================');
+
   try {
     const order = await OrderModel.findById(orderId);
     if (!order) return res.json({ msg: 'Order not found' });
@@ -180,7 +178,7 @@ export const deletePerItemInOrder = async (req, res) => {
     const itemTotal = item.price * item.quantity;
     order.totalAmount -= itemTotal;
     item.isCanceld = true;
-    item.isReturned = true;
+  //  item.isReturned = true;
     if (order.items.every(i => i.isCanceld)) {
       order.isCanceld = true;
       order.totalAmount = 0;
@@ -197,7 +195,6 @@ export const deletePerItemInOrder = async (req, res) => {
      console.log(couponDiscountAmount)
     const refundAmount = itemTotal - (couponDiscountAmount * (itemTotal / (order.totalAmount + itemTotal)));
 
-    // Refund to wallet if paymentStatus is "Paid" only
     if (order.paymentStatus === "Paid") {
       const userId = order.user;
       let wallet = await WalletModel.findOne({ user: userId });
@@ -205,13 +202,13 @@ export const deletePerItemInOrder = async (req, res) => {
       if (!wallet) {
         wallet = new WalletModel({ user: userId, balance: 0 });
       }
+      
 
-      // Update wallet balance and add a transaction
-      wallet.balance += refundAmount; // Add the calculated refund amount
+      wallet.balance += refundAmount; 
       wallet.transactions.push({
         amount: refundAmount,
         transactionType: 'credit',
-        description: `Refund for returned item in order ${orderId}`,
+        description: `Refund for returned item in order ${product.name}`,
         size: item.size,
         qty: item.quantity,
         productId: item.productId,
@@ -229,10 +226,10 @@ export const deletePerItemInOrder = async (req, res) => {
       allCanceled: order.items.every(i => i.isCanceld),
     });
 
-    return true; // Return true to indicate successful execution
+    return true; 
   } catch (error) {
     console.error(error);
     res.render("user/error");
-    return false; // Return false in case of an error
+    return false; 
   }
 };

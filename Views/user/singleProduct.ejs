@@ -35,6 +35,12 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
     />
+    <!-- SweetAlert2 CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+<!-- SweetAlert2 JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
       .product-title {
         font-size: 24px;
@@ -227,7 +233,7 @@
 
         <div class="col-md-6 p-5">
           <h1 class="product-title"><%= product.name %></h1>
-          <p class="product-price">₹ <%= product.price %></p>
+          <strong><p class="product-price">₹ <%= product.price %></p></strong>
           
           <% if (product.categoryId) { %>
             <p><strong>Category:</strong> <%= product.categoryId.name %></p> 
@@ -261,7 +267,7 @@
             <%= "★".repeat(Math.round(averageRating)) %> <%= "☆".repeat(5 - Math.round(averageRating)) %>
           </span>
           <br>  
-          <p class="product-description"><%= product.description %></p>
+          <strong class="product-description"><%= product.description %></strong>
           
           <% if (allOutOfStock) { %>
             <button
@@ -491,7 +497,7 @@
           const name = document.getElementById("name").value;
           const rating = document.getElementById("rating").value;
           const review = document.getElementById("review").value;
-          const rCheck = /^[A-Za-z\s\p{Emoji}]+$/u;
+          const rCheck = /^[A-Za-z!",.0-9'?\s\p{Emoji}]+$/u;
 
           if (!rCheck.test(review)) {
             showToast("Review can only contain letters and emojis.");
@@ -527,24 +533,36 @@
           }
 
           try {
-            const response = await axios.post("/product/reviews", formData, {
-              headers: {
-                "Content-Type": "multipart/form-data",
-              },
-            });
+  const result = await Swal.fire({
+    title: "Are you sure?",
+    text: "Do you want to submit this review?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, submit it!",
+  });
 
-            if (response.data.ok) {
-              showToast(response.data.msg);
-              document.getElementById("reviewForm").reset();
-              return;
-            } else {
-              showToast(response.data.msg);
-              return;
-            }
-          } catch (error) {
-            console.error("Error submitting review:", error);
-            showToast("Error submitting review. Please try again later.");
-          }
+  if (result.isConfirmed) {
+    const response = await axios.post("/product/reviews", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    if (response.data.ok) {
+      Swal.fire("Submitted!", response.data.msg, "success");
+      document.getElementById("reviewForm").reset();
+      return;
+    } else {
+      Swal.fire("Error", response.data.msg, "error");
+      return;
+    }
+  }
+} catch (error) {
+  console.error("Error submitting review:", error);
+  Swal.fire("Error", "Error submitting review. Please try again later.", "error");
+}
         });
     </script>
 

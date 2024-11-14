@@ -181,13 +181,13 @@ function showToast(message) {
 <script>
     function downloadPDF() {
         const currentUrl = window.location.href;
-        const url = `${currentUrl}&download=pdf`; 
+        const url = `${currentUrl}?download=pdf`; 
         window.open(url, '_blank'); 
     }
 
     function downloadExcel() {
         const currentUrl = window.location.href; 
-        const url = `${currentUrl}&download=excel`; 
+        const url = `${currentUrl}?download=excel`; 
         window.open(url, '_blank'); 
     }
     function resetHand(){

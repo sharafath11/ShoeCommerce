@@ -23,6 +23,7 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
     />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
       .otp-btn {
@@ -45,7 +46,7 @@
         <div class="col-md-6">
           <div class="card">
             <div class="card-header text-center">
-              <h3>Register</h3>
+              <h3>Welcome to our Famly</h3>
             </div>
             <div class="card-body">
               <form id="registerForm">
@@ -260,26 +261,32 @@
         clearInterval(timerInterval);
 
         timerInterval = setInterval(function () {
-          let timer = duration--;
-          let minutes = parseInt(timer / 60, 10);
-          let seconds = parseInt(timer % 60, 10);
+  let timer = duration--;
+  let minutes = parseInt(timer / 60, 10);
+  let seconds = parseInt(timer % 60, 10);
 
-          minutes = minutes < 10 ? "0" + minutes : minutes;
-          seconds = seconds < 10 ? "0" + seconds : seconds;
+  minutes = minutes < 10 ? "0" + minutes : minutes;
+  seconds = seconds < 10 ? "0" + seconds : seconds;
 
-          document.getElementById("timer").textContent =
-            minutes + ":" + seconds;
+  document.getElementById("timer").textContent = minutes + ":" + seconds;
 
-          if (timer < 0) {
-            clearInterval(timerInterval);
-            document.getElementById("otpField").style.display = "none";
-            getOtpBtn.disabled = false;
-            alert("OTP expired. Please request a new one.");
+  if (timer < 0) {
+    clearInterval(timerInterval);
+    document.getElementById("otpField").style.display = "none";
+    getOtpBtn.disabled = false;
 
-            localStorage.removeItem("otpStartTime");
-            localStorage.removeItem("otpDuration");
-          }
-        }, 1000);
+    Swal.fire({
+      icon: 'error',
+      title: 'OTP Expired',
+      text: 'Please request a new one.',
+      confirmButtonText: 'OK'
+    });
+
+    localStorage.removeItem("otpStartTime");
+    localStorage.removeItem("otpDuration");
+  }
+}, 1000);
+
       }
 
       function checkExistingTimer() {

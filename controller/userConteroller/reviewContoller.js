@@ -15,8 +15,11 @@ export const reviewHandler = async (req, res) => {
       const hasPurchased = await OrderModel.findOne({
         user: user._id,
         "items.productId": productId,
-        status: "Completed",
+        status: "Delivered",
       });
+      console.log('====================================');
+      console.log(hasPurchased);
+      console.log('====================================');
   
       if (!hasPurchased) {
         return res.json({
