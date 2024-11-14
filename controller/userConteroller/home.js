@@ -8,14 +8,19 @@ import {
 import CartModel from "../../models/cartModel.js";
 import ProductModel from "../../models/prodectsModel.js";
 import Wishlist from "../../models/whislistModel.js";
-
+import cron from 'node-cron';
+cron.schedule('0 0 * * *', () => {
+  console.log('Running scheduled tasks...');
+  disableExpiredCoupons();
+  couponActiveWithDate();
+  activateCategoryOffers();
+  productOfferEnabeDisable();
+  disableCatOffer();
+});
 export const homeRender = async (req, res) => {
   try {
-    disableExpiredCoupons();
-    couponActiveWithDate();
-    activateCategoryOffers();
-    productOfferEnabeDisable();
-    disableCatOffer();  
+   
+   
     const user = req.session.user;
     const toastMessage = req.session.toast;
     delete req.session.toast;
