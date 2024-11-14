@@ -18,13 +18,13 @@ app.use(session({
   secret: process.env.SECRET,
   resave: false,
   saveUninitialized: false,
-  store: MongoStore.create({ mongoUrl: 'mongodb://localhost:27017/bro1' }),
+  store: MongoStore.create({ mongoUrl: 'mongodb+srv://jdtbcajdt:WEfrMmAFC3RZdiV5@cluster7.24ktr.mongodb.net/' }),
   cookie: {
       secure: false, 
   }
 }));
 mongoose
-  .connect("mongodb://localhost:27017/bro1")
+  .connect(process.env.MONOGOURL)
   .then((res) => {
     console.log(`databse connected succes full`);
   })
