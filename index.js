@@ -19,7 +19,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
-    mongoUrl:"mongodb://jdtbcajdt:WEfrMmAFC3RZdiV5@cluster.mongodb.net/shope?retryWrites=true&w=majority"
+    mongoUrl:"mongodb://jdtbcajdt:WEfrMmAFC3RZdiV5@cluster.mongodb.net/test?retryWrites=true&w=majority"
     ,
     ttl: 14 * 24 * 60 * 60, // Set a time-to-live (TTL) of 14 days
     autoRemove: 'native' // Automatically remove expired sessions
