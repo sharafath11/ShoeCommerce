@@ -18,11 +18,19 @@ app.use(session({
   secret: process.env.SECRET,
   resave: false,
   saveUninitialized: false,
-  // store: MongoStore.create({ mongoUrl: process.env.MONOGOURL }),
+  store: MongoStore.create({
+    mongoUrl:"mongodb://jdtbcajdt:WEfrMmAFC3RZdiV5@cluster.mongodb.net/shope?retryWrites=true&w=majority"
+    ,
+    ttl: 14 * 24 * 60 * 60, // Set a time-to-live (TTL) of 14 days
+    autoRemove: 'native' // Automatically remove expired sessions
+  }),
   cookie: {
-      secure: false, 
+    secure: process.env.NODE_ENV === 'production', // Secure in production
+    httpOnly: true, // Helps prevent XSS attacks
+    maxAge: 1000 * 60 * 60 * 24 * 7, // Cookie expires in 7 days
   }
 }));
+
 mongoose
   .connect(process.env.MONOGOURL)
   .then((res) => {
