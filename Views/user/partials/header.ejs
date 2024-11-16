@@ -22,10 +22,10 @@
 
 .cart-container .qty {
     position: absolute;
-    top: -17px;
-    right: -24px;
-    background: #055987;
-    color: #fff;
+    top: -11px;
+    right: -17px;
+    /* background: #055987; */
+    color: #000000;
     font-size: 12px;
     border-radius: 50%;
     /* padding: 4px; */
@@ -59,19 +59,25 @@
                         <li class="nav-item" id="wishlist">
                             <a href="/wishlist" class="nav-link">
                                 <div class="cart-container">
-                                    <span class="qty" id="w-qty"><%= WishlistQty %></span>
+                                    <% if (WishlistQty > 0) { %>
+                                        <span class="qty" id="w-qty"><%= WishlistQty %></span>
+                                    <% } %>
                                     <span class="ti-heart"></span>
                                 </div>
                             </a>
                         </li>
+                        
                         <li class="nav-item" id="cart">
                             <a href="/cart" class="nav-link">
                                 <div class="cart-container">
-                                    <span class="qty" id="cart-quantity"><%= cartQty %></span>
+                                    <% if (cartQty > 0) { %>
+                                        <span class="qty" id="cart-quantity"><%= cartQty %></span>
+                                    <% } %>
                                     <span class="ti-bag"></span>
                                 </div>
                             </a>
                         </li>
+                        
                         <li class="nav-item" id="wallet">
                             <a href="/wallet" class="nav-link">
                                 <div class="cart-container">
@@ -79,6 +85,7 @@
                                 </div>
                             </a>
                         </li>
+                        
                         
                     </ul>
 
