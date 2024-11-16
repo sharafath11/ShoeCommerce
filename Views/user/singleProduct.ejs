@@ -5,7 +5,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-
+    <link rel="shortcut icon" href="/logo.png" />
     <meta name="author" content="CodePixar" />
 
     <meta name="description" content="" />
@@ -16,16 +16,16 @@
 
     <title>ST Shop</title>
 
-    <link rel="stylesheet" href="css/linearicons.css" />
-    <link rel="stylesheet" href="css/font-awesome.min.css" />
-    <link rel="stylesheet" href="css/themify-icons.css" />
-    <link rel="stylesheet" href="css/bootstrap.css" />
-    <link rel="stylesheet" href="css/owl.carousel.css" />
-    <link rel="stylesheet" href="css/nice-select.css" />
-    <link rel="stylesheet" href="css/nouislider.min.css" />
-    <link rel="stylesheet" href="css/ion.rangeSlider.css" />
-    <link rel="stylesheet" href="css/ion.rangeSlider.skinFlat.css" />
-    <link rel="stylesheet" href="css/magnific-popup.css" />
+    <link rel="stylesheet" href="/css/linearicons.css" />
+    <link rel="stylesheet" href="/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="/css/themify-icons.css" />
+    <link rel="stylesheet" href="/css/bootstrap.css" />
+    <link rel="stylesheet" href="/css/owl.carousel.css" />
+    <link rel="stylesheet" href="/css/nice-select.css" />
+    <link rel="stylesheet" href="/css/nouislider.min.css" />
+    <link rel="stylesheet" href="/css/ion.rangeSlider.css" />
+    <link rel="stylesheet" href="/css/ion.rangeSlider.skinFlat.css" />
+    <link rel="stylesheet" href="/css/magnific-popup.css" />
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -189,7 +189,80 @@
     </style>
   </head>
   <body>
-    <%- include('partials/header') %>
+    <header class="header_area sticky-header">
+      <div class="main_menu">
+          <nav class="navbar navbar-expand-lg navbar-light main_box">
+              <div class="container">
+                  <a class="navbar-brand logo_h" href="/">
+                      <img src="/img/logo.png" alt="Logo" style="width: 123px; height: 75px;">
+                  </a>
+  
+                  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                  </button>
+  
+                  <div class="collapse navbar-collapse offset" id="navbarSupportedContent">
+                      <ul class="nav navbar-nav menu_nav ml-auto">
+                          <li class="nav-item" id="home"><a class="nav-link" href="/">HOME</a></li>
+                          <li class="nav-item" id="shop"><a class="nav-link" href="/shop">SHOP</a></li>
+                          <li class="nav-item" id="checkout"><a class="nav-link" href="/checkout">CHECK OUT</a></li>
+                          <li class="nav-item" id="contact"><a class="nav-link" href="/contact">CONTACT</a></li>
+  
+                          <li class="nav-item">
+                              <a href="/wishlist" class="cart nav-link">
+                                  <div class="cart-container">
+                                      <span class="qty" id="w-qty"><%= WishlistQty %></span>
+                                      <span class="ti-heart"></span>
+                                  </div>
+                              </a>
+                          </li>
+                          <li class="nav-item">
+                              <a href="/cart" class="cart nav-link">
+                                  <div class="cart-container">
+                                      <span class="qty" id="cart-quantity"><%= cartQty %></span>
+                                      <span class="ti-bag"></span>
+                                  </div>
+                              </a>
+                          </li>
+                          <li class="nav-item ">
+                              <a href="/wallet" class="cart nav-link">
+                                  <div class="cart-container">
+                                      <span class="ti-wallet"></span>
+                                  </div>
+                              </a>
+                          </li>
+                      </ul>
+  
+                      <ul class="navbar-nav">
+                          <li class="nav-item dropdown">
+                              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  <% if (user) { %>
+                                      <%= user.username %>
+                                  <% } else { %>
+                                      LOGIN
+                                  <% } %>
+                              </a>
+                              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                  <% if (user) { %>
+                                      <a class="dropdown-item" href="/profile">Profile</a>
+                                      <div class="dropdown-divider"></div>
+                                      <form action="/logout" method="POST">
+                                          <button type="submit" class="dropdown-item">Logout</button>
+                                      </form>
+                                  <% } else { %>
+                                      <a class="dropdown-item" href="/login">Login</a>
+                                  <% } %>
+                              </div>
+                          </li>
+                      </ul>
+                  </div>
+              </div>
+          </nav>
+      </div>
+  </header>
     <section class="banner-area organic-breadcrumb">
       <div class="container">
         <div
@@ -716,6 +789,7 @@
               stopOnFocus: true
           }).showToast();
       }
+      
   </script>
   </body>
 </html>

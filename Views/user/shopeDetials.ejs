@@ -222,36 +222,37 @@
     <div class="container">
       <div class="row">
         <div class="col-xl-3 col-lg-4 col-md-5">
-          <div class="sidebar-categories">
-            <div class="head" onclick="toggleCategories()">
-              Browse Categories 
-              <span id="toggleIcon" class="lnr lnr-chevron-down"></span>
-            </div>
-            <ul class="main-categories" id="categoriesList" style="display: none;">
-              <li class="main-nav-list">
-                <a href="/shop">
-                  <span class="lnr lnr-arrow-right"></span> All categories
-                </a>
-              </li>
-              <% categories.forEach(category => { %>
-                <li class="main-nav-list">
-                  <a href="/shop?category=<%= category._id %>"
-                     aria-expanded="false"
-                     aria-controls="<%= category.name.replace(/\s+/g, '') %>">
-                    <span class="lnr lnr-arrow-right"></span> <%= category.name %>
-                  </a>
-                  <ul class="collapse"
-                      id="<%= category.name.replace(/\s+/g, '') %>"
-                      data-toggle="collapse"
-                      aria-expanded="false"
-                      aria-controls="<%= category.name.replace(/\s+/g, '') %>">
-                  </ul>
-                </li>
-              <% }) %>
-            </ul>
-          </div>
+          
     
-          <div class="sidebar-filter mt-50">
+          <div class="sidebar-filter mt-50" style="margin-top: -5px; color: #777777;">
+            <div class="sidebar-categories">
+              <div class="head" onclick="toggleCategories()" style="color: #fff;">
+                Browse Categories 
+                <span id="toggleIcon" class="lnr lnr-chevron-down"></span>
+              </div>
+              <ul class="main-categories" id="categoriesList" style="display: none;">
+                <li class="main-nav-list">
+                  <a href="/shop">
+                    <span class="lnr lnr-arrow-right"></span> All categories
+                  </a>
+                </li>
+                <% categories.forEach(category => { %>
+                  <li class="main-nav-list">
+                    <a href="/shop?category=<%= category._id %>"
+                       aria-expanded="false"
+                       aria-controls="<%= category.name.replace(/\s+/g, '') %>">
+                      <span class="lnr lnr-arrow-right"></span> <%= category.name %>
+                    </a>
+                    <ul class="collapse"
+                        id="<%= category.name.replace(/\s+/g, '') %>"
+                        data-toggle="collapse"
+                        aria-expanded="false"
+                        aria-controls="<%= category.name.replace(/\s+/g, '') %>">
+                    </ul>
+                  </li>
+                <% }) %>
+              </ul>
+            </div>
             <div class="top-filter-head" onclick="toggleFilter('brand-filter')">
               Product Filters - Brands
               <span id="toggleIcon" class="lnr lnr-chevron-down"></span>
