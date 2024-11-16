@@ -1,3 +1,39 @@
+
+
+
+
+
+<style>
+    .nav-item a.nav-link {
+    color: #333; /* Default text color */
+    transition: color 0.3s ease, background-color 0.3s ease;
+    text-decoration: none;
+}
+
+.nav-item a.nav-link:hover {
+    color: #ff5733; /* Hover text color */
+   
+}
+
+.cart-container {
+    display: inline-block;
+    position: relative;
+}
+
+.cart-container .qty {
+    position: absolute;
+    top: -17px;
+    right: -24px;
+    background: #055987;
+    color: #fff;
+    font-size: 12px;
+    border-radius: 50%;
+    /* padding: 4px; */
+    width: 20px;
+    text-align: center;
+}
+
+</style>
 <header class="header_area sticky-header">
     <div class="main_menu">
         <nav class="navbar navbar-expand-lg navbar-light main_box">
@@ -20,29 +56,30 @@
                         <li class="nav-item" id="checkout"><a class="nav-link" href="/checkout">CHECK OUT</a></li>
                         <li class="nav-item" id="contact"><a class="nav-link" href="/contact">CONTACT</a></li>
 
-                        <li class="nav-item">
-                            <a href="/wishlist" class="cart nav-link">
+                        <li class="nav-item" id="wishlist">
+                            <a href="/wishlist" class="nav-link">
                                 <div class="cart-container">
                                     <span class="qty" id="w-qty"><%= WishlistQty %></span>
                                     <span class="ti-heart"></span>
                                 </div>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a href="/cart" class="cart nav-link">
+                        <li class="nav-item" id="cart">
+                            <a href="/cart" class="nav-link">
                                 <div class="cart-container">
                                     <span class="qty" id="cart-quantity"><%= cartQty %></span>
                                     <span class="ti-bag"></span>
                                 </div>
                             </a>
                         </li>
-                        <li class="nav-item ">
-                            <a href="/wallet" class="cart nav-link">
+                        <li class="nav-item" id="wallet">
+                            <a href="/wallet" class="nav-link">
                                 <div class="cart-container">
                                     <span class="ti-wallet"></span>
                                 </div>
                             </a>
                         </li>
+                        
                     </ul>
 
                     <ul class="navbar-nav">
@@ -75,22 +112,30 @@
 
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const path = window.location.pathname;
+document.addEventListener("DOMContentLoaded", function () {
+    const path = window.location.pathname;
 
-        document.querySelectorAll(".nav-item").forEach(item => {
-            item.classList.remove("active");
-        });
-        if (path === "/") {
-            document.getElementById("home").classList.add("active");
-        } else if (path === "/shop") {
-            
-            document.getElementById("shop").classList.add("active");
-        } else if (path === "/checkout") {
-            document.getElementById("checkout").classList.add("active");
-    
-        } else if (path === "/contact") {
-            document.getElementById("contact").classList.add("active");
-        }
+    // Remove 'active' class from all nav items
+    document.querySelectorAll(".nav-item").forEach(item => {
+        item.classList.remove("active");
     });
+
+    // Add 'active' class based on the current path
+    if (path === "/") {
+        document.getElementById("home").classList.add("active");
+    } else if (path === "/shop") {
+        document.getElementById("shop").classList.add("active");
+    } else if (path === "/checkout") {
+        document.getElementById("checkout").classList.add("active");
+    } else if (path === "/contact") {
+        document.getElementById("contact").classList.add("active");
+    } else if (path === "/cart") {
+        document.getElementById("cart").classList.add("active");
+    } else if (path === "/wishlist") {
+        document.getElementById("wishlist").classList.add("active");
+    } else if (path === "/wallet") {
+        document.getElementById("wallet").classList.add("active");
+    }
+});
+
 </script>
