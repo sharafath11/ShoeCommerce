@@ -1,179 +1,109 @@
 <style>
+  /* Sidebar styling */
+.sidebar {
+  height: 100vh;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: #f8f9fa;
+  width: 250px;
+  transform: translateX(-100%); /* Initially hidden */
+  z-index: 1040;
+}
+
+/* Sidebar behavior */
+.sidebar.expanded {
+  transform: translateX(0); /* Show sidebar when expanded */
+}
+
+/* Sidebar collapsed in mobile view */
+@media (max-width: 768px) {
   .sidebar {
-    height: 100vh;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    transform: translateX(-100%); /* Initially hidden on mobile */
   }
-  ul{
-    width: 200px;
+  .sidebar.expanded {
+    transform: translateX(0); /* Show sidebar when expanded */
   }
+}
 
-  .sidebar-heading {
-    padding: 1.5rem;
-    font-size: 1.5rem;
-    text-align: center;
+@media (min-width: 769px) {
+  .sidebar {
+    transform: translateX(0); /* Sidebar visible on larger screens */
   }
+}
 
-  .sidebar .nav-link {
-    transition: color 0.3s ease;
-    padding: 15px;
-    font-size: 1.1rem;
-    color: #333;
-  }
-
-  .sidebar .nav-link:hover,
-  .nav-link.active {
-    background-color: #f0f0f0;
-    color: #007bff;
-  }
-
-  /* Add styles for button */
-  .product-btn {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    font-size: 1.1rem;
-    cursor: pointer;
-  }
-
-  .product-btn:hover {
-    background-color: #0056b3;
-  }
 </style>
+<!-- Sidebar -->
+<button id="sidebarToggle" class="btn btn-primary position-fixed top-50 start-0 translate-middle-y">Toggle Sidebar</button>
 
-<nav class="col-md-2 d-none d-md-block bg-light sidebar">
+<nav class="col-md-2 bg-light sidebar">
   <div class="position-sticky pt-3">
     <h3 class="sidebar-heading">Admin Dashboard</h3>
     <ul class="nav flex-column">
       <li class="nav-item">
         <a class="nav-link active" href="/admin">
-          <i class="bi bi-house-door"></i> Dashboard
+          <i class="bi bi-house-door"></i>
+          <span>Dashboard</span>
         </a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="/admin/users">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users w-5 h-5 mr-3"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-          <i class="bi bi-people"></i> Users
+          <i class="bi bi-people"></i>
+          <span>Users</span>
         </a>
       </li>
-
       <li class="nav-item">
         <a class="nav-link" href="/admin/orders">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shopping-cart w-5 h-5 mr-3"><circle cx="8" cy="21" r="1"></circle><circle cx="19" cy="21" r="1"></circle><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path></svg>
-          <i class="bi bi-cart"></i> Orders
+          <i class="bi bi-cart"></i>
+          <span>Orders</span>
         </a>
       </li>
-      
-      <!-- Replaced Products anchor tag with button -->
       <li class="nav-item">
-        <a class="nav-link" href="/admin/products" >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="lucide lucide-package w-5 h-5 mr-3"
-          >
-            <path d="m7.5 4.27 9 5.15"></path>
-            <path
-              d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"
-            ></path>
-            <path d="m3.3 7 8.7 5 8.7-5"></path>
-            <path d="M12 22V12"></path>
-          </svg>
-          <i class="bi bi-box"></i> Products
+        <a class="nav-link" href="/admin/products">
+          <i class="bi bi-box"></i>
+          <span>Products</span>
         </a>
       </li>
-
       <li class="nav-item">
         <a class="nav-link" href="/admin/category">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <!-- Tag shape -->
-            <path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"></path>
-            
-            <!-- Small circle -->
-            <circle cx="7.5" cy="7.5" r="0.5" fill="currentColor"></circle>
-          </svg>
-          
-          <i class="bi bi-box"></i> Category
+          <i class="bi bi-box"></i>
+          <span>Category</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/admin/Coupen">
-          <svg
-          xmlns="http://www.w3.org/2000/svg"
-          xmlns:xlink="http://www.w3.org/1999/xlink"
-          fill="#000000"
-          version="1.1"
-          id="Layer_1"
-          width="24"
-          height="24"
-          viewBox="0 0 300 300"
-          xml:space="preserve"
-        >
-          <g>
-            <g>
-              <g>
-                <rect x="107.563" y="119.408" width="10.375" height="12.281" />
-                <path
-                  d="M170.944,134.285c0-8.997-7.467-16.376-16.381-16.376c-8.995,0-16.376,7.291-16.376,16.376c0,9.181,7.381,16.376,16.376,16.376C163.476,150.661,170.944,143.376,170.944,134.285z M147.456,134.285c0-3.958,3.239-7.109,7.107-7.109c3.87,0,7.107,3.149,7.107,7.109c0,3.96-3.237,7.109-7.107,7.109C150.695,141.394,147.456,138.246,147.456,134.285z"
-                />
-                <rect x="107.563" y="168.531" width="10.375" height="12.278" />
-                <rect
-                  x="138.38"
-                  y="145.544"
-                  transform="matrix(0.4696 -0.8829 0.8829 0.4696 -40.0464 234.8049)"
-                  width="74.035"
-                  height="10.375"
-                />
-                <rect x="107.563" y="143.967" width="10.375" height="12.278" />
-                <path
-                  d="M196.828,150.124c-8.997-0.034-16.407,7.231-16.438,16.319c-0.036,9.179,7.319,16.407,16.322,16.444c8.912,0.031,16.402-7.234,16.438-16.322C213.181,157.563,205.74,150.156,196.828,150.124z M196.768,173.615c-3.865,0-7.107-3.151-7.107-7.112c0-3.96,3.242-7.107,7.107-7.107c3.87,0,7.112,3.146,7.112,7.107S200.638,173.615,196.768,173.615z"
-                />
-                <path
-                  d="M149.997,0C67.157,0,0,67.157,0,150c0,82.841,67.157,150,149.997,150C232.841,300,300,232.838,300,150C300,67.157,232.841,0,149.997,0z M238.489,185.004c0,8.045-7.462,14.568-16.661,14.568h-103.89v-6.484h-10.375v6.484H78.175c-9.202,0-16.664-6.526-16.664-14.568v-69.795c0-8.043,7.462-14.566,16.664-14.566h29.388v6.484h10.375v-6.484h103.89c9.2,0,16.661,6.523,16.661,14.566V185.004z"
-                />
-              </g>
-            </g>
-          </g>
-        </svg>
-        
-        
-
-          <i class="bi bi-box"></i> Coupen
+        <a class="nav-link" href="/admin/coupon">
+          <i class="bi bi-gift"></i>
+          <span>Coupon</span>
         </a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="/admin/offers">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-gift w-5 h-5 mr-3"><rect x="3" y="8" width="18" height="4" rx="1"></rect><path d="M12 8v13"></path><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"></path><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"></path></svg>          <i class="bi bi-box"></i> Offers
+          <i class="bi bi-gift"></i>
+          <span>Offers</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/admin/product-offers">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-gift w-5 h-5 mr-3"><rect x="3" y="8" width="18" height="4" rx="1"></rect><path d="M12 8v13"></path><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"></path><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"></path></svg>          <i class="bi bi-box"></i>Product Offers
-        </a>
-      </li>
-
-      <li class="nav-item">
-        <form id="logout-form" action="/admin/logout" method="POST" style="display: none;">
-         
-        </form>
-        
-        <a class="nav-link text-danger" href="#" 
-           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-          <i class="bi bi-box-arrow-right"></i> Logout
-        </a>
-        
         <form id="logout-form" action="/admin/logout" method="POST" style="display: none;"></form>
+        <a class="nav-link text-danger" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+          <i class="bi bi-box-arrow-right"></i>
+          <span>Logout</span>
+        </a>
       </li>
     </ul>
   </div>
 </nav>
 
-<!-- Add Axios and Event Listener -->
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const toggleBtn = document.getElementById("sidebarToggle");
+    const sidebar = document.querySelector(".sidebar");
+
+    if (toggleBtn && sidebar) {
+      toggleBtn.addEventListener("click", () => {
+        sidebar.classList.toggle("expanded");
+      });
+    }
+  });
+</script>
