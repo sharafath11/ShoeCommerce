@@ -337,31 +337,32 @@
       </div>
       <div class="row">
         <!-- Iterate over products for Coming Products section -->
-        <% products.forEach(product => { %>
-          <div class="col-lg-3 col-md-6">
-            <div class="single-product">
-              <img class="img-fluid" src="<%= product.images[0].replace('public', '') %>" alt="<%= product.name %>" />
-              <div class="product-details">
-                <h6><%= product.name %></h6>
-			        
-                <div class="price">
-                  <h6>₹<%= product.price %></h6>
-                  <% if (product.originalPrice) { %>
-                    <h6 class="l-through">₹<%= product.originalPrice %></h6>
-                  <% } %>
-                </div>
-                <div class="prd-bottom">
-                  <!-- <a href="#" class="social-info">
-                    <span class="ti-bag"></span>
-                    <p class="hover-text">add to bag</p>
-                  </a> -->
-                  
-                  
-                </div>
+        <% 
+        // Sort products in descending order based on the price
+        products.sort((a, b) => b.price - a.price); 
+      %>
+      
+      <% products.forEach(product => { %>
+        <div class="col-lg-3 col-md-6">
+          <div class="single-product">
+            <img class="img-fluid" src="<%= product.images[0].replace('public', '') %>" alt="<%= product.name %>" />
+            <div class="product-details">
+              <h6><%= product.name %></h6>
+              
+              <div class="price">
+                <h6>₹<%= product.price %></h6>
+                <% if (product.originalPrice) { %>
+                  <h6 class="l-through">₹<%= product.originalPrice %></h6>
+                <% } %>
+              </div>
+              <div class="prd-bottom">
+                <span>coming soon!</span>
               </div>
             </div>
           </div>
-        <% }) %>
+        </div>
+      <% }) %>
+      
       </div>
     </div>
   </div>
