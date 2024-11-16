@@ -22,17 +22,17 @@
     <!--
             CSS
             ============================================= -->
-    <link rel="stylesheet" href="/css/linearicons.css" />
-    <link rel="stylesheet" href="/css/font-awesome.min.css" />
-    <link rel="stylesheet" href="/css/themify-icons.css" />
-    <link rel="stylesheet" href="/css/bootstrap.css" />
-    <link rel="stylesheet" href="/css/owl.carousel.css" />
-    <link rel="stylesheet" href="/css/nice-select.css" />
-    <link rel="stylesheet" href="/css/nouislider.min.css" />
-    <link rel="stylesheet" href="/css/ion.rangeSlider.css" />
-    <link rel="stylesheet" href="/css/ion.rangeSlider.skinFlat.css" />
-    <link rel="stylesheet" href="/css/magnific-popup.css" />
-    <link rel="stylesheet" href="/css/main.css" />
+    <link rel="stylesheet" href="css/linearicons.css" />
+    <link rel="stylesheet" href="css/font-awesome.min.css" />
+    <link rel="stylesheet" href="css/themify-icons.css" />
+    <link rel="stylesheet" href="css/bootstrap.css" />
+    <link rel="stylesheet" href="css/owl.carousel.css" />
+    <link rel="stylesheet" href="css/nice-select.css" />
+    <link rel="stylesheet" href="css/nouislider.min.css" />
+    <link rel="stylesheet" href="css/ion.rangeSlider.css" />
+    <link rel="stylesheet" href="css/ion.rangeSlider.skinFlat.css" />
+    <link rel="stylesheet" href="css/magnific-popup.css" />
+    <link rel="stylesheet" href="css/main.css" />
 		<!-- CSS for Toastify -->
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
@@ -45,6 +45,23 @@
     display: inline-block;
     text-align: center;
 }
+#toggleIcon {
+  display: inline-block;
+    font-size: 13px;
+    font-weight: bolder;
+    color: #ffffff;
+    transition: transform 0.3s ease, color 0.3s ease;
+    cursor: pointer;
+}
+
+#toggleIcon:hover {
+  color: #ffffff; /* Darker blue on hover */
+  transform: rotate(180deg); /* Add a rotation effect */
+}
+
+#toggleIcon:active {
+  color: #003f7f; /* Even darker blue on click */
+}
 
 .qty {
     position: absolute;
@@ -55,6 +72,7 @@
     color: red;
 }
 .custom-button {
+  margin-bottom: 30px;
     background-color: #343a40;
     color: white;
     border: none;
@@ -70,6 +88,7 @@
 .custom-button:active {
     transform: translateY(0);
 }
+
 
     </style>
     <header class="header_area sticky-header">
@@ -204,8 +223,11 @@
       <div class="row">
         <div class="col-xl-3 col-lg-4 col-md-5">
           <div class="sidebar-categories">
-            <div class="head">Browse Categories</div>
-            <ul class="main-categories">
+            <div class="head" onclick="toggleCategories()">
+              Browse Categories 
+              <span id="toggleIcon" class="lnr lnr-chevron-down"></span>
+            </div>
+            <ul class="main-categories" id="categoriesList" style="display: none;">
               <li class="main-nav-list">
                 <a href="/shop">
                   <span class="lnr lnr-arrow-right"></span> All categories
@@ -230,10 +252,12 @@
           </div>
     
           <div class="sidebar-filter mt-50">
-            <div class="top-filter-head">Product Filters</div>
-    
+            <div class="top-filter-head" onclick="toggleFilter('brand-filter')">
+              Product Filters - Brands
+              <span id="toggleIcon" class="lnr lnr-chevron-down"></span>
+            </div>
             <!-- Brand Filter -->
-            <div class="common-filter">
+            <div class="common-filter brand-filter" style="display: none;">
               <div class="head">Brands</div>
               <form action="#">
                 <ul>
@@ -256,9 +280,13 @@
                 </ul>
               </form>
             </div>
-    
+          
+            <div class="top-filter-head" onclick="toggleFilter('color-filter')">
+              Product Filters - Colors
+              <span id="toggleIcon" class="lnr lnr-chevron-down"></span>
+            </div>
             <!-- Color Filter -->
-            <div class="common-filter">
+            <div class="common-filter color-filter" style="display: none;">
               <div class="head">Color</div>
               <form action="#">
                 <ul>
@@ -280,16 +308,15 @@
                 </ul>
               </form>
             </div>
-    
+          
             <!-- Filter Button -->
             <div class="mt-5">
               <center>
                 <button class="custom-button" onclick="filterHandler()">Start to filter</button>
-            </center>
+              </center>
             </div>
           </div>
         </div>
-    
         <div class="col-xl-9 col-lg-8 col-md-7">
           <!-- Start Filter Bar -->
           <div class="filter-bar d-flex flex-wrap align-items-center" style="height: 63px;">
@@ -789,6 +816,26 @@ function createPagination(totalPages, currentPage) {
         }
     });
 }
+function toggleCategories() {
+    const categoriesList = document.getElementById("categoriesList");
+    const toggleIcon = document.getElementById("toggleIcon");
+
+    if (categoriesList.style.display === "none") {
+      categoriesList.style.display = "block";
+      toggleIcon.classList.remove("lnr-chevron-down");
+      toggleIcon.classList.add("lnr-chevron-up");
+    } else {
+      categoriesList.style.display = "none";
+      toggleIcon.classList.remove("lnr-chevron-up");
+      toggleIcon.classList.add("lnr-chevron-down");
+    }
+  }
+   function toggleFilter(filterClass) {
+    const filterElement = document.querySelector(`.${filterClass}`);
+    if (filterElement) {
+      filterElement.style.display = filterElement.style.display === 'none' ? 'block' : 'none';
+    }
+  }
 
 
 </script>
