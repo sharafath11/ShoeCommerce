@@ -870,7 +870,7 @@
         axios.post('/payment/create-order', orderDetails)
           .then(response => {
             const { orderId, amount, currency ,order} = response.data;
-
+            
          
             var options = {
               "key": "rzp_test_0NNl9o6nbS0KBP", 

@@ -30,7 +30,7 @@ export const createOrder = async (req, res) => {
     }));
 
     let totalAmount = orderItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-    let finalAmount = totalAmount + 50; 
+    let finalAmount = amount + 50; 
   
  
     let coupon = null;
