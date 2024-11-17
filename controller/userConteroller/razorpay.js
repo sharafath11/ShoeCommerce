@@ -30,7 +30,7 @@ export const createOrder = async (req, res) => {
     }));
 
     let totalAmount = orderItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-    let finalAmount = Math.ceil(amount + 50);   
+    let finalAmount = Number(amount)+50
   
  
     let coupon = null;
@@ -100,7 +100,7 @@ export const createOrder = async (req, res) => {
         country: selectedAddress.country,
       },
       orderId: OP,
-      totalAmount: Math.round(finalAmount-.50),
+      totalAmount: Math.round(finalAmount),
       originalPrice: totalAmount,
       discountValue: totalAmount - finalAmount,
       couponId: coupon ? coupon._id : null,
