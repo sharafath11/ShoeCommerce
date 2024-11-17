@@ -100,7 +100,7 @@ export const createOrder = async (req, res) => {
         country: selectedAddress.country,
       },
       orderId: OP,
-      totalAmount: Math.round(finalAmount),
+      totalAmount: Math.round(finalAmount-.50),
       originalPrice: totalAmount,
       discountValue: totalAmount - finalAmount,
       couponId: coupon ? coupon._id : null,

@@ -871,10 +871,10 @@
           .then(response => {
             const { orderId, amount, currency ,order} = response.data;
 
-         
+          console.log(response.data)
             var options = {
               "key": "rzp_test_0NNl9o6nbS0KBP", 
-              "amount":amount*100,
+              "amount":Math.ceil(amount * 100 - 0.50),
               "currency": currency,
               "name": "ST SHOP",
               "description": "Order Payment",
