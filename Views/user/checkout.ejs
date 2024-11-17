@@ -874,7 +874,7 @@
          
             var options = {
               "key": "rzp_test_0NNl9o6nbS0KBP", 
-              "amount":amount,
+              "amount":amount*100,
               "currency": currency,
               "name": "ST SHOP",
               "description": "Order Payment",
@@ -896,7 +896,14 @@
                   showToast("Payment verification failed.");
                   console.error("Verification failed:", err);
                 });
-              }
+              },
+              "modal": {
+            "ondismiss": function () {
+              
+              showToast("Payment was cancelled. retrry option in order..");
+              window.location.reload(); // Refresh the page on cancel
+            }
+          }
             };
 
             var rzp1 = new Razorpay(options);
