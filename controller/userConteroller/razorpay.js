@@ -77,7 +77,7 @@ export const createOrder = async (req, res) => {
 
 
     const razorpayOrder = await razorpayI.orders.create({
-      amount: finalAmount * 100, 
+      amount: finalAmount, 
       currency,
       receipt: receipt || `order_rcptid_${new Date().getTime()}`
     });
