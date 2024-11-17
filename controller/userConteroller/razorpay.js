@@ -189,7 +189,7 @@ export const createOrder = async (req, res) => {
           { paymentStatus: 'Failed' }
         );
   
-        return res.json({ ok: false, msg: 'Payment verification failed. Order status updated to "Failed".' });
+        return res.json({ ok: false, msg: 'Payment verification failed. Order status updated to "Failed".' ,red:"/checkout"});
       }
     } catch (error) {
       console.error('Error verifying Razorpay payment:', error);
