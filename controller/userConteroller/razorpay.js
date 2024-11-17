@@ -212,7 +212,7 @@ export const createOrder = async (req, res) => {
       }
 
       const paymentDetails = {
-        amount: order.totalAmount * 100, 
+        amount: order.totalAmount , 
         currency: 'INR', 
         receipt: `receipt_order_${orderId}`,
         payment_capture: 1, 
