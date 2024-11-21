@@ -854,7 +854,8 @@
   const totalAmountSpan = document.getElementById("totalAmount");
   const totalAmount = totalAmountSpan.innerText;
   const orderTotal = parseFloat(totalAmount.replace(/[₹,]/g, '').trim());
-  const totalAmountInPaise = orderTotal * 100
+  const totalAmountInPaise = orderTotal
+  console.log(totalAmountInPaise)
   const orderDetails = {
     amount: totalAmountInPaise,  
     currency: "INR",
@@ -896,7 +897,14 @@
                   showToast("Payment verification failed.");
                   console.error("Verification failed:", err);
                 });
-              }
+              },
+              "modal": {
+            "ondismiss": function () {
+              
+              showToast("Payment was cancelled. retrry option in order..");
+              window.location.reload(); 
+            }
+          }
             };
 
             var rzp1 = new Razorpay(options);
