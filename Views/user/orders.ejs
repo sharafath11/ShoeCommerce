@@ -552,6 +552,10 @@
           axios.post("/payment/retry-payment", { orderId })
               .then((response) => {
                   const { amount, currency, newOderId } = response.data;
+                  let lastAmunt=Number(amount*100)
+                  console.log(amount ,typeof amount);
+                 
+                  
                   var options = {
                       "key": "rzp_test_0NNl9o6nbS0KBP",
                       "amount": amount,
