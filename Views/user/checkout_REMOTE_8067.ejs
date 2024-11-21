@@ -854,8 +854,7 @@
   const totalAmountSpan = document.getElementById("totalAmount");
   const totalAmount = totalAmountSpan.innerText;
   const orderTotal = parseFloat(totalAmount.replace(/[₹,]/g, '').trim());
-  const totalAmountInPaise = orderTotal
-  console.log(totalAmountInPaise)
+  const totalAmountInPaise = orderTotal * 100
   const orderDetails = {
     amount: totalAmountInPaise,  
     currency: "INR",

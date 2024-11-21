@@ -872,7 +872,7 @@
           .then(response => {
             const { orderId, amount, currency ,order} = response.data;
 
-          console.log(response.data)
+         
             var options = {
               "key": "rzp_test_0NNl9o6nbS0KBP", 
               "amount":amount,
@@ -902,7 +902,7 @@
             "ondismiss": function () {
               
               showToast("Payment was cancelled. retrry option in order..");
-              window.location.reload(); // Refresh the page on cancel
+              window.location.reload(); 
             }
           }
             };

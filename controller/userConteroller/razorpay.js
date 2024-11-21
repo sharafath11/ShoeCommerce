@@ -30,7 +30,7 @@ export const createOrder = async (req, res) => {
     }));
 
     let totalAmount = orderItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-    let finalAmount = amount + 50; 
+    let finalAmount = Number(amount)
   
     console.log("fgjhfgjhnkl");
     console.log(totalAmount);
@@ -217,7 +217,7 @@ export const createOrder = async (req, res) => {
       }
 
       const paymentDetails = {
-        amount: order.totalAmount, 
+        amount: order.totalAmount/100, 
         currency: 'INR', 
         receipt: `receipt_order_${orderId}`,
         payment_capture: 1, 
