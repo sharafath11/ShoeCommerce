@@ -478,7 +478,9 @@
               if (result.isConfirmed) {
                   axios.delete(`/removeOrder/${orderId}`)
                       .then((response) => {
+                        
                           showToast(response.data.msg);
+                          
                           if (response.data.ok) window.location.reload();
                       })
                       .catch((error) => {

@@ -13,26 +13,24 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 app.use(passport.initialize());
-
 app.use(session({
   secret: process.env.SECRET,
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
-    mongoUrl:"mongodb+srv://jdtbcajdt:WEfrMmAFC3RZdiV5@cluster7.24ktr.mongodb.net/"
-    ,
-    ttl: 14 * 24 * 60 * 60, // Set a time-to-live (TTL) of 14 days
-    autoRemove: 'native' // Automatically remove expired sessions
+    mongoUrl:process.env.MONGO_URL,
+    ttl: 14 * 24 * 60 * 60, 
+    autoRemove: 'native' 
   }),
   cookie: {
-    secure: process.env.NODE_ENV === 'production', // Secure in production
-    httpOnly: true, // Helps prevent XSS attacks
-    maxAge: 1000 * 60 * 60 * 24 * 7, // Cookie expires in 7 days
+    secure: process.env.NODE_ENV === 'production', 
+    httpOnly: true, 
+    maxAge: 1000 * 60 * 60 * 24 * 7,
   }
 }));
 
 mongoose
-  .connect(process.env.MONOGOURL)
+  .connect(process.env.MONGO_URL)
   .then((res) => {
     console.log(`databse connected succes full`);
   })

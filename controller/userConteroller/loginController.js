@@ -22,7 +22,7 @@ export const loginPost = async (req, res) => {
     if (!user) {
       return res.status(400).json({
         success: false,
-        msg: "User not found!",
+        msg: "Invalid email or password!",
       });
     }
     if(user.block){
@@ -49,7 +49,7 @@ export const loginPost = async (req, res) => {
     req.session.user = user;
 
     return res.status(200).json({
-      success: true,
+      ok: true,
       msg: "Login successful!",
       redirect: "/",
     });
