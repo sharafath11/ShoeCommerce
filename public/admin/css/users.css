@@ -1,0 +1,23 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f8fafc;
+}
+
+.content-wrapper {
+  min-height: 100vh;
+  padding-bottom: 2rem;
+}
+
+.card {
+  border-radius: 12px;
+  border: none;
+}
+
+.table th {
+  font-weight: 600;
+}
+
+.sidebar {
+  height: 100vh;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.08);
+}

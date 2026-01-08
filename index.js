@@ -19,7 +19,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
-    mongoUrl:"mongodb+srv://jdtbcajdt:WEfrMmAFC3RZdiV5@cluster7.24ktr.mongodb.net/"
+    mongoUrl:process.env.MONGO_URL
     ,
     ttl: 14 * 24 * 60 * 60, // Set a time-to-live (TTL) of 14 days
     autoRemove: 'native' // Automatically remove expired sessions
@@ -32,7 +32,7 @@ app.use(session({
 }));
 
 mongoose
-  .connect(process.env.MONOGOURL)
+  .connect(process.env.MONGO_URL)
   .then((res) => {
     console.log(`databse connected succes full`);
   })
