@@ -1,0 +1,18 @@
+.table thead th {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: #64748b;
+}
+
+.badge-subtle {
+    border: 1px solid currentColor;
+}
+
+.bg-success-subtle { background-color: #dcfce7 !important; color: #166534 !important; }
+.bg-warning-subtle { background-color: #fef9c3 !important; color: #854d0e !important; }
+.bg-info-subtle    { background-color: #e0f2fe !important; color: #075985 !important; }
+
+/* Clean up status dropdown width */
+.input-group-sm > .form-select {
+    width: 130px;
+}
