@@ -1,194 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Category Management</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-<!-- SweetAlert JS -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<!-- Toastify CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-<!-- Toastify JS -->
-<script src="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.js"></script>
+    <%- include('partials/head') %>
+    <title>Nexus Admin | Category Matrix</title>
 </head>
-<style>
-   a {
-       text-decoration: none;
-       color: white;
-   }
-</style>
-
-<body>
+<body class="sidebar-page">
     <div class="container-fluid">
         <div class="row">
-            <!-- Sidebar -->
-              <%- include('partials/sideBar') %> 
+            <%- include('partials/sideBar') %> 
 
-            <!-- Main Content -->
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
-                    <h1 class="h2">Category Management</h1>
+            <main class="content-wrapper">
+                <!-- Header -->
+                <div class="d-flex justify-content-between align-items-center mb-5">
+                    <div>
+                        <h1 class="h3 fw-bold mb-0">Category Management</h1>
+                        <p class="text-muted small mb-0">Organize your products into logical collections.</p>
+                    </div>
+                    <a href="/admin/category/addcategory" class="btn btn-dark px-4 py-2 rounded-3 shadow-sm">
+                        <i class="bi bi-plus-lg me-2"></i>Add Category
+                    </a>
                 </div>
 
-                <!-- Category Management Panel -->
-                <div class="card shadow-sm mb-4">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between mb-3">
-                            <h5 class="card-title">Manage Categories</h5>
-                            <button class="btn btn-primary">
-                                <a href="/admin/category/addcategory" style="color: white;">Add Category</a>
-                            </button>
-                        </div>
-
-                        <table class="table table-hover">
-                            <thead>
+                <!-- Categories Card -->
+                <div class="card p-0 overflow-hidden">
+                    <div class="card-header bg-white py-3 border-bottom-0">
+                        <h5 class="fw-bold mb-0">All Categories</h5>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light">
                                 <tr>
-                                    <th>Category Name</th>
+                                    <th class="ps-4">Category Name</th>
                                     <th>Description</th>
-                                    <th>Actions</th>
+                                    <th>Status</th>
+                                    <th class="text-end pe-4">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <% if (categories && categories.length > 0) { %>
                                     <% categories.forEach(function(category) { %>
                                         <tr>
-                                            <td><%= category.name %></td>
-                                            <td><%= category.description %></td>
+                                            <td class="ps-4">
+                                                <div class="fw-bold text-dark"><%= category.name %></div>
+                                            </td>
                                             <td>
-                                                <a href="/admin/category/edit-category/<%= category._id %>" class="text-primary me-2">Edit</a>
-                                                <button class="toggle-list-status text-danger" data-id="<%= category._id %>">
-                                                    <%= category.blocked ? 'Unblock' : 'Block' %>
-                                                </button>
-                                                
-                                                
+                                                <div class="text-muted small text-truncate" style="max-width: 300px;">
+                                                    <%= category.description %>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="badge badge-status <%= category.blocked ? 'bg-danger-subtle' : 'bg-success-subtle' %>">
+                                                    <%= category.blocked ? 'Blocked' : 'Active' %>
+                                                </span>
+                                            </td>
+                                            <td class="text-end pe-4">
+                                                <div class="d-flex justify-content-end gap-3">
+                                                    <a href="/admin/category/edit-category/<%= category._id %>" class="text-primary text-decoration-none small fw-medium">
+                                                        <i class="bi bi-pencil-square me-1"></i>Edit
+                                                    </a>
+                                                    <button class="toggle-list-status btn btn-link p-0 text-danger text-decoration-none small fw-medium" data-id="<%= category._id %>">
+                                                        <i class="bi bi-shield-exclamation me-1"></i><%= category.blocked ? 'Unblock' : 'Block' %>
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     <% }) %>
                                 <% } else { %>
                                     <tr>
-                                        <td colspan="3" class="text-center">No categories available</td>
+                                        <td colspan="4" class="text-center py-5 text-muted">No categories available</td>
                                     </tr>
                                 <% } %>
                             </tbody>
                         </table>
                     </div>
                 </div>
-            </main>
-            <nav aria-label="Page navigation example">
-                <ul class="pagination justify-content-center">
-                    <!-- Previous Button -->
-                    <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
-                        <a class="page-link" href="/admin/users?page=<%= currentPage - 1 %>" tabindex="-1" aria-disabled="true">
-                            <i class="bi bi-arrow-left">Previous</i> <!-- Bootstrap icon -->
-                        </a>
-                    </li>
-            
-                    <!-- Page Numbers -->
-                    <% for (let i = 1; i <= totalPages; i++) { %>
-                        <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                            <a class="page-link" href="/admin/users?page=<%= i %>"><%= i %></a>
+
+                <!-- Pagination -->
+                <% if (totalPages > 1) { %>
+                <nav class="mt-4">
+                    <ul class="pagination justify-content-center mb-0">
+                        <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                            <a class="page-link border-0 bg-light rounded-start-pill px-4" href="/admin/category?page=<%= currentPage - 1 %>">
+                                <i class="bi bi-chevron-left small me-1"></i>Prev
+                            </a>
                         </li>
-                    <% } %>
-            
-                    <!-- Next Button -->
-                    <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
-                        <a class="page-link" href="/admin/users?page=<%= currentPage + 1 %>">
-                            <i class="bi bi-arrow-right">Next</i> <!-- Bootstrap icon -->
-                        </a>
-                    </li>
-                </ul>
-            </nav>
+                        <li class="page-item active mx-2">
+                            <span class="page-link border-0 rounded-circle shadow-sm"><%= currentPage %></span>
+                        </li>
+                        <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                            <a class="page-link border-0 bg-light rounded-end-pill px-4" href="/admin/category?page=<%= currentPage + 1 %>">
+                                Next<i class="bi bi-chevron-right small ms-1"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                <% } %>
+            </main>
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Toastify JS -->
-    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-
-    <% if (typeof message !== undefined && message) { %>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                function showToast(message) {
-                    Toastify({
-                        text: message,
-                        duration: 2000, // duration in ms
-                        gravity: "top", // `top` or `bottom`
-                        position: "right", // `left`, `center` or `right`
-                        backgroundColor: "#333", // background color
-                        stopOnFocus: true // stop on focus
-                    }).showToast();
-                }
-                showToast('<%= message %>');
-            });
-        </script>
+    <!-- Hidden input for flash messages -->
+    <% if (typeof message !== 'undefined' && message) { %>
+        <input type="hidden" id="flashMessage" value="<%= message %>">
     <% } %>
-   
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const buttons = document.querySelectorAll('.toggle-list-status');
-    
-            buttons.forEach(button => {
-                button.addEventListener('click', async function (e) {
-                    const buttonText = this.textContent.trim();
-                    const categoryId = this.getAttribute('data-id');
-    
-                    // Use SweetAlert for confirmation
-                    const result = await Swal.fire({
-                        title: `Are you sure?`,
-                        text: `You want to ${buttonText} this category.`,
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Yes, proceed!',
-                        cancelButtonText: 'No, cancel!'
-                    });
-    
-                    if (!result.isConfirmed) {
-                        return; 
-                    }
-    
-                    try {
-                        const response = await fetch(`/admin/category/toggle-category/${categoryId}`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                        });
-    
-                        const data = await response.json();
-    
-                        if (data.success) {
-                            this.textContent = data.blocked ? 'Unblock' : 'Block';
-                            showToast(data.message);
-                        } else {
-                            showToast(data.message); // Show the error message
-                        }
-                    } catch (error) {
-                        console.error("Error:", error);
-                        showToast("An error occurred. Please try again.");
-                    }
-                });
-            });
-    
-            function showToast(message) {
-                Toastify({
-                    text: message,
-                    duration: 2000,
-                    gravity: "top",
-                    position: "right",
-                    backgroundColor: "#333",
-                    stopOnFocus: true
-                }).showToast();
-            }
-        });
-    </script>
-    
 
-    </script>
+    <%- include('partials/scripts') %>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="module" src="/admin/js/category.js"></script>
 </body>
 </html>

@@ -49,40 +49,7 @@
       <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     </head>
   </head>
-  <style>
-    body {
-      background-color: #f7f7f7;
-    }
-
-    .card {
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .card-header {
-      font-size: 24px;
-    }
-
-    .card-body .display-4 {
-      font-size: 48px;
-      color: #333;
-    }
-
-    table {
-      margin-top: 20px;
-    }
-
-    td {
-      font-size: 16px;
-    }
-
-    .text-danger {
-      color: #dc3545 !important;
-    }
-
-    .text-success {
-      color: #28a745 !important;
-    }
-  </style>
+    <link rel="stylesheet" href="/user/css/wallet.css" />
   <body>
     <%- include('partials/header', { WishlistQty: WishlistQty,cartQty:cartQty })
     %>
@@ -176,104 +143,6 @@
     <script src="js/main.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-    <script>
-      function addMoneyInWallet() {
-        Swal.fire({
-          title: "Enter Amount",
-          input: "number",
-          inputPlaceholder: "Enter amount to add",
-          inputAttributes: {
-            min: 1,
-            max: 10000,
-          },
-          showCancelButton: true,
-          confirmButtonColor: "#3085d6",
-          cancelButtonColor: "#d33",
-          confirmButtonText: "Proceed",
-        }).then((result) => {
-          if (result.isConfirmed && result.value > 0) {
-            if (result.value < 10) {
-              Toastify({
-                text: "minimum 10 ruppees",
-                duration: 3000,
-                close: true,
-                gravity: "top",
-                position: "right",
-                backgroundColor: "#4CAF50",
-              }).showToast();
-            }
-            const amount = result.value;
-
-            axios
-              .post("/wallet/create-order", { amount })
-              .then((orderResponse) => {
-                const { orderId, currency } = orderResponse.data;
-
-                const options = {
-                  key: "rzp_test_0NNl9o6nbS0KBP",
-                  amount: amount,
-                  currency: currency,
-                  name: "ST SHOPE",
-                  description: "Add money to wallet",
-                  order_id: orderId,
-                  handler: function (response) {
-                    axios
-                      .post("/wallet/add/money", {
-                        razorpay_payment_id: response.razorpay_payment_id,
-                        razorpay_order_id: response.razorpay_order_id,
-                        razorpay_signature: response.razorpay_signature,
-                        amount,
-                      })
-                      .then((paymentResponse) => {
-                        if (paymentResponse.data.ok) {
-                          setTimeout(() => {
-                            Toastify({
-                              text: paymentResponse.data.msg,
-                              duration: 3000,
-                              close: true,
-                              gravity: "top",
-                              position: "right",
-                              backgroundColor: "#4CAF50",
-                            }).showToast();
-
-                            setTimeout(() => {
-                              window.location.reload();
-                            }, 3000);
-                          }, 2000);
-                        } else {
-                          Swal.fire({
-                            icon: "error",
-                            title: "Oops...",
-                            text: paymentResponse.data.msg,
-                          });
-                        }
-                      })
-                      .catch((error) => {
-                        Swal.fire({
-                          icon: "error",
-                          title: "Error",
-                          text: "Failed to confirm payment!",
-                        });
-                      });
-                  },
-                  theme: {
-                    color: "#3399cc",
-                  },
-                };
-
-                const rzp = new Razorpay(options);
-                rzp.open();
-              })
-              .catch((error) => {
-                Swal.fire({
-                  icon: "error",
-                  title: "Error",
-                  text: "Unable to initiate payment!",
-                });
-              });
-          }
-        });
-      }
-    </script>
+    <script type="module" src="/user/js/wallet.js"></script>
   </body>
 </html>

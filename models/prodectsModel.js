@@ -12,42 +12,55 @@ const productSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-
     color: {
       type: String,
       trim: true,
     },
+
     availableSize: [
       {
         size: {
-          type: Number, 
-          required: true
+          type: Number,
+          required: true,
         },
         stock: {
-          type: Number, 
-          required: true
-        }
-      }
+          type: Number,
+          required: true,
+        },
+      },
     ],
-     
+
     description: {
       type: String,
       required: true,
       trim: true,
     },
-    images: [String],
+
+    images: [
+      {
+        url: {
+          type: String,
+          required: true,
+        },
+        public_id: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
+
     price: {
       type: Number,
       required: true,
     },
-    originalPrice:{
-      type:Number,
+    originalPrice: {
+      type: Number,
     },
-    discountApplied:{
-      type:Number,
-      default:0
+    discountApplied: {
+      type: Number,
+      default: 0,
     },
-  
+
     blocked: {
       type: Boolean,
       default: false,
@@ -56,6 +69,7 @@ const productSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+
     categoryId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
@@ -66,5 +80,4 @@ const productSchema = new mongoose.Schema(
 );
 
 const ProductModel = mongoose.model("Product", productSchema);
-
 export default ProductModel;

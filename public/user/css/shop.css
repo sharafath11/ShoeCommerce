@@ -1,0 +1,57 @@
+/* 
+ * Antigravity UI: Shop Listing
+ * Target: /public/user/css/shop.css
+ */
+
+.cart-container {
+    position: relative;
+    display: inline-block;
+    text-align: center;
+}
+
+#toggleIcon {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: bolder;
+    color: #ffffff;
+    transition: transform 0.3s ease, color 0.3s ease;
+    cursor: pointer;
+}
+
+#toggleIcon:hover {
+    color: #ffffff;
+    transform: rotate(180deg);
+}
+
+#toggleIcon:active {
+    color: #003f7f;
+}
+
+.qty {
+    position: absolute;
+    top: -11px;
+    left: 128%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    color: red;
+}
+
+.custom-button {
+    margin-bottom: 30px;
+    background-color: #343a40;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.custom-button:hover {
+    background-color: #495057;
+    transform: translateY(-2px);
+}
+
+.custom-button:active {
+    transform: translateY(0);
+}

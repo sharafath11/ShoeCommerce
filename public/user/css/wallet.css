@@ -1,0 +1,33 @@
+/* 
+ * Antigravity UI: User Wallet
+ * Target: /public/user/css/wallet.css
+ */
+
+.card {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    font-size: 24px;
+}
+
+.card-body .display-4 {
+    font-size: 48px;
+    color: #333;
+}
+
+table {
+    margin-top: 20px;
+}
+
+td {
+    font-size: 16px;
+}
+
+.text-danger {
+    color: #dc3545 !important;
+}
+
+.text-success {
+    color: #28a745 !important;
+}

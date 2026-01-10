@@ -33,53 +33,7 @@
     <link rel="stylesheet" href="css/ion.rangeSlider.skinFlat.css" />
     <link rel="stylesheet" href="css/magnific-popup.css" />
     <link rel="stylesheet" href="css/main.css" />
-    <style>
-      .wishlist-card {
-        border-radius: 15px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
-        border: 1px solid #eee;
-      }
-
-      .wishlist-card:hover {
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-      }
-
-      .wishlist-card img {
-        width: 100%;
-        height: 200px;
-        object-fit: cover;
-        border-top-left-radius: 15px;
-        border-top-right-radius: 15px;
-      }
-
-      .wishlist-card .btn-cart {
-        background-color: #000;
-        color: #fff;
-        border: none;
-      }
-
-      .wishlist-card .btn-cart:hover {
-        background-color: #444;
-      }
-
-      .wishlist-card .btn-view {
-        background-color: #f8f9fa;
-        border: 1px solid #dee2e6;
-      }
-
-      .wishlist-card .btn-view:hover {
-        background-color: #e2e6ea;
-      }
-
-      .remove-btn svg {
-        fill: #d9534f;
-      }
-
-      .remove-btn svg:hover {
-        fill: #c9302c;
-      }
-    </style>
+    <link rel="stylesheet" href="/user/css/wishlist.css" />
   </head>
   <body>
     <%- include('partials/header', { WishlistQty: WishlistQty,cartQty:cartQty }) %>
@@ -109,7 +63,7 @@
           <div class="card wishlist-card">
             <a href="/singleprodect/<%= product._id %>">
                 <img
-                    src="<%= product.images[0].replace('public', '') %>"
+                    src="<%= product.images[0].url %>"
                     alt="<%= product.name %>"
                     class="card-img-top"
                     style="height: 200px; object-fit: cover"
@@ -241,48 +195,6 @@
    
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script>
-        function addToCart(event,productId) {
-            console.log('Adding product to cart');
-            const sizeSelect = document.getElementById(`size-${productId}`);
-            const selectedSize = sizeSelect.value;
-            if(!selectedSize){
-                showToast("Please select size :)");
-                return;
-            }
-            axios.post(`/addToCart/${productId}`,{size:selectedSize})
-            .then(function(response) {  
-                if (response.data.success) {
-                    showToast(response.data.message);
-                    return updateCartQuantity();
-                } else {
-                    if(response.data.message){
-                        return showToast(response.data.message);
-                    } else {
-                        window.location.href='/ShowLoginMsg';
-                    }
-                }
-            })
-            .catch(function(error) {
-                console.log(error);
-            });
-        }
-    
-        function showToast(message) {
-            Toastify({
-                text: message,
-                duration: 2000,
-                gravity: "top",
-                position: "right",
-                backgroundColor: "#333",
-                stopOnFocus: true
-            }).showToast();
-        }
-    
-        function updateCartQuantity() {
-            let currentCartQty = parseInt(document.getElementById('cart-quantity').innerText);
-            document.getElementById('cart-quantity').innerText = currentCartQty + 1;
-        }
-    </script>   
+    <script type="module" src="/user/js/wishlist.js"></script>
   </body>
 </html>

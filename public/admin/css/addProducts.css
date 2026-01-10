@@ -1,0 +1,129 @@
+/* 
+ * Antigravity UI: Add Product
+ * Target: /public/admin/css/addProducts.css
+ */
+
+body {
+    background-color: #f8fafc;
+    color: #334155;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.content-wrapper {
+    padding: 2.5rem;
+    transition: all 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    .content-wrapper {
+        padding: 1.5rem 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .content-wrapper {
+        padding: 1.5rem 1rem;
+    }
+}
+
+.form-card {
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+    padding: 2.5rem;
+    max-width: 900px;
+}
+
+@media (max-width: 576px) {
+    .form-card {
+        padding: 1.5rem;
+    }
+}
+
+.form-label {
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 0.6rem;
+    font-size: 0.9rem;
+}
+
+.form-control, .form-select {
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    padding: 0.75rem 1rem;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+}
+
+/* Image Upload & Crop Area */
+.image-upload-zone {
+    position: relative;
+    border: 2px dashed #e2e8f0;
+    border-radius: 16px;
+    padding: 2rem;
+    text-align: center;
+    background: #f8fafc;
+    transition: all 0.2s ease;
+}
+
+.image-upload-zone:hover {
+    border-color: #6366f1;
+    background: #f1f5f9;
+}
+
+.crop-preview-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.crop-item {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 1rem;
+    border: 1px solid #f1f5f9;
+}
+
+.image-preview {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+/* Size/Stock Rows */
+.size-stock-row {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.btn-remove-size {
+    color: #ef4444;
+    cursor: pointer;
+}
+
+.btn-add-size {
+    border-radius: 10px;
+    font-weight: 500;
+    font-size: 0.85rem;
+}
+
+/* Action Buttons */
+.btn-submit {
+    background: #1e293b;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 0.8rem 2.5rem;
+    font-weight: 600;
+}
+
+.btn-submit:hover {
+    background: #0f172a;
+}

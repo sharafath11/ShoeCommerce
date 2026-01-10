@@ -1,158 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Products Management</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Toastify CSS -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-
-    <style>
-     
-    .pagination {
-        font-size: 1.2rem; /* Increase font size for better readability */
-    }
-    .page-item {
-        margin: 0 5px; /* Add space between pagination items */
-    }
-    .page-link {
-        border-radius: 50%; /* Make pagination items circular */
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a slight shadow */
-        transition: all 0.3s ease; /* Smooth hover transition */
-    }
-    .page-link:hover {
-        background-color: #6c757d; /* Darker hover effect */
-        color: #fff; /* White text on hover */
-    }
-    .page-item.active .page-link {
-        background-color: #0d6efd; /* Make the active page more prominent */
-        color: white; /* White text for active */
-        border: 2px solid #0a58ca; /* Add border to the active page */
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Stronger shadow for active */
-    }
-    .page-link:focus {
-        outline: none;
-        box-shadow: 0 0 8px rgba(33, 150, 243, 0.5); /* Blue glow effect when focused */
-    }
-    .page-item.disabled .page-link {
-        background-color: #e9ecef; /* Disable color for 'Previous' and 'Next' if not clickable */
-        color: #6c757d;
-    }
-    .page-link, .page-link:hover {
-        text-decoration: none; /* Remove underline from pagination links */
-    }
-
-
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f6f9;
-        }
-        .sidebar {
-            height: 100vh;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-        }
-        .sidebar .nav-link {
-            font-size: 16px;
-        }
-        .sidebar-heading {
-            font-size: 1.5rem;
-            color: #333;
-        }
-        .card {
-            border-radius: 10px;
-            border: none;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        .table th {
-            font-weight: 600;
-        }
-        .table th, .table td {
-            vertical-align: middle;
-        }
-        .form-control {
-            border-radius: 20px;
-        }
-        .btn {
-            font-size: 12px;
-        }
-        .btn-delete {
-            color: red;
-        }
-        .btn-delete:hover {
-            color: darkred;
-        }
-        a {
-            text-decoration: none;
-            color: white;
-        }
-    </style>
+    <%- include('partials/head') %>
+    <title>Nexus Admin | Products</title>
+    <link rel="stylesheet" href="/admin/css/products.css">
 </head>
-<body>
+<body class="sidebar-page">
     <div class="container-fluid">
         <div class="row">
-            <!-- Sidebar -->
-              <%- include('partials/sideBar') %> 
+            <%- include('partials/sideBar') %> 
 
-            <!-- Main Content -->
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
-                    <h1 class="h2">Products Management</h1>
-                    <button class="btn btn-dark"><a href="/admin/products/addproducts">Add Product</a></button>
+            <main class="content-wrapper">
+                <!-- Header -->
+                <div class="d-flex justify-content-between align-items-center mb-5">
+                    <div>
+                        <h1 class="h3 fw-bold mb-0">Products Management</h1>
+                        <p class="text-muted small mb-0">Manage your inventory, sizes, and pricing.</p>
+                    </div>
+                    <a href="/admin/products/addproducts" class="btn btn-dark px-4 py-2 rounded-3 shadow-sm">
+                        <i class="bi bi-plus-lg me-2"></i>Add Product
+                    </a>
                 </div>
 
-                <!-- Search Bar -->
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control w-25" id="searchInput" placeholder="Search products...">
+                <!-- Tools -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div class="search-box position-relative" style="width: 350px;">
+                        <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                        <input type="text" class="form-control ps-5" id="searchInput" placeholder="Search by name or brand...">
+                    </div>
                 </div>
 
-                <!-- Products Table -->
-                <div class="card shadow-sm mb-4">
-                    <div class="card-body">
-                        <table class="table" id="productsTable">
-                            <thead>
+                <!-- Products Card -->
+                <div class="card p-0 overflow-hidden">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0" id="productsTable">
+                            <thead class="bg-light">
                                 <tr>
-                                  
-                                    <th>Product Name</th>
-                                    <th>Brand Name</th>
-                                    <th> Sizes and stock</th>
-                                    <th>Reviews</th>
+                                    <th class="ps-4">Product</th>
+                                    <th>Inventory</th>
                                     <th>Price</th>
-                                    
                                     <th>Category</th>
                                     <th>Color</th>
-                                    <th>Sales</th>
-                                    <th>Actions</th>
+                                    <th>Performance</th>
+                                    <th class="text-end pe-4">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <% Products.forEach((product, index) => { %>
+                                <% Products.forEach((product) => { %>
                                 <tr>
-                                    
-                                    <td><%= product.name %></td>
-                                    <td><%= product.brand %></td>
+                                    <td class="ps-4">
+                                        <div class="d-flex align-items-center">
+                                            <div class="product-img-slot me-3 d-flex align-items-center justify-content-center overflow-hidden">
+                                                <% if (product.images && product.images.length > 0) { %>
+                                                    <img src="<%= product.images[0].url %>" alt="<%= product.name %>" style="width: 100%; height: 100%; object-fit: cover;">
+                                                <% } else { %>
+                                                    <i class="bi bi-image text-muted"></i>
+                                                <% } %>
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold text-dark product-name"><%= product.name %></div>
+                                                <div class="text-muted small product-brand"><%= product.brand %></div>
+                                            </div>
+                                        </div>
+                                    </td>
                                     <td>
-                                        <% product.availableSize.forEach(function(item) { %>
-                                          <%= item.size %> (Stock: <%= item.stock %>)<br>
-                                        <% }); %>
-                                      </td>
-                                    <td><a href="/admin/reviews/<%= product._id %>" style="color: #333;" class="btn">Reviews</a></td>
-                                    <td>₹<%= product.price %></td>
-                                   
-                                    <td><%= product?.categoryId?.name %></td>
-                                    <td><%= product?.color %></td>
-                                    <td><%= product.sales %></td>
+                                        <div class="small">
+                                            <% product.availableSize.forEach(function(item) { %>
+                                              <span class="badge bg-light text-dark border badge-stock mb-1">
+                                                <%= item.size %>: <%= item.stock %>
+                                              </span>
+                                            <% }); %>
+                                        </div>
+                                    </td>
                                     <td>
-                                        <a href="/admin/products/edit/<%= product._id %>" class="btn btn-sm btn-primary">Edit</a>
-                                        <button class="btn btn-sm btn-toggle-list" 
-                                                data-id="<%= product._id %>" 
-                                                data-status="<%= product.blocked ? 'unlist' : 'list' %>">
-                                            <%= product.blocked ? 'Unlist' : 'List' %>
-                                        </button>
+                                        <div class="fw-bold">₹<%= product.price.toLocaleString() %></div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary-subtle text-muted rounded-pill">
+                                            <%= product?.categoryId?.name || 'Uncategorized' %>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <span class="rounded-circle me-2 color-preview" style="background-color: <%= product.color?.toLowerCase() %>;"></span>
+                                            <span class="small text-muted text-capitalize"><%= product.color %></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="small text-muted"><%= product.sales %> sales</div>
+                                        <a href="/admin/reviews/<%= product._id %>" class="text-primary x-small text-decoration-none">View Reviews</a>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <div class="d-flex justify-content-end gap-2">
+                                            <a href="/admin/products/edit/<%= product._id %>" class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <button class="btn btn-sm <%= product.blocked ? 'btn-success' : 'btn-outline-danger' %> btn-toggle-list" 
+                                                    data-id="<%= product._id %>" 
+                                                    data-status="<%= product.blocked ? 'list' : 'unlist' %>">
+                                                <%= product.blocked ? 'List' : 'Unlist' %>
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                                 <% }) %>
@@ -160,144 +108,41 @@
                         </table>
                     </div>
                 </div>
-                
-<nav aria-label="Page navigation example">
-    <ul class="pagination justify-content-center">
-        <!-- Previous Button -->
-        <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
-            <a class="page-link" href="/admin/products?page=<%= currentPage - 1 %>" tabindex="-1" aria-disabled="true">
-                <i class="bi bi-arrow-left">Previous</i> <!-- Bootstrap icon -->
-            </a>
-        </li>
 
+                <!-- Pagination -->
+                <% if (totalPages > 1) { %>
+                <nav class="mt-5">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                            <a class="page-link" href="/admin/products?page=<%= currentPage - 1 %>">
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+                        </li>
 
-        <% for (let i = 1; i <= totalPages; i++) { %>
-            <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                <a class="page-link" href="/admin/products?page=<%= i %>"><%= i %></a>
-            </li>
-        <% } %>
+                        <% for (let i = 1; i <= totalPages; i++) { %>
+                            <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                <a class="page-link" href="/admin/products?page=<%= i %>"><%= i %></a>
+                            </li>
+                        <% } %>
 
-        
-        <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
-            <a class="page-link" href="/admin/products?page=<%= currentPage + 1 %>">
-                <i class="bi bi-arrow-right">Next</i>
-            </a>
-        </li>
-    </ul>
-</nav>
-
+                        <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                            <a class="page-link" href="/admin/products?page=<%= currentPage + 1 %>">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                <% } %>
             </main>
         </div>
     </div>
 
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-
-    
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-
-
-    <% if (typeof message !== undefined && message) { %>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            function showToast(message) {
-                Toastify({
-                    text: message,
-                    duration: 2000, // duration in ms
-                    gravity: "top", // `top` or `bottom`
-                    position: "right", // `left`, `center` or `right`
-                    backgroundColor: "#333", // background color
-                    stopOnFocus: true // stop on focus
-                }).showToast();
-            }
-            showToast('<%= message %>');
-        });
-    </script>
+    <!-- Hidden input for flash messages -->
+    <% if (typeof message !== 'undefined' && message) { %>
+        <input type="hidden" id="flashMessage" value="<%= message %>">
     <% } %>
 
-    <script>
-        document.getElementById('searchInput').addEventListener('input', function() {
-            let searchQuery = this.value.toLowerCase();
-            let productsTable = document.getElementById('productsTable');
-            let rows = productsTable.getElementsByTagName('tr');
-
-            for (let i = 1; i < rows.length; i++) { 
-                let cells = rows[i].getElementsByTagName('td');
-                let productName = cells[1].textContent.toLowerCase();
-                let brandName = cells[2].textContent.toLowerCase();
-                
-               
-                if (productName.includes(searchQuery) || brandName.includes(searchQuery)) {
-                    rows[i].style.display = ''; 
-                } else {
-                    rows[i].style.display = 'none'; 
-                }
-            }
-        });
-    </script>
-
-   
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const buttons = document.querySelectorAll('.btn-toggle-list');
-
-        buttons.forEach(button => {
-            button.addEventListener('click', async function () {
-    const productId = this.getAttribute('data-id');
-    const action = this.getAttribute('data-status');
-
-    const confirmationMessage = action === 'list' 
-        ? 'Are you sure you want to list this product?' 
-        : 'Are you sure you want to unlist this product?';
-
-    // Use SweetAlert for confirmation
-    const result = await Swal.fire({
-        title: 'Confirm Action',
-        text: confirmationMessage,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Yes',
-        cancelButtonText: 'No',
-    });
-
-    if (result.isConfirmed) {
-        try {
-            const response = await fetch(`/admin/products/${action}/${productId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                button.textContent = action === 'list' ? 'Unlist' : 'List';
-                button.setAttribute('data-status', action === 'list' ? 'unlist' : 'list');
-                showToast(data.message); 
-            } else {
-                showToast(data.message); 
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            showToast('An error occurred. Please try again.');
-        }
-    }
-});
-
-        });
-
-            function showToast(message) {
-                Toastify({
-                    text: message,
-                    duration: 3000,
-                    gravity: 'top',
-                    position: 'right',
-                    backgroundColor: '#333',
-                    stopOnFocus: true,
-                }).showToast();
-            }
-        });
-    </script>
+    <%- include('partials/scripts') %>
+    <script type="module" src="/admin/js/products.js"></script>
 </body>
 </html>

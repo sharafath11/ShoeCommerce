@@ -34,7 +34,7 @@
     <link rel="stylesheet" href="/css/main.css" />
   </head>
 
-  <body>
+  <body data-server-msg="<%= typeof message !== 'undefined' ? message : '' %>">
     <!-- Start Header Area -->
     <%- include('partials/header', { WishlistQty: WishlistQty,cartQty:cartQty }) %>
 
@@ -274,7 +274,7 @@
           <div class="col-lg-3 col-md-6">
             <div class="single-product">
               <a href="/singleprodect/<%= product._id %>">
-                <img class="img-fluid" src="<%= product.images[0].replace('public', '') %>" alt="<%= product.name %>" />
+                <img class="img-fluid" src="<%= product.images[0].url %>" alt="<%= product.name %>" />
               </a>
               <div class="product-details">
                 <h6><%= product.name %></h6>
@@ -345,7 +345,7 @@
       <% products.forEach(product => { %>
         <div class="col-lg-3 col-md-6">
           <div class="single-product">
-            <img class="img-fluid" src="<%= product.images[0].replace('public', '') %>" alt="<%= product.name %>" />
+            <img class="img-fluid" src="<%= product.images[0].url %>" alt="<%= product.name %>" />
             <div class="product-details">
               <h6><%= product.name %></h6>
               
@@ -596,116 +596,6 @@
     <script src="js/main.js"></script>
    
    
-    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-    
-</script>
-<% if (typeof message !== undefined && message) { %>
-  <script>
-      document.addEventListener('DOMContentLoaded', function() {
-          function showToast(message) {
-              Toastify({
-                  text: message,
-                  duration: 2000, 
-                  gravity: "top",
-                  position: "right", 
-                  backgroundColor: "#333", 
-                  stopOnFocus: true 
-              }).showToast();
-          }
-          showToast('<%= message %>');
-      });
-  </script>
-  <% } %>
- 
-
-  <script>
-    
-    function addToCart(productId) {
-        console.log('Adding product to cart');
-        
-        axios.get(`/addToCart/${productId}`)
-        .then(function(response) {  
-            if (response.data.success) {
-                showToast(response.data.message);
-               return updateCartQuantity();
-            } else {
-                if(response.data.message){
-                  return showToast(response.data.message);
-                } 
-                else{
-                  window.location.href='/ShowLoginMsg'
-                }
-            }
-        })
-        .catch(function(error) {
-            // showToast('Please login :)');
-            console.log(error);
-        });
-    }
-
-    
-    function showToast(message) {
-        Toastify({
-            text: message,
-            duration: 2000, // duration in ms
-            gravity: "top", // `top` or `bottom`
-            position: "right", // `left`, `center` or `right`
-            backgroundColor: "#333", // background color
-            stopOnFocus: true // stop on focus
-        }).showToast();
-    }
-
-    
-    function updateCartQuantity() {
-        let currentCartQty = parseInt(document.getElementById('cart-quantity').innerText);
-        document.getElementById('cart-quantity').innerText = currentCartQty + 1;
-    }
-</script>
-
-<script>
-    function addToWishList(productId) {
-        axios.post(`/whislistAdd/${productId}`)
-        .then(function(response) {  
-            if (response.data.success) {
-                showToast(response.data.message);
-               return addWishlistQty();
-            } else {
-                if(response.data.message){
-                  return showToast(response.data.message);
-                } 
-                else{
-                  window.location.href='/ShowLoginMsg'
-                }
-            }
-        })
-        .catch(function(error) {
-           
-            console.log(error);
-           
-        });
-    }
-
-   
-    function addWishlistQty() {
-        let currentWtQty = parseInt(document.getElementById('w-qty').innerText);
-        document.getElementById('w-qty').innerText = currentWtQty + 1;
-    }
-
-   
-    function showToast(message) {
-        Toastify({
-            text: message,
-            duration: 3000,
-            gravity: "top",
-            position: "right",
-            backgroundColor: "#333",
-            stopOnFocus: true
-        }).showToast();
-    }
-</script>
-
-<!-- Make sure to include Axios -->
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
+    <script type="module" src="/user/js/index.js"></script>
   </body>
 </html>

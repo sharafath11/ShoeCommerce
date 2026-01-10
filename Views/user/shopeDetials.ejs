@@ -39,58 +39,7 @@
   </head>
 
   <body id="category" >
-    <style>
-        .cart-container {
-    position: relative;
-    display: inline-block;
-    text-align: center;
-}
-#toggleIcon {
-  display: inline-block;
-    font-size: 13px;
-    font-weight: bolder;
-    color: #ffffff;
-    transition: transform 0.3s ease, color 0.3s ease;
-    cursor: pointer;
-}
-
-#toggleIcon:hover {
-  color: #ffffff; /* Darker blue on hover */
-  transform: rotate(180deg); /* Add a rotation effect */
-}
-
-#toggleIcon:active {
-  color: #003f7f; /* Even darker blue on click */
-}
-
-.qty {
-    position: absolute;
-    top: -11px;
-    left: 128%;
-    transform: translateX(-50%);
-    font-size: 12px;
-    color: red;
-}
-.custom-button {
-  margin-bottom: 30px;
-    background-color: #343a40;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 16px;
-    border-radius: 5px;
-    transition: background-color 0.3s, transform 0.3s;
-}
-.custom-button:hover {
-    background-color: #495057;
-    transform: translateY(-2px);
-}
-.custom-button:active {
-    transform: translateY(0);
-}
-
-
-    </style>
+    <link rel="stylesheet" href="/user/css/shop.css" />
     <header class="header_area sticky-header">
       <div class="main_menu">
           <nav class="navbar navbar-expand-lg navbar-light main_box">
@@ -348,7 +297,7 @@
                   <div class="single-product">
                     <a href="/singleprodect/<%= product._id %>">
                       <div class="image-container position-relative">
-                        <img class="img-fluid w-100" src="<%= product.images[0].replace('public', '') %>" alt="<%= product.name %>" />
+                        <img class="img-fluid w-100" src="<%= product.images[0].url %>" alt="<%= product.name %>" />
                         
                         <!-- Discount Badge with rounded corners and space -->
                         <% if (product.discountApplied > 0) { %>
@@ -698,148 +647,9 @@
     
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
-
-<script>
-
-
-  function addToWishList(productId) {
-      axios.post(`/whislistAdd/${productId}`)
-          .then(function(response) {  
-              if (response.data.success) {
-                  showToast(response.data.message);
-                  return addWishlistQty();
-              } else {
-                  if (response.data.message) {
-                      return showToast(response.data.message);
-                  } else {
-                      window.location.href = '/ShowLoginMsg';
-                  }
-              }
-          })
-          .catch(function(error) {
-              showToast('Please login :)');
-              console.log(error);
-          });
-  }
-
-  function addWishlistQty() {
-      let currentWtQty = parseInt(document.getElementById('w-qty').innerText);
-      document.getElementById('w-qty').innerText = currentWtQty + 1;
-  }
-
-  function showToast(message) {
-      Toastify({
-          text: message,
-          duration: 3000,
-          gravity: "top",
-          position: "right",
-          backgroundColor: "#333",
-          stopOnFocus: true
-      }).showToast();
-  }
-
-
-let currentPage = 1;
-
-document.addEventListener("DOMContentLoaded", function () {
-    const urlParams = new URLSearchParams(window.location.search);
-    const totalPages = document.getElementById("tala").value; // Ensure this is a number
-    currentPage = parseInt(urlParams.get('page')) || 1; // Read currentPage from URL or default to 1
-    createPagination(totalPages, currentPage);
-});
-
-function filterHandler(page = 1) {
-  const urlParams = new URLSearchParams(window.location.search);
-  const selectedBrand = document.querySelector('input[name="brand"]:checked')?.value;
-  const selectedColor = document.querySelector('input[name="color"]:checked')?.value;
-  const selectedSorting = document.getElementById('mySelect').value; // unified as 'sort'
-  const searchInput = document.getElementById('search_input').value.trim();
-
-  currentPage = page;
-
-  const filterData = {
-    brand: selectedBrand || urlParams.get('brand') || '',
-    color: selectedColor || urlParams.get('color') || '',
-    sort: selectedSorting || urlParams.get('sort') || '1', 
-    category: urlParams.get('category') || '',
-    search: searchInput ||  urlParams.get('search') || '',
-    page: currentPage,
-  };
-
-  const queryString = new URLSearchParams(filterData).toString();
-  window.location.href = `/shop?${queryString}`; 
-}
-
-
-function createPagination(totalPages, currentPage) {
-    console.log("Total Pages:", totalPages);
-    console.log("Current Page:", currentPage);
-    const paginationContainer = document.getElementById('page-numbers');
-    paginationContainer.innerHTML = ''; // Clear existing page numbers
-
-    // Create previous arrow
-    const prevArrow = document.getElementById('prev-arrow');
-    prevArrow.style.display = currentPage > 1 ? 'inline-block' : 'none';
-
-    // Create page numbers
-    for (let i = 1; i <= totalPages; i++) {
-        const pageLink = document.createElement('a');
-        pageLink.className = 'page-number' + (i === currentPage ? ' active' : '');
-        pageLink.textContent = i;
-        pageLink.href = '#';
-        pageLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            filterHandler(i); // Call filterHandler with the current page number
-        });
-        paginationContainer.appendChild(pageLink);
-    }
-
-    // Create next arrow
-    const nextArrow = document.getElementById('next-arrow');
-    nextArrow.style.display = currentPage < totalPages ? 'inline-block' : 'none';
-
-    // Add event listener for next arrow
-    nextArrow.addEventListener('click', (e) => {
-        e.preventDefault();
-        if (currentPage < totalPages) {
-            filterHandler(currentPage + 1); // Call with next page number
-        }
-    });
-
-    // Add event listener for previous arrow
-    prevArrow.addEventListener('click', (e) => {
-        e.preventDefault();
-        if (currentPage > 1) {
-            filterHandler(currentPage - 1); // Call with previous page number
-        }
-    });
-}
-function toggleCategories() {
-    const categoriesList = document.getElementById("categoriesList");
-    const toggleIcon = document.getElementById("toggleIcon");
-
-    if (categoriesList.style.display === "none") {
-      categoriesList.style.display = "block";
-      toggleIcon.classList.remove("lnr-chevron-down");
-      toggleIcon.classList.add("lnr-chevron-up");
-    } else {
-      categoriesList.style.display = "none";
-      toggleIcon.classList.remove("lnr-chevron-up");
-      toggleIcon.classList.add("lnr-chevron-down");
-    }
-  }
-   function toggleFilter(filterClass) {
-    const filterElement = document.querySelector(`.${filterClass}`);
-    if (filterElement) {
-      filterElement.style.display = filterElement.style.display === 'none' ? 'block' : 'none';
-    }
-  }
-
-
-</script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script type="module" src="/user/js/shop.js"></script>
+  </body>
 
   </body>
 </html>

@@ -1,0 +1,23 @@
+/* 
+ * Antigravity UI: User Authentication (Register)
+ * Target: /public/user/css/register.css
+ */
+
+.otp-btn {
+    background-color: rgb(253, 122, 0);
+    color: rgb(255, 255, 255);
+    border: none;
+    padding: 10px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.otp-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.timer {
+    font-size: 0.9rem;
+    color: #666;
+}

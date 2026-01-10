@@ -1,443 +1,128 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Dashboard - Add Product</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css"
-      rel="stylesheet"
-    />
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <!-- SweetAlert CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-<!-- SweetAlert JS -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<!-- Toastify CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-<!-- Toastify JS -->
-<script src="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.js"></script>
-
-
-    <style>
-      body {
-        background-color: #f8f9fa;
-      }
-      .sidebar {
-        height: 100vh;
-        background-color: #343a40;
-        padding-top: 20px;
-      }
-      .sidebar a {
-        color: #ffffff;
-        text-decoration: none;
-        display: block;
-        padding: 10px 20px;
-      }
-      .sidebar a:hover {
-        background-color: #495057;
-      }
-      .form-container {
-        margin: 30px;
-      }
-      .image-preview {
-        max-width: 100%;
-        height: 300px;
-        display: none;
-        margin-bottom: 10px;
-      }
-      .crop-container {
-        margin-bottom: 20px;
-      }
-    </style>
-  </head>
-  <body>
+<head>
+    <%- include('partials/head') %>
+    <title>Nexus Admin | Add Product</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/admin/css/addProducts.css">
+</head>
+<body class="sidebar-page">
     <div class="container-fluid">
-      <div class="row">
-        <!-- Sidebar -->
-        <%- include('partials/sideBar') %> 
-        <!-- Main Content -->
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-          <div class="form-container">
-            <h2>Add New Product</h2>
-            <form enctype="multipart/form-data" id="addProductForm">
-              <!-- Product Fields -->
-              <div class="mb-3">
-                <label for="productName" class="form-label">Product Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  class="form-control"
-                  id="productName"
-                  placeholder="Enter product name"
-                  required
-                />
-              </div>
-              <div class="mb-3">
-                <label for="brandName" class="form-label">Brand Name</label>
-                <input
-                  type="text"
-                  name="brand"
-                  class="form-control"
-                  id="brandName"
-                  placeholder="Enter brand name"
-                  required
-                />
-              </div>
-              <div class="mb-3" id="sizeContainer">
-                <label for="availableSizes" class="form-label"
-                  >Available Sizes & Stock</label
-                >
-              </div>
+        <div class="row">
+            <%- include('partials/sideBar') %> 
 
-              <button
-                type="button"
-                class="btn btn-secondary mb-3"
-                id="addSizeStockBtn"
-              >
-                Add Size & Stock
-              </button>
-              <div class="mb-3">
-                <label for="color" class="form-label">Color</label>
-                <input
-                  type="text"
-                  name="color"
-                  class="form-control"
-                  id="color"
-                  placeholder="Color"
-                  required
-                />
-              </div>
-              <div class="mb-3">
-                <label for="productDescription" class="form-label"
-                  >Description</label
-                >
-                <textarea
-                  class="form-control"
-                  name="description"
-                  id="productDescription"
-                  rows="3"
-                  placeholder="Enter product description"
-                  required
-                ></textarea>
-              </div>
-              <div class="row">
-              </div>
-              <div class="row mb-3">
-                <div class="col-md-6">
-                  <label for="productPrice" class="form-label">Price</label>
-                  <input
-                    type="number"
-                    name="price"
-                    class="form-control"
-                    id="productPrice"
-                    placeholder="Enter price"
-                    min="1"
-                    required
-                  />
+            <main class="content-wrapper">
+                <!-- Header & Breadcrumbs -->
+                <div class="mb-5">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-2">
+                            <li class="breadcrumb-item"><a href="/admin/products" class="text-decoration-none text-muted">Products</a></li>
+                            <li class="breadcrumb-item active">Add New</li>
+                        </ol>
+                    </nav>
+                    <h1 class="h3 fw-bold mb-0">Add New Product</h1>
                 </div>
-                <div class="col-md-6">
-                  <label for="originalPrice" class="form-label">Original Price</label>
-                  <input
-                    type="number"
-                    name="originalPrice"
-                    class="form-control"
-                    id="originalPrice"
-                    placeholder="Enter original price"
-                    min="1"
-                    required
-                  />
-                </div>
-              </div>
-              
-              
-              <div class="mb-3">
-                <label for="productCategory" class="form-label">Category</label>
-                <select
-                  class="form-select"
-                  id="productCategory"
-                  name="category"
-                  required
-                >
-                  <option selected>Select product category</option>
-                  <% categories.forEach(category => { %>
-                  <option value="<%= category._id %>">
-                    <%= category.name %>
-                  </option>
-                  <% }) %>
-                </select>
-              </div>
 
-              <!-- Image Upload Fields with Cropper -->
-              <div class="mb-3">
-                <label for="productImages" class="form-label"
-                  >Product Images (3 images required)</label
-                >
-                <input
-                  type="file"
-                  class="form-control"
-                  id="productImages"
-                  name="images"
-                  accept="image/*"
-                  multiple
-                  required
-                />
-              </div>
+                <form id="addProductForm" enctype="multipart/form-data">
+                    <div class="row g-4">
+                        <!-- Left Column: Details -->
+                        <div class="col-lg-8">
+                            <div class="form-card mb-4">
+                                <h5 class="fw-bold mb-4">Core Information</h5>
+                                
+                                <div class="mb-4">
+                                    <label class="form-label">Product Title</label>
+                                    <input type="text" name="name" class="form-control" placeholder="Enter product name" required>
+                                </div>
 
-              <!-- Container to hold all image previews and crop buttons -->
-              <div id="imageCropContainer"></div>
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Brand</label>
+                                        <input type="text" name="brand" class="form-control" placeholder="e.g. Nike" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Color Way</label>
+                                        <input type="text" name="color" class="form-control" placeholder="e.g. Midnight Blue" required>
+                                    </div>
+                                </div>
 
-              <input type="hidden" name="croppedImages" id="croppedImages" />
+                                <div class="mb-0">
+                                    <label class="form-label">Description</label>
+                                    <textarea name="description" class="form-control" rows="6" placeholder="Write balanced product features..." required></textarea>
+                                </div>
+                            </div>
 
-              <button type="submit" class="btn btn-dark mt-3" id="submit-btn">
-                Add Product
-              </button>
-            </form>
-          </div>
-        </main>
-      </div>
+                            <div class="form-card mb-4">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <h5 class="fw-bold mb-0">Inventory & Sizes</h5>
+                                    <button type="button" class="btn btn-outline-primary btn-sm btn-add-size" id="addSizeStockBtn">
+                                        <i class="bi bi-plus-lg me-1"></i>Add Size
+                                    </button>
+                                </div>
+                                <div id="sizeContainer">
+                                    <p class="text-muted small mb-3">Add available sizes and their respective stock levels.</p>
+                                    <!-- Rows added dynamically via JS -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Images & Meta -->
+                        <div class="col-lg-4">
+                            <div class="form-card mb-4">
+                                <h5 class="fw-bold mb-4">Pricing & Category</h5>
+                                
+                                <div class="mb-4">
+                                    <label class="form-label">Listing Price (₹)</label>
+                                    <input type="number" name="price" class="form-control" min="1" required>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label">Original Price (₹)</label>
+                                    <input type="number" name="originalPrice" class="form-control" min="1" required>
+                                </div>
+
+                                <div class="mb-0">
+                                    <label class="form-label">Category</label>
+                                    <select name="category" class="form-select" required>
+                                        <option value="" selected disabled>Choose collection...</option>
+                                        <% categories.forEach(category => { %>
+                                            <option value="<%= category._id %>"><%= category.name %></option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-card">
+                                <h5 class="fw-bold mb-3">Product Media</h5>
+                                <p class="text-muted small mb-4">Upload at least 3 high-quality images and crop them to square ratio.</p>
+                                
+                                <div class="image-upload-zone mb-4">
+                                    <i class="bi bi-cloud-arrow-up h1 text-muted"></i>
+                                    <div class="mt-2 small">Click to upload images</div>
+                                    <input type="file" id="productImages" class="opacity-0 position-absolute start-0 top-0 w-100 h-100 cursor-pointer" accept="image/*" multiple required>
+                                </div>
+
+                                <div id="imageCropContainer" class="crop-preview-container">
+                                    <!-- Croppers loaded here -->
+                                </div>
+                            </div>
+
+                            <div class="mt-4 d-grid gap-2">
+                                <button type="submit" class="btn btn-submit shadow-sm py-3">
+                                    <i class="bi bi-cloud-check me-2"></i>Publish Product
+                                </button>
+                                <a href="/admin/products" class="btn btn-light border py-3 text-muted">Discard Draft</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </main>
+        </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Scripts -->
+    <%- include('partials/scripts') %>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
-
-    <script>
-      let croppers = [];
-
-      document
-        .getElementById("addSizeStockBtn")
-        .addEventListener("click", function () {
-          const sizeContainer = document.getElementById("sizeContainer");
-          const sizeStockRow = document.createElement("div");
-          sizeStockRow.classList.add("d-flex", "align-items-center", "mb-2");
-          sizeStockRow.innerHTML = `
-              <input type="text" name="size" class="form-control me-2" placeholder="Size" required style="width: 100px;" />
-              <input type="number" name="stock" class="form-control me-2" placeholder="Stock" required style="width: 100px;" />
-              <button type="button" class="btn btn-danger remove-size-stock">Remove</button>
-          `;
-          sizeContainer.appendChild(sizeStockRow);
-        });
-
-      document
-        .getElementById("sizeContainer")
-        .addEventListener("click", function (e) {
-          if (e.target.classList.contains("remove-size-stock")) {
-            e.target.parentElement.remove();
-          }
-        });
-
-      document
-        .getElementById("productImages")
-        .addEventListener("change", function (event) {
-          const files = event.target.files;
-
-          const container = document.getElementById("imageCropContainer");
-          container.innerHTML = "";
-
-          for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            const reader = new FileReader();
-
-            const cropContainer = document.createElement("div");
-            cropContainer.classList.add("crop-container");
-
-            const imagePreview = document.createElement("img");
-            imagePreview.classList.add("image-preview");
-            imagePreview.id = `imagePreview_${i}`;
-
-            const cropButton = document.createElement("button");
-            cropButton.type = "button";
-            cropButton.classList.add("btn", "btn-primary", "mt-2");
-            cropButton.textContent = "Crop Image";
-            cropButton.id = `cropButton_${i}`;
-
-            cropContainer.appendChild(imagePreview);
-            cropContainer.appendChild(cropButton);
-            container.appendChild(cropContainer);
-
-            reader.onload = function (e) {
-              imagePreview.src = e.target.result;
-              imagePreview.style.display = "block";
-
-              const cropper = new Cropper(imagePreview, {
-                aspectRatio: 1,
-                viewMode: 1,
-                autoCropArea: 1,
-              });
-              croppers[i] = cropper;
-
-              cropButton.addEventListener("click", function () {
-                const canvas = cropper.getCroppedCanvas();
-                const croppedImage = canvas.toDataURL("image/jpeg");
-
-                let croppedImagesField =
-                  document.getElementById("croppedImages").value;
-                croppedImagesField = croppedImagesField
-                  ? JSON.parse(croppedImagesField)
-                  : [];
-                croppedImagesField.push(croppedImage);
-                document.getElementById("croppedImages").value =
-                  JSON.stringify(croppedImagesField);
-
-                showToast("Image cropped successfully!");
-              });
-            };
-
-            reader.readAsDataURL(file);
-          }
-        });
-
-      document
-        .getElementById("addProductForm")
-        .addEventListener("submit", function (e) {
-          e.preventDefault();
-
-          const name = document.getElementById("productName").value.trim();
-          const brand = document.getElementById("brandName").value.trim();
-          const color = document.getElementById("color").value.trim();
-          const description = document
-            .getElementById("productDescription")
-            .value.trim();
-          const price = document.getElementById("productPrice").value.trim();
-          const originalPrice = document.getElementById("originalPrice").value.trim();
-          const category = document
-            .getElementById("productCategory")
-            .value.trim();
-
-          if (!name || !/^[A-Za-z'0-9\s]+$/.test(name)) {
-            showToast("Product name contains invalid characters or is empty.");
-            return;
-          }
-
-          if (!brand || !/^[A-Za-z'0-9\s]+$/.test(brand)) {
-            showToast("Brand contains invalid characters or is empty.");
-            return;
-          }
-
-          if (!color || !/^[A-Za-z'\s]+$/.test(color)) {
-            showToast("Color contains invalid characters or is empty.");
-            return;
-          }
-
-          if (!description || !/^[A-Za-z'0-9\s'-]+$/.test(description)) {
-            showToast("Description contains invalid characters or is empty.");
-            return;
-          }
-
-          if (!price || price <= 0) {
-            showToast("Price must be greater than zero.");
-            return;
-          }
-          if(originalPrice<price){
-            showToast("original price always big.");
-            return;
-          }
-
-          if (!category) {
-            showToast("Product category is required.");
-            return;
-          }
-
-          const sizeStockData = [];
-          let isValidSizeStok = false;
-          const sizeStockRows = document.querySelectorAll("#sizeContainer div");
-          sizeStockRows.forEach((row) => {
-            const size = row.querySelector('input[name="size"]').value.trim();
-            const stock = row.querySelector('input[name="stock"]').value.trim();
-            if (!size || !stock || stock < 1 || size < 1) {
-              isValidSizeStok = true;
-              showToast("Size or stock is missing or invalid.");
-              return;
-            }
-            sizeStockData.push({ size, stock });
-          });
-          if (isValidSizeStok) return;
-          const formData = new FormData();
-          formData.append("name", name);
-          formData.append("brand", brand);
-          formData.append("color", color);
-          formData.append("description", description);
-          formData.append("price", price);
-          formData.append("originalPrice",originalPrice)
-          formData.append("category", category);
-          formData.append("availableSize", JSON.stringify(sizeStockData));
-
-          const croppedImages = document.getElementById("croppedImages").value;
-          const images = JSON.parse(croppedImages);
-          if (images.length < 3) {
-            showToast("Please crop and select at least 3 images.");
-            return;
-          }
-
-          images.forEach((image, index) => {
-            const blob = dataURItoBlob(image);
-            formData.append(`croppedImages`, blob, `croppedImage_${index}.jpg`);
-          });
-
-          confirmAction(
-            "Are you sure?",
-            "Add the Product?",
-            "Yes, Add it!"
-          ).then((result) => {
-            if (result.isConfirmed) {
-              axios
-                .post("/admin/products/add-products", formData, {
-                  headers: {
-                    "Content-Type": "multipart/form-data",
-                  },
-                })
-                .then(function (response) {
-                  if (response.data.ok) {
-                    
-                    document.getElementById("addProductForm").reset();
-                    window.location.href = response.data.red;
-                  } else {
-                    showToast(response.data.msg);
-                    return;
-                  }
-                })
-                .catch(function (error) {
-                  console.error("There was an error!", error);
-                });
-            }
-          });
-        });
-
-      function dataURItoBlob(dataURI) {
-        const byteString = atob(dataURI.split(",")[1]);
-        const mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
-        const ab = new ArrayBuffer(byteString.length);
-        const ia = new Uint8Array(ab);
-        for (let i = 0; i < byteString.length; i++) {
-          ia[i] = byteString.charCodeAt(i);
-        }
-        return new Blob([ab], { type: mimeString });
-      }
-      function confirmAction(title, text, confirmButtonText) {
-        return Swal.fire({
-          title: title,
-          text: text,
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#3085d6",
-          cancelButtonColor: "#d33",
-          confirmButtonText: confirmButtonText,
-        });
-      }
-      function showToast(message) {
-      Toastify({
-        text: message,
-        duration: 2000,
-        gravity: "top",
-        position: "right",
-        backgroundColor: "#333",
-        stopOnFocus: true,
-      }).showToast();
-    }
-    </script>
-  </body>
+    <script type="module" src="/admin/js/addProducts.js"></script>
+</body>
 </html>

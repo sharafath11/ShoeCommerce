@@ -179,7 +179,7 @@
                 <div class="product-info">
                     <% products.forEach(product => { %>
                         <div class="product-item">
-                            <img src="<%= product.images[0].replace('public', '') %>" class="image-preview" />                            <div class="product-details">
+                            <img src="<%= product.images[0].url %>" class="image-preview" />                            <div class="product-details">
                                 <h3><%= product.name %></h3>
                                 <p>Brand: <%= product.brand %></p>
                             </div>
@@ -212,9 +212,9 @@
         </div>
 
         <div class="review-content">
-          <% if (review.imagePath && review.imagePath.trim() !== '') { %>
+          <% if (review.image && review.image.url) { %>
           <img
-            src="<%= review.imagePath.replace('public', '') %>"
+            src="<%= review.image.url %>"
             alt="Product Image"
             class="product-image"
           />

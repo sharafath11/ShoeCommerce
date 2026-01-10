@@ -1,170 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-<style>
-  :root {
-    --sb-bg: #0f172a;
-    --sb-hover: rgba(255, 255, 255, 0.05);
-    --accent: #38bdf8;
-    --text-dim: #94a3b8;
-    --text-light: #f8fafc;
-    --width-wide: 260px;
-    --width-mini: 80px;
-    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
+<link rel="stylesheet" href="/admin/css/sidebar.css">
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-  body {
-    margin: 0;
-    font-family: 'Inter', sans-serif;
-    background: #f1f5f9;
-    padding-left: var(--width-wide);
-    transition: var(--transition);
-  }
-
-  body.collapsed-mode {
-    padding-left: var(--width-mini);
-  }
-
-  .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    background: var(--sb-bg);
-    width: var(--width-wide);
-    transition: var(--transition);
-    display: flex;
-    flex-direction: column;
-    z-index: 1000;
-    box-shadow: 4px 0 10px rgba(0,0,0,0.1);
-    overflow: hidden;
-  }
-
-  .sidebar.mini {
-    width: var(--width-mini);
-  }
-
-  .header-section {
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    min-height: 70px;
-  }
-
-  .toggle-btn {
-    background: var(--sb-hover);
-    border: none;
-    color: var(--text-light);
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: var(--transition);
-  }
-
-  .sidebar.mini .toggle-btn {
-    transform: rotate(180deg);
-    margin: 0 auto;
-  }
-
-  .logo-text {
-    color: var(--text-light);
-    font-weight: 700;
-    font-size: 1.1rem;
-    transition: var(--transition);
-    white-space: nowrap;
-    opacity: 1;
-  }
-
-  .sidebar.mini .logo-text {
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  .nav-list {
-    list-style: none;
-    padding: 10px;
-    margin: 0;
-    flex-grow: 1;
-  }
-
-  .nav-item { margin-bottom: 5px; position: relative; }
-
-  .nav-link {
-    display: flex;
-    align-items: center;
-    padding: 12px;
-    color: var(--text-dim);
-    text-decoration: none;
-    border-radius: 10px;
-    transition: var(--transition);
-    white-space: nowrap;
-  }
-
-  .nav-link i {
-    font-size: 1.4rem;
-    min-width: 56px; 
-    display: flex;
-    justify-content: center;
-  }
-
-  .nav-link span {
-    opacity: 1;
-    transition: opacity 0.2s;
-  }
-
-  .sidebar.mini .nav-link span {
-    opacity: 0;
-  }
-
-  .nav-link:hover {
-    background: var(--sb-hover);
-    color: var(--text-light);
-  }
-
-  .nav-link.active {
-    background: rgba(56, 189, 248, 0.12);
-    color: var(--accent);
-  }
-
-  .nav-link.active::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    width: 4px;
-    height: 20px;
-    background: var(--accent);
-    border-radius: 0 4px 4px 0;
-    box-shadow: 0 0 10px var(--accent);
-  }
-
-  .logout-link {
-    margin-top: auto;
-    color: #fb7185 !important;
-    border-top: 1px solid rgba(255,255,255,0.05);
-    border-radius: 0;
-  }
-
-  @media (max-width: 768px) {
-    body { padding-left: 0 !important; }
-    .sidebar { transform: translateX(-100%); width: var(--width-wide) !important; }
-    .sidebar.mobile-show { transform: translateX(0); }
-  }
-</style>
-</head>
-<body class="sidebar-page">
+<div class="mobile-header">
+  <span class="logo-text">Nexus Admin</span>
+  <button class="toggle-btn" id="mobileToggle">
+    <i class="bi bi-list"></i>
+  </button>
+</div>
 
 <nav class="sidebar" id="mainSidebar">
   <div class="header-section">
     <span class="logo-text">Nexus Admin</span>
-    <button class="toggle-btn" id="sidebarToggle" title="Toggle Sidebar">
+    <button class="toggle-btn d-none d-md-flex" id="sidebarToggle" title="Toggle Sidebar">
       <i class="bi bi-chevron-left"></i>
     </button>
   </div>
@@ -200,43 +48,11 @@
     </a>
 
     <form id="logout-form" action="/admin/logout" method="POST" style="display: none;"></form>
-    <a href="#" class="nav-link logout-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+    <a href="#" class="nav-link logout-link" onclick="confirmLogout()">
       <i class="bi bi-box-arrow-right"></i>
       <span>Logout</span>
     </a>
   </div>
 </nav>
 
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const sidebar = document.getElementById('mainSidebar');
-    const toggleBtn = document.getElementById('sidebarToggle');
-    const navLinks = document.querySelectorAll('.nav-link');
-
-    // 1. Toggle Functionality
-    toggleBtn.addEventListener('click', () => {
-      sidebar.classList.toggle('mini');
-      document.body.classList.toggle('collapsed-mode');
-    });
-
-    // 2. Active Link Logic (Based on URL)
-    const currentPath = window.location.pathname;
-    navLinks.forEach(link => {
-      // Check if the link's href matches the current browser URL
-      if (link.getAttribute('href') === currentPath) {
-        link.classList.add('active');
-      }
-      
-      // Also allow manual click highlighting for snappy feel
-      link.addEventListener('click', function() {
-        if (!this.classList.contains('logout-link')) {
-          navLinks.forEach(l => l.classList.remove('active'));
-          this.classList.add('active');
-        }
-      });
-    });
-  });
-</script>
-
-</body>
-</html>
+<script src="/admin/js/sidebar.js"></script>

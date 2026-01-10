@@ -1,0 +1,57 @@
+/* 
+ * Antigravity UI: Shopping Cart
+ * Target: /public/user/css/cart.css
+ */
+
+.cart-image {
+    max-width: 150px;
+    height: auto;
+}
+
+.quantity-btn {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    border-radius: 50%;
+    transition: all 0.3s ease-in-out;
+}
+
+.quantity-btn:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.increase {
+    border-color: #28a745;
+}
+
+.increase:hover {
+    background-color: #28a745;
+    color: white;
+}
+
+.decrease {
+    border-color: #dc3545;
+}
+
+.decrease:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .cart-image {
+        max-width: 100px;
+    }
+    .quantity-btn {
+        width: 30px;
+        height: 30px;
+    }
+    .quantity-btn i {
+        font-size: 14px;
+    }
+}
