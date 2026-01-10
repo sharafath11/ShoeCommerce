@@ -1,0 +1,45 @@
+name: CI/CD - ShoeCommerce Production
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build Docker image
+        run: |
+          docker build -t sharafathst/st-shope:latest .
+
+      - name: Push Docker image
+        run: |
+          docker push sharafathst/st-shope:latest
+
+      - name: Deploy on EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            docker pull sharafathst/st-shope:latest
+            docker stop st-shope || true
+            docker rm st-shope || true
+            docker run -d \
+              --name st-shope \
+              --restart unless-stopped \
+              -p 127.0.0.1:5000:5000 \
+              --env-file /home/ec2-user/st-shope/.env \
+              sharafathst/st-shope:latest
