@@ -1,204 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Dashboard - Users Management</title>
-    <!-- Bootstrap CSS -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <!-- Toastify CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-    <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <!-- SweetAlert JS -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Toastify CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-    <!-- Toastify JS -->
-    <script src="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.js"></script>
-  </head>
-  <style>
-    body {
-      font-family: "Arial", sans-serif;
-    }
-    .sidebar {
-      height: 100vh;
-      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    }
-    .sidebar .nav-link {
-      font-size: 16px;
-    }
-    .sidebar-heading {
-      font-size: 1.5rem;
-      color: #333;
-    }
-    .card {
-      border-radius: 10px;
-      border: none;
-    }
-    .card .form-control {
-      border-radius: 20px;
-    }
-    .table th {
-      font-weight: 600;
-    }
-  </style>
-  <body>
-    <div class="container-fluid">
-      <div class="row">
-      
-          <%- include('partials/sideBar') %> 
-        
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
-                <h1 class="h2">Users Management</h1>
-            </div>
-            
-            <div class="d-flex justify-content-between mb-3">
-                <input class="form-control w-25" type="text" placeholder="Search users..." id="searchInput">
-              </div>
-            
-            <div class="card shadow-sm mb-4">
-              <div class="card-body">
-                <table class="table" id="usersTable">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>Email</th>
-                      <th>Google user</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody id="userTableBody">
-                    <% Users.forEach((user, index) => { %>
-                      <tr data-username="<%= user.username.toLowerCase() %>" data-email="<%= user.email.toLowerCase() %>">
-                        <td><%= user.username %></td>
-                        <td><%= user.email %></td>
-                        <td><%= user.googleUser %></td>
-                        <td>
-                          <button class="btn btn-sm btn-<%= user.block ? 'danger' : 'success' %> toggle-block-btn" data-id="<%= user._id %>">
-                            <%= user.block ? 'Unblock' : 'Block' %>
-                          </button>
-                        </td>
-                      </tr>
-                    <% }) %>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </main>
-          <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-center">
-               
-                <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
-                    <a class="page-link" href="/admin/users?page=<%= currentPage - 1 %>" tabindex="-1" aria-disabled="true">
-                        <i class="bi bi-arrow-left">Previous</i> 
-                    </a>
-                </li>
-        
-              
-                <% for (let i = 1; i <= totalPages; i++) { %>
-                    <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                        <a class="page-link" href="/admin/users?page=<%= i %>"><%= i %></a>
-                    </li>
-                <% } %>
-        
-              
-                <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
-                    <a class="page-link" href="/admin/users?page=<%= currentPage + 1 %>">
-                        <i class="bi bi-arrow-right">Next</i> <!-- Bootstrap icon -->
-                    </a>
-                </li>
-            </ul>
-        </nav>
-      </div>
-    </div>
-
-   
-    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-
-    <script>
-      document.addEventListener('DOMContentLoaded', () => {
-          document.querySelectorAll('.toggle-block-btn').forEach(button => {
-              button.addEventListener('click', async function() {
-                  const userId = this.getAttribute('data-id');
-                  const isBlocking = this.textContent.trim() === 'Block';
-  
-                  const confirmationMessage = isBlocking ? 
-                      'Are you sure you want to block this user?' : 
-                      'Are you sure you want to unblock this user?';
-  
-                  // Use SweetAlert for confirmation
-                  const result = await Swal.fire({
-                      title: 'Confirmation',
-                      text: confirmationMessage,
-                      icon: 'warning',
-                      showCancelButton: true,
-                      confirmButtonText: 'Yes',
-                      cancelButtonText: 'No'
-                  });
-  
-                  if (!result.isConfirmed) {
-                      return; 
-                  }
-  
-                  try {
-                      const response = await fetch(`/admin/users/toggle-block/${userId}`, {
-                          method: 'POST',
-                          headers: {
-                              'Content-Type': 'application/json'
-                          }
-                      });
-  
-                      const result = await response.json();
-                      if (result.ok) {
-                          this.textContent = result.block ? 'Unblock' : 'Block';
-                          this.className = `btn btn-sm btn-${result.block ? 'danger' : 'success'} toggle-block-btn`;
-  
-                          showToast(`User ${result.block ? 'blocked' : 'unblocked'} successfully`);
-                      }
-                  } catch (error) {
-                      console.error('Error toggling block status:', error);
-                  }
-              });
-          });
-      });
-  
-      function showToast(message) {
-          Toastify({
-              text: message,
-              duration: 3000,
-              gravity: 'top', 
-              position: 'right', 
-              backgroundColor: '#333', 
-              stopOnFocus: true,
-              close: true 
-          }).showToast();
-      }
-  
-      document.getElementById('searchInput').addEventListener('input', function () {
-          const searchTerm = this.value.toLowerCase();
-          const rows = document.querySelectorAll('#userTableBody tr');
-  
-          rows.forEach(row => {
-              const username = row.getAttribute('data-username');
-              const email = row.getAttribute('data-email');
-  
-              if (username.includes(searchTerm) || email.includes(searchTerm)) {
-                  row.style.display = '';
-              } else {
-                  row.style.display = 'none';
-              }
-          });
-      });
-  </script>
-  
-  <!-- Include SweetAlert CSS and JS -->
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard - Users Management</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+  <link rel="stylesheet" href="/admin/css/users.css?v=1.1">
+</head>
+
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      <%- include('partials/sideBar') %>
+
+      <main class="content-wrapper col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3">
+          <h1 class="h2">Users Management</h1>
+        </div>
+
+        <div class="mb-3">
+          <input
+            id="searchInput"
+            class="form-control w-25"
+            type="text"
+            placeholder="Search users..."
+          />
+        </div>
+
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <table class="table table-hover align-middle">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Google User</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="userTableBody">
+                <% Users.forEach(user => { %>
+                  <tr
+                    data-username="<%= user.username.toLowerCase() %>"
+                    data-email="<%= user.email.toLowerCase() %>"
+                  >
+                    <td><%= user.username %></td>
+                    <td><%= user.email %></td>
+                    <td>
+                      <span class="badge <%= user.googleUser ? 'bg-success' : 'bg-secondary' %>">
+                        <%= user.googleUser ? 'Yes' : 'No' %>
+                      </span>
+                    </td>
+                    <td>
+                      <button
+                        class="btn btn-sm btn-<%= user.block ? 'danger' : 'success' %> toggle-block-btn"
+                        data-id="<%= user._id %>"
+                      >
+                        <%= user.block ? 'Unblock' : 'Block' %>
+                      </button>
+                    </td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <nav class="mt-4">
+          <ul class="pagination justify-content-center">
+            <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+              <a class="page-link" href="/admin/users?page=<%= currentPage - 1 %>">Previous</a>
+            </li>
+
+            <% for (let i = 1; i <= totalPages; i++) { %>
+              <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                <a class="page-link" href="/admin/users?page=<%= i %>"><%= i %></a>
+              </li>
+            <% } %>
+
+            <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+              <a class="page-link" href="/admin/users?page=<%= currentPage + 1 %>">Next</a>
+            </li>
+          </ul>
+        </nav>
+      </main>
+    </div>
+  </div>
+  <!-- Global libs -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  
-  </body>
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+  <!-- Page JS -->
+ <script type="module" src="/admin/js/users.js"></script>
+</body>
 </html>

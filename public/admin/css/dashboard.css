@@ -1,0 +1,26 @@
+body {
+    background-color: #1f60a1;
+}
+
+.content-wrapper {
+    transition: all 0.3s ease;
+    padding-top: 20px;
+}
+
+.stat-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.stat-card .display-6 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.card {
+    border-radius: 12px;
+    border: none;
+    
+}
