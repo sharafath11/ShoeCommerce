@@ -14,28 +14,24 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 app.use(passport.initialize());
-app.use(session({
-  secret: process.env.SECRET,
-  resave: false,
-  saveUninitialized: false,
-  store: MongoStore.create({
-<<<<<<< HEAD
-    mongoUrl:process.env.MONGO_URL,
-    ttl: 14 * 24 * 60 * 60, 
-    autoRemove: 'native' 
-=======
-    mongoUrl:process.env.MONGO_URL
-    ,
-    ttl: 14 * 24 * 60 * 60, // Set a time-to-live (TTL) of 14 days
-    autoRemove: 'native' // Automatically remove expired sessions
->>>>>>> align-code
-  }),
-  cookie: {
-    secure: process.env.NODE_ENV === 'production', 
-    httpOnly: true, 
-    maxAge: 1000 * 60 * 60 * 24 * 7,
-  }
-}));
+app.use(
+  session({
+    secret: process.env.SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGO_URL,
+      ttl: 14 * 24 * 60 * 60,
+      autoRemove: "native",
+    }),
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    },
+  })
+);
+
 
 mongoose
   .connect(process.env.MONGO_URL)
