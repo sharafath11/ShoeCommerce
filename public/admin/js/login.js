@@ -1,48 +1,44 @@
-/**
- * Antigravity UI: Admin Login
- * Target: /public/admin/js/login.js
- */
-
 import { showToast } from "/utils/toast.js";
 
-document.addEventListener('DOMContentLoaded', function () {
-    const form = document.getElementById('login-form');
-    if (!form) return;
+document.addEventListener("DOMContentLoaded", function () {
+  const form = document.getElementById("login-form");
+  if (!form) return;
 
-    form.addEventListener('submit', async function (event) {
-        event.preventDefault();
+  form.addEventListener("submit", async function (event) {
+    event.preventDefault();
 
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value;
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
 
-        try {
-            const response = await axios.post('/admin/login', { email, password });
+    try {
+      const response = await axios.post(
+        "/admin/login",
+        { email, password },
+        { withCredentials: true } // 🔥 THIS IS THE KEY
+      );
 
-            if (response.data.success) {
-                // showToast("Login successful", "success"); // Optional: usually instant redirect
-                window.location.href = '/admin';
-            } else {
-                showError('Unexpected response status');
-            }
-        } catch (error) {
-            console.error(error);
-            if (error.response) {
-                showError(error.response.data.message || 'Invalid credentials');
-            } else if (error.request) {
-                showError('No response from server');
-            } else {
-                showError('Error during login');
-            }
-        }
-    });
+      if (response.data.success) {
+        window.location.href = "/admin";
+      }
+    } catch (error) {
+      console.error(error);
 
-    function showError(msg) {
-        const errorDiv = document.getElementById('error-message');
-        if (errorDiv) {
-            errorDiv.textContent = msg;
-            errorDiv.style.display = 'block';
-        } else {
-            showToast(msg, "error");
-        }
+      const msg =
+        error.response?.data?.msg ||
+        error.response?.data?.message ||
+        "Invalid credentials";
+
+      showError(msg);
     }
+  });
+
+  function showError(msg) {
+    const errorDiv = document.getElementById("error-message");
+    if (errorDiv) {
+      errorDiv.textContent = msg;
+      errorDiv.style.display = "block";
+    } else {
+      showToast(msg, "error");
+    }
+  }
 });

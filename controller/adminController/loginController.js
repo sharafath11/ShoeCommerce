@@ -7,32 +7,35 @@ export const adminLogin = (req, res) => {
    
       
 };
-
 export const adminLoginPost = (req, res) => {
-    const { email, password } = req.body;
-    console.log(req.body);
+  const email = String(req.body.email || "").trim();
+  const password = String(req.body.password || "").trim();
 
-    if (email === process.env.ADMIN && password === process.env.ADMIN_PASSWORD) {
-       
-        const payload = {
-            admin: true, 
-            email, 
-        };
+  console.log("INPUT:", email, password);
+  console.log("ENV:", process.env.ADMIN, process.env.ADMIN_PASSWORD);
 
-        
-        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }); 
+  if (
+    email === process.env.ADMIN &&
+    password === process.env.ADMIN_PASSWORD
+  ) {
+    const token = jwt.sign(
+      { admin: true, email },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
 
-        req.session.token = token;
-        res.status(200).json({
-            success: true,
-            token,
-            msg: "Login successful",
-            red:"/admin"
-        });
-       
-    } else {
-        res.status(401).json({ success: false, msg: "In valid creadinatiols" });
-    }
+    req.session.token = token;
+
+    return res.json({
+      success: true,
+      red: "/admin"
+    });
+  }
+
+  return res.status(401).json({
+    success: false,
+    msg: "Invalid credentials"
+  });
 };
 
 

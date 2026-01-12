@@ -1,7 +1,6 @@
 import express from "express";
 import userRoutes from "./routes/userRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
-import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import passport from "passport";
 import mongoose from "mongoose";
@@ -30,6 +29,7 @@ app.use(
     }),
     cookie: {
       secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
       httpOnly: true,
       maxAge: 1000 * 60 * 60 * 24 * 7,
     },
@@ -47,8 +47,6 @@ mongoose
 
 app.set("view engine", "ejs");
 app.set("views", "./Views");
-
-app.use(bodyParser.json());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
