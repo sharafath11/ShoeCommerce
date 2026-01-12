@@ -1,0 +1,29 @@
+body {
+    background-color: #f8f9fa;
+    font-family: 'Arial', sans-serif;
+}
+
+.card {
+    border-radius: 10px;
+    border: none;
+}
+
+h3 {
+    font-weight: 600;
+}
+
+.form-control {
+    border-radius: 5px;
+}
+
+.btn-dark {
+    border-radius: 5px;
+}
+
+a.text-muted:hover {
+    text-decoration: underline;
+}
+
+.alert {
+    display: none;
+}

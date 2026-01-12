@@ -1,0 +1,37 @@
+body {
+    padding: 20px;
+}
+.page-title {
+    font-weight: bold;
+}
+.premium-card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
+}
+.badge-discount {
+    background-color: #e3f2fd;
+    color: #0d47a1;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+.category-pill {
+    background-color: #f3e5f5;
+    color: #4a148c;
+    padding: 4px 12px;
+    border-radius: 15px;
+    font-size: 0.85rem;
+}
+.status-indicator.active {
+    color: #2e7d32;
+    background-color: #e8f5e9;
+    padding: 4px 10px;
+    border-radius: 6px;
+}
+.status-indicator.inactive {
+    color: #c62828;
+    background-color: #ffebee;
+    padding: 4px 10px;
+    border-radius: 6px;
+}

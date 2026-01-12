@@ -10,7 +10,8 @@
 <!-- Toastify JS -->
 <script src="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.js"></script>
 </head>
-<style> body { background-color: #f0f4f8; font-family: 'Arial', sans-serif; } h2 { font-weight: bold; color: #333; } .card { background-color: #fff; border: none; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); transition: transform 0.2s; } .card:hover { transform: translateY(-5px); } .table th { background-color: #007bff; color: white; } .table th, .table td { vertical-align: middle; font-size: 1rem; } .filter-label { font-weight: bold; color: #555; } .filter-select { border-radius: 0.5rem; } .btn-custom { background-color: #007bff; color: white; transition: background-color 0.3s; } .btn-custom:hover { background-color: #0056b3; } @media (max-width: 768px) { .card { margin-bottom: 1rem; } .table-responsive { overflow-x: auto; } } </style>
+    <link rel="stylesheet" href="/admin/css/salesReport.css">
+</head>
 <body>
 
 <div class="container mt-4">
@@ -129,71 +130,7 @@
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
-<script>
-    document.getElementById('dateFilter').addEventListener('change', function() {
-        const selectedValue = this.value;
-        const startDateInput = document.getElementById('startDateInput');
-        const endDateInput = document.getElementById('endDateInput');
-
-        if (selectedValue === 'custom') {
-            startDateInput.style.display = 'block';
-            endDateInput.style.display = 'block';
-        } else {
-            startDateInput.style.display = 'none';
-            endDateInput.style.display = 'none';
-        }
-    });
-    function applyFilters() {
-    const dateFilter = document.getElementById('dateFilter').value;
-    const paymentFilter = document.getElementById('paymentFilter').value;
-    const url = new URL(window.location.href);
-    url.searchParams.set('dateFilter', dateFilter);
-    url.searchParams.set('paymentFilter', paymentFilter);
-    window.location.href = url.toString();
-}
-function customFiltering(event) {
-    event.preventDefault(); 
-    const startDate = document.getElementById('startDate').value;
-    const endDate = document.getElementById('endDate').value;
-    if (startDate > endDate) {
-        console.log('hjkl');
-        
-        showToast("The start date must be before the end date.");
-        return;
-    }
-    const paymentFilter = document.getElementById('paymentFilter').value;
-    const url = `/admin/sales/report?dateFilter=custom&startDate=${startDate}&endDate=${endDate}` + 
-                (paymentFilter ? `&paymentFilter=${paymentFilter}` : '');
-    window.location.href = url;
-}
-function showToast(message) {
-                Toastify({
-                    text: message,
-                    duration: 2000,
-                    gravity: "top",
-                    position: "right",
-                    backgroundColor: "#333",
-                    stopOnFocus: true
-                }).showToast();
-            }
-
-</script>
-<script>
-    function downloadPDF() {
-        const currentUrl = window.location.href;
-        const url = `${currentUrl}?download=pdf`; 
-        window.open(url, '_blank'); 
-    }
-
-    function downloadExcel() {
-        const currentUrl = window.location.href; 
-        const url = `${currentUrl}?download=excel`; 
-        window.open(url, '_blank'); 
-    }
-    function resetHand(){
-        window.location.href="/admin/sales/report"
-    }
-</script>
+<script type="module" src="/admin/js/salesReport.js"></script>
 
 
 

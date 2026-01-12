@@ -1,0 +1,71 @@
+/* General styling */
+body {
+  background-color: #f8f9fa;
+  font-family: 'Poppins', sans-serif;
+}
+
+.modal-content {
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Header & Footer */
+.modal-header {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.modal-footer {
+  border-top: none;
+  padding-top: 0;
+}
+
+.modal-title {
+  font-size: 1.75rem;
+  font-weight: bold;
+}
+
+.btn-download {
+  background-color: #28a745;
+  color: #fff;
+}
+
+.btn-download:hover {
+  background-color: #218838;
+}
+
+.order-details p {
+  margin-bottom: 0.75rem;
+}
+
+/* Table styling */
+.table th,
+.table td {
+  vertical-align: middle;
+}
+
+.table thead th {
+  background-color: #f0f0f0;
+  font-weight: 600;
+}
+
+.table tfoot td {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.badge-order-number {
+  font-size: 1rem;
+  background-color: #6c757d;
+  padding: 0.4rem 0.7rem;
+  border-radius: 12px;
+}
+
+.table tbody tr:hover {
+  background-color: #f1f1f1; /* Hover effect for table rows */
+}
+.header{
+  display: flex;
+align-items: center;
+justify-content: space-between;
+}

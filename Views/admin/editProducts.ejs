@@ -64,8 +64,8 @@
                                 <div id="sizeContainer">
                                     <% product.availableSize.forEach(function(sizeStock) { %>
                                         <div class="d-flex align-items-center mb-2 size-stock-row bg-light rounded-3 gap-2">
-                                            <input type="text" name="size" class="form-control" value="<%= sizeStock.size %>" required style="width: 120px;">
-                                            <input type="number" name="stock" class="form-control" value="<%= sizeStock.stock %>" required style="width: 120px;">
+                                            <input type="text" name="size" class="form-control w-120px" value="<%= sizeStock.size %>" required>
+                                            <input type="number" name="stock" class="form-control w-120px" value="<%= sizeStock.stock %>" required>
                                             <button type="button" class="btn btn-link text-danger remove-size-stock ms-auto p-0">
                                                 <i class="bi bi-trash"></i>
                                             </button>

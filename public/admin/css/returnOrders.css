@@ -1,0 +1,22 @@
+body {
+    background-color: #fff9c4;
+}
+.navbar {
+    background-color: #ffd600;
+}
+.card {
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.badge-pending {
+    background-color: #ffd600;
+    color: black;
+}
+.badge-accepted {
+    background-color: #4caf50;
+    color: white;
+}
+.badge-rejected {
+    background-color: #f44336;
+    color: white;
+}

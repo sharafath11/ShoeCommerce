@@ -9,22 +9,7 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/react-toastify/dist/ReactToastify.min.css">
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-
-        .container {
-            margin-top: 50px;
-        }
-
-        .table th,
-        .table td {
-            vertical-align: middle;
-        }
-    </style>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/react-toastify/dist/ReactToastify.min.css">
+    <link rel="stylesheet" href="/admin/css/coupen.css">
 </head>
 
 <body>
@@ -104,7 +89,7 @@
                             <select class="form-select" id="discountType" required>
                                 <option value="" disabled selected>Select discount type</option>
                                 <option value="percentage">Percentage</option>
-                                <!-- <option value="fixed">Fixed</option> -->
+                                <option value="fixed">Fixed</option>
                             </select>
                         </div>
 
@@ -164,7 +149,7 @@
                         <select class="form-select" id="editDiscountType" required>
                             <option value="" disabled selected>Select discount type</option>
                             <option value="percentage">Percentage</option>
-                            <!-- <option value="fixed">Fixed</option> -->
+                            <option value="fixed">Fixed</option>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -199,154 +184,10 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        function populateEditModal(code, discountType, discountValue, startingDate, expiryDate, minimumPrice, isActive, cid, cname) {
-            document.getElementById("editcname").value = cname;
-            document.getElementById("cid").value = cid;
-            document.getElementById('editCouponCode').value = code;
-            document.getElementById('editDiscountType').value = discountType;
-            document.getElementById('editDiscountValue').value = discountValue;
-            document.getElementById('editMinimumPrice').value = minimumPrice;
-            document.getElementById('editStartingDate').value = startingDate;
-            document.getElementById('editExpiryDate').value = expiryDate;
-            document.getElementById('editIsActive').value = isActive.toString();
-        }
-        
-        document.getElementById('editForm').addEventListener('submit', async function(event) {
-            event.preventDefault();
-            const cid = document.getElementById("cid").value;
-            const couponCode = document.getElementById('editCouponCode').value;
-            const cname = document.getElementById('editcname').value;
-            const discountType = document.getElementById('editDiscountType').value;
-            const discountValue = document.getElementById('editDiscountValue').value;
-            const minimumPrice = document.getElementById('editMinimumPrice').value;
-            const startingDate = document.getElementById('editStartingDate').value;
-            const endingDate = document.getElementById('editExpiryDate').value;
-            const isActive = document.getElementById('editIsActive').value === 'true';
-        
-            if (new Date(startingDate) >= new Date(endingDate)) {
-                showToast("Expiry Date must be after Starting Date!");
-                return;
-            }
-        
-            const data = {
-                _id: cid,
-                name: cname,
-                code: couponCode,
-                discountType,
-                discountValue: Number(discountValue),
-                minimumPrice: Number(minimumPrice),
-                startingDate: new Date(startingDate),
-                endingDate: new Date(endingDate),
-                isActive
-            };
-        
-            const result = await Swal.fire({
-                title: 'Are you sure?',
-                text: 'Do you want to update this coupon?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, update it!',
-                cancelButtonText: 'No, cancel!',
-            });
-        
-            if (result.isConfirmed) {
-                try {
-                    const response = await axios.put('/admin/coupons/update', data);
-             
-                    
-                    if (response.data.ok) {
-                        showToast(response.data.msg);
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1000);
-                    } else {
-                        showToast(response.data.msg);
-                    }
-                } catch (error) {
-                    showToast("Error updating coupon!");
-                }
-            }
-        });
-        
-        document.getElementById('couponForm').addEventListener('submit', function (event) {
-            event.preventDefault();
-            const couponCode = document.getElementById('couponCode').value.trim();
-            const cname = document.getElementById("cname").value;
-            const discountType = document.getElementById('discountType').value.trim();
-            const discountValue = document.getElementById('discountValue').value;
-            const minimumPrice = document.getElementById('minimumPrice').value;
-            const startingDate = document.getElementById('startingDate').value;
-            const endingDate = document.getElementById('endingDate').value;
-        
-            if (!cname) {
-                showToast('Coupon name is required');
-                return;
-            }
-        
-            if (!couponCode || couponCode.length < 8) {
-                showToast('Coupon Code must be at least 8 characters long');
-                return;
-            }
-        
-            if (!discountType || !discountValue || discountValue <= 0 || !minimumPrice || minimumPrice <= 0 || !startingDate || !endingDate) {
-                showToast('All fields are required and values must be valid');
-                return;
-            }
-        
-            const currentDate = new Date().toISOString().split('T')[0];
-            if (startingDate < currentDate || endingDate <= startingDate) {
-                showToast('Invalid date range');
-                return;
-            }
-        
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "Do you want to add this coupon?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, add it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    axios.post('/admin/coupons/addCoupen', {
-                        code: couponCode,
-                        name: cname,
-                        discountType: discountType,
-                        discountValue: discountValue,
-                        minimumPrice: minimumPrice,
-                        startingDate: startingDate,
-                        endingDate: endingDate
-                    })
-                    .then(response => {
-                        if (response.data.ok) {
-                            showToast(response.data.msg);
-                            setTimeout(() => {
-                                window.location.reload();
-                            }, 1000);
-                        } else {
-                            showToast(response.data.msg);
-                        }
-                    })
-                    .catch(() => {
-                        showToast('Failed to add coupon. Try again.');
-                    });
-                }
-            });
-        });
-        
-        function showToast(message) {
-            Toastify({
-                text: message,
-                duration: 2000,
-                gravity: "top",
-                position: "right",
-                style: {
-                    background: "#333"
-                },
-                stopOnFocus: true
-            }).showToast();
-        }
-        </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="/admin/js/coupen.js"></script>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
