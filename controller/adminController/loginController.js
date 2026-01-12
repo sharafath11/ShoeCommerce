@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken'
-
+import dotenv from 'dotenv'
+dotenv.config()
 export const adminLogin = (req, res) => {
 
         return res.render("admin/login");
@@ -30,7 +31,7 @@ export const adminLoginPost = (req, res) => {
         });
        
     } else {
-        res.status(401).json({ success: false, msg: "Somthing wrong" });
+        res.status(401).json({ success: false, msg: "In valid creadinatiols" });
     }
 };
 
