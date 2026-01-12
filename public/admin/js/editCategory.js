@@ -1,8 +1,3 @@
-/**
- * Antigravity UI: Edit Category
- * Target: /public/admin/js/editCategory.js
- */
-
 import { confirmAlert } from "/utils/confirmAlert.js";
 import { showToast } from "/utils/toast.js";
 
@@ -14,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const categoryDescriptionInput = document.getElementById('categoryDescription');
     const categoryNameError = document.getElementById('categoryNameError');
     const categoryDescriptionError = document.getElementById('categoryDescriptionError');
-    const categoryId = form.dataset.categoryId; // Check if this dataset attr exists in EJS
+    const categoryId = form.dataset.categoryId;
 
     form.addEventListener('submit', async (event) => {
         event.preventDefault();
@@ -48,7 +43,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!confirmed) return;
 
         try {
-            // Ensure categoryId comes from EJS or URL
             const targetId = categoryId || window.location.pathname.split('/').pop();
 
             const response = await axios.post(`/admin/category/edit-category/${targetId}`, {

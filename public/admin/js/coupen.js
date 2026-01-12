@@ -1,12 +1,6 @@
-/**
- * Antigravity UI: Coupon Management
- * Target: /public/admin/js/coupen.js
- */
-
 import { confirmAlert } from "/utils/confirmAlert.js";
 import { showToast } from "/utils/toast.js";
 
-// Global exposure for EJS onclick (edit modal population)
 window.populateEditModal = function (code, discountType, discountValue, startingDate, expiryDate, minimumPrice, isActive, cid, cname) {
     document.getElementById("editcname").value = cname;
     document.getElementById("cid").value = cid;
@@ -31,7 +25,6 @@ function initEditForm() {
     editForm.addEventListener('submit', async function (event) {
         event.preventDefault();
 
-        // Values
         const cid = document.getElementById("cid").value;
         const couponCode = document.getElementById('editCouponCode').value;
         const cname = document.getElementById('editcname').value;

@@ -1,8 +1,3 @@
-/**
- * Antigravity UI: Add Product
- * Target: /public/admin/js/addProducts.js
- */
-
 import { confirmAlert } from "/utils/confirmAlert.js";
 import { showToast } from "/utils/toast.js";
 
@@ -15,9 +10,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initProductForm();
 });
 
-/**
- * Manage Dynamic Size/Stock Rows
- */
 function initSizeStockManager() {
     const container = document.getElementById("sizeContainer");
     const addBtn = document.getElementById("addSizeStockBtn");
@@ -44,9 +36,6 @@ function initSizeStockManager() {
     });
 }
 
-/**
- * Handle Image Uploads and Cropping
- */
 function initImageUploader() {
     const imageInput = document.getElementById("productImages");
     const cropContainer = document.getElementById("imageCropContainer");
@@ -102,9 +91,6 @@ function initImageUploader() {
     });
 }
 
-/**
- * Handle Form Submission
- */
 function initProductForm() {
     const form = document.getElementById("addProductForm");
     if (!form) return;
@@ -114,14 +100,12 @@ function initProductForm() {
 
         const formData = new FormData();
 
-        // Basic fields
         const fields = ['name', 'brand', 'color', 'description', 'price', 'originalPrice', 'category'];
         fields.forEach(f => {
             const val = form.querySelector(`[name="${f}"]`).value.trim();
             formData.append(f, val);
         });
 
-        // Size & Stock
         const sizeStockData = [];
         const rows = document.querySelectorAll("#sizeContainer > div");
         rows.forEach(row => {
@@ -136,7 +120,6 @@ function initProductForm() {
         }
         formData.append("availableSize", JSON.stringify(sizeStockData));
 
-        // Images
         const validImages = croppedImages.filter(img => img);
         if (validImages.length < 3) {
             showToast("Please crop at least 3 images", "error");
@@ -172,9 +155,6 @@ function initProductForm() {
     });
 }
 
-/**
- * Utility: Convert Data URI to Blob
- */
 function dataURItoBlob(dataURI) {
     const byteString = atob(dataURI.split(",")[1]);
     const mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];

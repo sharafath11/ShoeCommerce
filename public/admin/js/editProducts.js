@@ -1,8 +1,3 @@
-/**
- * Antigravity UI: Edit Product
- * Target: /public/admin/js/editProducts.js
- */
-
 import { confirmAlert } from "/utils/confirmAlert.js";
 import { showToast } from "/utils/toast.js";
 
@@ -100,7 +95,6 @@ async function initEditForm() {
         const originalPrice = document.getElementById("originalPrice").value.trim();
         const category = document.getElementById("category").value;
 
-        // Validation
         if (parseFloat(price) > parseFloat(originalPrice)) {
             showToast("Listing price cannot exceed original price.", "error");
             return;
@@ -129,7 +123,6 @@ async function initEditForm() {
         formData.append("category", category);
         formData.append("sizes", JSON.stringify(sizeStockData));
 
-        // Handle Cropped Images
         croppers.forEach((cropper, index) => {
             const canvas = cropper.getCroppedCanvas({ width: 600, height: 600 });
             const dataUrl = canvas.toDataURL("image/jpeg", 0.9);

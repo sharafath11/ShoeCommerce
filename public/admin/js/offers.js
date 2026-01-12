@@ -1,18 +1,9 @@
-/**
- * Antigravity UI: Offers Management
- * Target: /public/admin/js/offers.js
- */
-
 import { confirmAlert } from "/utils/confirmAlert.js";
 import { showToast } from "/utils/toast.js";
 
-// Global exposure for EJS interaction
 window.editOffer = function (id, title, description, discount, categoryId, isActive, startDate, expireDate) {
     document.getElementById('catOffId').value = id;
     document.getElementById('editOfferTitle').value = title;
-
-    // Note: EJS modal structure audit confirmed description/dates might be missing in DOM
-    // Strictly mapping available fields
 
     document.getElementById('editOfferDiscount').value = discount;
     document.getElementById('editOfferCategory').value = categoryId;
@@ -43,13 +34,8 @@ window.editOfferHandler = async function (event) {
     const discount = document.getElementById('editOfferDiscount').value;
     const category = document.getElementById('editOfferCategory').value;
 
-    // Get radio value
     const radio = document.querySelector('input[name="isActiveEdit"]:checked');
     const isActive = radio ? (radio.value === 'true') : false;
-
-    // Use utils (not strictly necessary for update but good for consistency)
-    // No confirmation needed for simple update usually, but let's be safe if user wants.
-    // Sticking to original logic: direct update.
 
     try {
         const response = await axios.put(`/admin/offers/edit/${id}`, {
@@ -71,9 +57,7 @@ window.editOfferHandler = async function (event) {
     }
 };
 
-
 document.addEventListener('DOMContentLoaded', () => {
-    // Add Offer Form
     const addForm = document.getElementById('addOfferForm');
     if (addForm) {
         addForm.addEventListener('submit', async (e) => {
@@ -82,8 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const title = document.getElementById('addOfferTitle').value;
             const description = document.getElementById('addOfferDescription').value;
             const discount = document.getElementById('addOfferDiscount').value;
-            const categoryId = document.getElementById('addOfferCategory').value; // Matches <select name="categoryId"> in EJS?
-            // EJS usually uses names, but JS uses IDs. Assuming IDs exist from previous manual file creation.
+            const categoryId = document.getElementById('addOfferCategory').value;
             const startDate = document.getElementById('addOfferStartDate').value;
             const endDate = document.getElementById('addOfferEndDate').value;
             const isActiveCheck = document.getElementById('addOfferIsActive');

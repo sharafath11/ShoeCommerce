@@ -1,13 +1,6 @@
-/**
- * Antigravity UI: Reviews Management
- * Target: /public/admin/js/reviews.js
- */
-
 import { confirmAlert } from "/utils/confirmAlert.js";
 import { showToast } from "/utils/toast.js";
 
-// Global for inline onclick in reviews.ejs
-// <button onclick="changeReviewStatus('<%= review._id %>', boolean)">
 window.changeReviewStatus = async function (reviewId, shouldBlock) {
     const action = shouldBlock ? "Reject" : "Approve";
 
@@ -38,4 +31,4 @@ window.changeReviewStatus = async function (reviewId, shouldBlock) {
     }
 };
 
-window.showToast = showToast; // Legacy support if needed, but redundant with direct import use above.
+window.showToast = showToast;

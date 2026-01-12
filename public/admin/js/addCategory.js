@@ -1,8 +1,3 @@
-/**
- * Antigravity UI: Add Category
- * Target: /public/admin/js/addCategory.js
- */
-
 import { confirmAlert } from "/utils/confirmAlert.js";
 import { showToast } from "/utils/toast.js";
 

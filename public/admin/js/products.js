@@ -15,7 +15,7 @@ function initListToggle() {
     buttons.forEach((button) => {
         button.addEventListener("click", async function () {
             const productId = this.dataset.id;
-            const currentStatus = this.dataset.status; // 'list' or 'unlist'
+            const currentStatus = this.dataset.status;
 
             const isListing = currentStatus === 'list';
 
@@ -28,13 +28,11 @@ function initListToggle() {
             if (!confirmed) return;
 
             try {
-                // Endpoint: /admin/products/list/:id or /admin/products/unlist/:id
                 const res = await fetch(`/admin/products/${currentStatus}/${productId}`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                 });
 
-                // Check if response is JSON or just status
                 if (res.ok) {
                     showToast(
                         `Product ${isListing ? "listed" : "unlisted"} successfully`,
