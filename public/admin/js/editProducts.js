@@ -57,7 +57,7 @@ function initImageUploader() {
             const reader = new FileReader();
             reader.onload = function (e) {
                 const itemDiv = document.createElement("div");
-                itemDiv.className = "col-md-4 mb-3";
+                itemDiv.className = "col-12";
                 itemDiv.innerHTML = `
                     <div class="image-item shadow-sm">
                         <img id="imagePreview_${i}" src="${e.target.result}" class="image-preview">
