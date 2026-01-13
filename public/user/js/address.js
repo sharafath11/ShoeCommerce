@@ -1,14 +1,9 @@
-/**
- * Antigravity UI: User Address Management
- * Target: /public/user/js/address.js
- */
 
 import { confirmAlert } from "/utils/confirmAlert.js";
 import { showToast } from "/utils/toast.js";
 import { isValidPincode, validateField } from "/utils/validation.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-    // Initialization logic if needed
 });
 
 window.addAddress = async function (event, userId) {
@@ -22,7 +17,6 @@ window.addAddress = async function (event, userId) {
     const country = document.getElementById("country").value.trim();
     const name = document.getElementById("name").value.trim();
 
-    // Validation
     const validations = [
         { value: name, name: "Name", minLength: 1 },
         { value: type, name: "Type", minLength: 3 },
@@ -104,7 +98,6 @@ window.UpdateAddress = async function (event, addressId, index) {
     const country = document.getElementById(`country${index}`).value.trim();
     const name = document.getElementById(`name${index}`).value.trim();
 
-    // Validation
     const validations = [
         { value: name, name: "Name", minLength: 1 },
         { value: type, name: "Type", minLength: 3 },

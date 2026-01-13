@@ -1,7 +1,3 @@
-/**
- * Antigravity UI: Checkout
- * Target: /public/user/js/checkout.js
- */
 
 import { confirmAlert } from "/utils/confirmAlert.js";
 import { showToast } from "/utils/toast.js";
@@ -11,7 +7,6 @@ let coupenId = null;
 let tempTotal = 0;
 
 document.addEventListener("DOMContentLoaded", () => {
-    // Initialization if needed
 });
 
 window.checkoutHandler = async function (e) {
@@ -336,7 +331,7 @@ function gatherOrderData() {
         const size = sizeElement ? parseInt(sizeElement.innerText) : NaN;
 
         if (isNaN(size)) {
-            return; // Skip or handle error
+            return;
         }
 
         const productName = document.getElementById(`product-name-${index}`).innerText;
@@ -348,7 +343,7 @@ function gatherOrderData() {
             name: productName,
             size: size,
             quantity: quantity,
-            price: price / quantity, // Calculate unit price if saved as total in UI
+            price: price / quantity,
             total: price,
         });
     });

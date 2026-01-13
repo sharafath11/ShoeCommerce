@@ -1,7 +1,3 @@
-/**
- * Antigravity UI: Shopping Cart
- * Target: /public/user/js/cart.js
- */
 
 import { confirmAlert } from "/utils/confirmAlert.js";
 import { showToast } from "/utils/toast.js";
@@ -46,7 +42,6 @@ window.updateQuantity = async function (productId, action, index) {
         return;
     }
 
-    // Optimistically update UI
     qtyInput.value = currentQty;
 
     try {
@@ -63,7 +58,6 @@ window.updateQuantity = async function (productId, action, index) {
             updateCartTotal();
         } else {
             showToast(response.data.message, "error");
-            // Revert UI
             qtyInput.value = currentQty - (action === "increase" ? 1 : -1);
         }
     } catch (error) {

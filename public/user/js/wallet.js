@@ -1,12 +1,7 @@
-/**
- * Antigravity UI: User Wallet
- * Target: /public/user/js/wallet.js
- */
 
 import { showToast } from "/utils/toast.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-    // Initialization
 });
 
 window.addMoneyInWallet = async function () {
@@ -32,7 +27,7 @@ window.addMoneyInWallet = async function () {
 
             const options = {
                 key: "rzp_test_0NNl9o6nbS0KBP",
-                amount: amount * 100, // Razorpay expects paise
+                amount: amount * 100,
                 currency: currency,
                 name: "ST SHOPE",
                 description: "Add money to wallet",

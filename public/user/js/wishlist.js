@@ -1,12 +1,7 @@
-/**
- * Antigravity UI: User Wishlist
- * Target: /public/user/js/wishlist.js
- */
 
 import { showToast } from "/utils/toast.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-    // Initialization if needed
 });
 
 window.addToCart = async function (event, productId) {

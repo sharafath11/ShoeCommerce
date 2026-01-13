@@ -1,7 +1,3 @@
-/**
- * Antigravity UI: User Authentication (Register)
- * Target: /public/user/js/register.js
- */
 
 import { showToast } from "/utils/toast.js";
 import { isValidEmail, validatePassword } from "/utils/validation.js";
@@ -70,7 +66,6 @@ function initRegisterForm() {
         const password = document.getElementById("password").value;
         const confirmPassword = document.getElementById("confirmPassword").value;
 
-        // Validations
         const passwordResult = validatePassword(password);
         if (!passwordResult.isValid) {
             showToast(passwordResult.message, "warning");

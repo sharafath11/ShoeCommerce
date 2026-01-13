@@ -1,13 +1,8 @@
-/**
- * Antigravity UI: User Orders
- * Target: /public/user/js/orders.js
- */
 
 import { confirmAlert } from "/utils/confirmAlert.js";
 import { showToast } from "/utils/toast.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-    // Initialization if needed
 });
 
 window.removeOrder = async function (e, orderId) {

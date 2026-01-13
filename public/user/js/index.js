@@ -1,12 +1,7 @@
-/**
- * Antigravity UI: Home Page
- * Target: /public/user/js/index.js
- */
 
 import { showToast } from "/utils/toast.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-    // Check for server-side message passed via template (if any)
     const serverMessage = document.body.dataset.serverMsg;
     if (serverMessage) {
         showToast(serverMessage, "success");

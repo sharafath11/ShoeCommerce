@@ -1,14 +1,9 @@
-/**
- * Antigravity UI: User Profile
- * Target: /public/user/js/profile.js
- */
 
 import { confirmAlert } from "/utils/confirmAlert.js";
 import { showToast } from "/utils/toast.js";
 import { validateMobileNumber } from "/utils/validation.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-    // Initialization if needed
 });
 
 window.updtaeUser = async function (event, userId) {

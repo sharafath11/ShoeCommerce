@@ -1,7 +1,3 @@
-/**
- * Antigravity UI: Forgot Password
- * Target: /public/user/js/forgotPassword.js
- */
 
 import { showToast } from "/utils/toast.js";
 

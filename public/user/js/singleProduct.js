@@ -1,7 +1,3 @@
-/**
- * Antigravity UI: Product Details
- * Target: /public/user/js/singleProduct.js
- */
 
 import { showToast } from "/utils/toast.js";
 
@@ -157,7 +153,7 @@ function initReviewForm() {
                 if (response.data.ok) {
                     Swal.fire("Success!", response.data.msg, "success");
                     reviewForm.reset();
-                    fetchReviews(1); // Refresh reviews
+                    fetchReviews(1);
                 } else {
                     Swal.fire("Error", response.data.msg, "error");
                 }
@@ -205,7 +201,6 @@ function renderReviews(reviews) {
         </div>
     `).join('');
 
-    // Modal logic for review images
     document.querySelectorAll(".review-image").forEach(img => {
         img.addEventListener("click", function () {
             const modal = document.getElementById("imageModal");
@@ -247,7 +242,6 @@ function updatePagination(totalPages, currentPage) {
     }
 }
 
-// Modal closing logic
 const closeModal = document.getElementById("closeModal");
 if (closeModal) {
     closeModal.onclick = () => document.getElementById("imageModal").style.display = "none";

@@ -1,7 +1,3 @@
-/**
- * Antigravity UI: User Authentication (Login)
- * Target: /public/user/js/login.js
- */
 
 import { showToast } from "/utils/toast.js";
 

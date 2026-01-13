@@ -1,7 +1,3 @@
-/**
- * Antigravity UI: Reset Password
- * Target: /public/user/js/resetPassword.js
- */
 
 import { showToast } from "/utils/toast.js";
 import { validatePassword } from "/utils/validation.js";

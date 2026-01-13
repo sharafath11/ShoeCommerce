@@ -1,7 +1,3 @@
-/**
- * Antigravity UI: Shop Listing Logic
- * Target: /public/user/js/shop.js
- */
 
 import { showToast } from "/utils/toast.js";
 
@@ -56,7 +52,6 @@ window.filterHandler = function (page = 1) {
         page: page,
     };
 
-    // Remove empty params
     Object.keys(filterData).forEach(key => !filterData[key] && delete filterData[key]);
 
     const queryString = new URLSearchParams(filterData).toString();
@@ -94,7 +89,6 @@ function createPagination(totalPages, currentPage) {
     }
 }
 
-// UI Toggles for Sidebar
 window.toggleCategories = function () {
     const list = document.getElementById('categoriesList');
     if (list) list.style.display = list.style.display === 'none' ? 'block' : 'none';
