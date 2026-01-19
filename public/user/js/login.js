@@ -35,7 +35,7 @@ function initLoginForm() {
 
             const data = await response.json();
 
-            if (!data.success) {
+            if (!data.ok) {
                 showToast(data.msg, "error");
             } else {
                 showToast(data.msg, "success");

@@ -63,7 +63,7 @@ function initEditForm() {
 
         try {
             const response = await axios.put('/admin/coupons/update', data);
-
+            console.log(response.data);
             if (response.data.ok) {
                 showToast(response.data.msg, "success");
                 setTimeout(() => location.reload(), 1000);
@@ -96,8 +96,8 @@ function initAddForm() {
             showToast('Coupon name is required', "error");
             return;
         }
-        if (!couponCode || couponCode.length < 8) {
-            showToast('Coupon Code must be at least 8 characters long', "error");
+        if (!couponCode || couponCode.length < 4) {
+            showToast('Coupon Code must be at least 4 characters long', "error");
             return;
         }
         if (!discountType || !discountValue || discountValue <= 0 || !minimumPrice || minimumPrice <= 0 || !startingDate || !endingDate) {

@@ -151,9 +151,10 @@ window.applyCouponCode = async function () {
 
         const result = response.data;
         if (result.ok) {
-            messageDiv.innerText = `Coupon applied! Discount: ${result.discountValue}%`;
+            const discountLabel = result.discountType === "percentage" ? `${result.discountValue}%` : `₹${result.discountValue}`;
+            messageDiv.innerText = `Coupon applied! Discount: ${discountLabel}`;
             totalAmountSpan.innerText = `₹${parseInt(result.newTotal)}`;
-            document.getElementById("discount").innerText = `${result.discountValue}%`;
+            document.getElementById("discount").innerText = discountLabel;
             document.getElementById("coupen-btn").disabled = true;
             coupenId = result.coupon._id;
             showToast(result.msg, "success");

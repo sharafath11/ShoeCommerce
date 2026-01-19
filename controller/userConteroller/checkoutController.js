@@ -9,14 +9,14 @@ import ProductModel from "../../models/prodectsModel.js";
 export const getCheckout = async (req, res) => {
   try {
     const { user, WishlistQty, cartQty } = req.session;
-    const [cartDetails, addresses,coupens] = await Promise.all([
+    const [cartDetails, addresses, coupens] = await Promise.all([
       CartModel.findOne({ userId: user._id }).lean(),
       AddressModel.find({ userId: user._id }).sort({ createdAt: -1 }).lean(),
-      CouponModel.find({isActive:true})
+      CouponModel.find({ isActive: true })
     ]);
 
     if (!cartDetails || cartDetails.products.length === 0) {
-      return res.render("user/checkout", { user, WishlistQty, cartQty, cartItems: [], addresses,coupens });
+      return res.render("user/checkout", { user, WishlistQty, cartQty, cartItems: [], addresses, coupens });
     }
 
     const productIds = cartDetails.products.map((cartItem) => cartItem.productId);
@@ -40,7 +40,7 @@ export const getCheckout = async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching checkout details:", error.message);
-   
+
     return res.render("user/error");
   }
 };
@@ -48,7 +48,7 @@ export const checkoutFn = async (req, res) => {
   try {
     const { cartItems, selectedAddresses, coupenId, paymentMethod } = req.body;
 
-  
+
 
     const orderItems = cartItems.map(item => ({
       productId: item.productId,
@@ -80,7 +80,7 @@ export const checkoutFn = async (req, res) => {
     const selectedAddress = selectedAddresses[0];
 
     let coupon = null;
-    let cvalue=0
+    let cvalue = 0
     let finalAmount = totalAmount + 50;
 
     if (coupenId && mongoose.Types.ObjectId.isValid(coupenId)) {
@@ -88,7 +88,7 @@ export const checkoutFn = async (req, res) => {
       if (!coupon || !coupon.isActive) {
         return res.json({ ok: false, msg: "Invalid or inactive coupon.", red: "/cart" });
       }
-      if (finalAmount < coupon.minimumAmount) {
+      if (finalAmount < coupon.minimumPrice) {
         return res.json({
           msg: `Coupon cannot be applied. Minimum order total should be ₹${coupon.minimumPrice}.`
         });
@@ -97,7 +97,7 @@ export const checkoutFn = async (req, res) => {
         finalAmount -= coupon.discountValue;
       } else if (coupon.discountType === "percentage") {
         finalAmount -= (totalAmount * coupon.discountValue) / 100;
-         cvalue=(totalAmount * coupon.discountValue) / 100 
+        cvalue = (totalAmount * coupon.discountValue) / 100
       }
 
       if (finalAmount < 0) {
@@ -141,13 +141,13 @@ export const checkoutFn = async (req, res) => {
         postalCode: selectedAddress.zip,
         country: selectedAddress.country,
       },
-      
+
       totalAmount: Math.round(finalAmount),
       totelOrginalPrice,
-      totelDiscountValue:totelOrginalPrice-totalAmount,
+      totelDiscountValue: totelOrginalPrice - totalAmount,
       categoryDiscountValue,
       orderId: orderId,
-      coupenValue:cvalue,
+      coupenValue: cvalue,
       paymentMethod,
       couponId: coupon ? coupon._id : null,
     });
