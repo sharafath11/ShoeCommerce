@@ -11,7 +11,10 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "https://stshop.sharafathabi.cloud/auth/google/callback",
+      callbackURL: process.env.GOOGLE_CALLBACK_URL ||
+        (process.env.NODE_ENV === 'production'
+          ? "https://stshop.sharafathabi.cloud/auth/google/callback"
+          : "http://localhost:5000/auth/google/callback"),
       passReqToCallback: true,
     },
     async function (request, accessToken, refreshToken, profile, done) {
@@ -65,17 +68,17 @@ export const googleAuthCallback = async (req, res) => {
         isVerified: true,
       });
       await user.save();
-     
+
       const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
         expiresIn: "1h",
       });
       const newWallet = new WalletModel({
-        user: user._id,  
-        balance: 0.0,       
-        transactions: [],   
+        user: user._id,
+        balance: 0.0,
+        transactions: [],
       });
       console.log(newWallet);
-      
+
       await newWallet.save();
       return res.status(200).json({
         success: true,

@@ -85,5 +85,7 @@ router.get("/wallet", protectedHand, walletRender)
 router.post("/orders/return", protectedHand, returnOrders)
 router.post("/checkout/wallet/pay", protectedHand, payWithWallet);
 router.post("/wallet/create-order", protectedHand, createAddmoneyWallet)
-router.post("/wallet/add/money", protectedHand, addMoneyWallet)
+router.post("/wallet/add/money", protectedHand, addMoneyWallet);
+//Create an Express route that accepts two numbers as query parameters and displays their sum on a web page
+
 export default router
